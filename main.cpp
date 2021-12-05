@@ -6,10 +6,49 @@
 
 size_t const TILE_SIZE_PIXELS(16);
 size_t const TILESET_WIDTH_TILES(5);
-size_t const LEVEL_WIDTH_TILES(10);
+size_t const LEVEL_WIDTH_TILES(20);
 size_t const LEVEL_HEIGHT_TILES(LEVEL_WIDTH_TILES);
 size_t const LEVEL_SIZE_TILES(LEVEL_WIDTH_TILES * LEVEL_HEIGHT_TILES);
+size_t const SPEED_IN_PIXELS(3);
 size_t const VIEWPORT_SIZE(10 * TILE_SIZE_PIXELS);
+
+class KeyboardState {
+public:
+    bool is_pressed(SDL_Scancode key) const {
+        switch (key) {
+            case SDL_SCANCODE_UP:
+                return up;
+            case SDL_SCANCODE_DOWN:
+                return down;
+            case SDL_SCANCODE_LEFT:
+                return left;
+            case SDL_SCANCODE_RIGHT:
+                return right;
+        }
+
+        return false; // FIXME: Exception.
+    }
+
+    void update(SDL_Scancode key, bool pressed) {
+        switch (key) {
+            case SDL_SCANCODE_UP:
+                up = pressed;
+                return;
+            case SDL_SCANCODE_DOWN:
+                down = pressed;
+                return;
+            case SDL_SCANCODE_LEFT:
+                left = pressed;
+                return;
+            case SDL_SCANCODE_RIGHT:
+                right = pressed;
+                return;
+        }
+    }
+
+private:
+    bool up{false}, down{false}, left{false}, right{false};
+};
 
 void load_level(uint8_t level[], size_t level_size, std::string level_file_name) {
     std::ifstream stream;
@@ -21,9 +60,9 @@ void load_level(uint8_t level[], size_t level_size, std::string level_file_name)
 }
 
 void render_level(uint8_t level[], size_t level_width, size_t level_height, SDL_Renderer *renderer, SDL_Texture *tileset,
-                  size_t tileset_width_tiles, size_t tile_size_pixels) {
-    for (size_t y(0); y < level_height; y++) {
-        for (size_t x(0); x < level_width; x++) {
+                  size_t tileset_width_tiles, size_t tile_size_pixels, size_t current_x, size_t current_y) {
+    for (size_t y(current_y / tile_size_pixels); y <= (current_y + VIEWPORT_SIZE) / tile_size_pixels; y++) {
+        for (size_t x(current_x / tile_size_pixels); x <= (current_x + VIEWPORT_SIZE) / tile_size_pixels; x++) {
             uint8_t tile_index(level[y * level_width + x]);
 
             SDL_Rect source_rect, dest_rect;
@@ -36,10 +75,41 @@ void render_level(uint8_t level[], size_t level_width, size_t level_height, SDL_
             source_rect.x = (tile_index % tileset_width_tiles) * (source_rect.w + 1);
             source_rect.y = (tile_index / tileset_width_tiles) * (source_rect.h + 1);
 
-            dest_rect.x = x * source_rect.w;
-            dest_rect.y = y * source_rect.h;
+            dest_rect.x = x * source_rect.w - current_x;
+            dest_rect.y = y * source_rect.h - current_y;
 
             SDL_RenderCopy(renderer, tileset, &source_rect, &dest_rect);
+        }
+    }
+}
+
+void move(KeyboardState const& keyboard_state, size_t& x, size_t& y) {
+    if (keyboard_state.is_pressed(SDL_SCANCODE_UP)) {
+        if (y < SPEED_IN_PIXELS) {
+            y = 0;
+        } else {
+            y -= SPEED_IN_PIXELS;
+        }
+    }
+    if (keyboard_state.is_pressed(SDL_SCANCODE_DOWN)) {
+        if (y + VIEWPORT_SIZE >= LEVEL_HEIGHT_TILES * TILE_SIZE_PIXELS) {
+            y = LEVEL_HEIGHT_TILES * TILE_SIZE_PIXELS - VIEWPORT_SIZE;
+        } else {
+            y += SPEED_IN_PIXELS;
+        }
+    }
+    if (keyboard_state.is_pressed(SDL_SCANCODE_LEFT)) {
+        if (x < SPEED_IN_PIXELS) {
+            x = 0;
+        } else {
+            x -= SPEED_IN_PIXELS;
+        }
+    }
+    if (keyboard_state.is_pressed(SDL_SCANCODE_RIGHT)) {
+        if (x + VIEWPORT_SIZE >= LEVEL_WIDTH_TILES * TILE_SIZE_PIXELS) {
+            x = LEVEL_WIDTH_TILES * TILE_SIZE_PIXELS - VIEWPORT_SIZE;
+        } else {
+            x += SPEED_IN_PIXELS;
         }
     }
 }
@@ -106,17 +176,22 @@ int main(int argc, char *argv[])
 
     bool quit = false;
     SDL_Event event;
+    KeyboardState keyboard_state;
+    size_t x(0), y(0);
     while (!quit) {
         SDL_RenderClear(ren);
-        render_level(level, LEVEL_WIDTH_TILES, LEVEL_HEIGHT_TILES, ren, tileset, TILESET_WIDTH_TILES, TILE_SIZE_PIXELS);
+        render_level(level, LEVEL_WIDTH_TILES, LEVEL_HEIGHT_TILES, ren, tileset, TILESET_WIDTH_TILES, TILE_SIZE_PIXELS, x, y);
         SDL_RenderPresent(ren);
-        SDL_Delay(100);
+        SDL_Delay(16);
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 SDL_Log("Program quit after %i ticks", event.quit.timestamp);
                 quit = true;
+            } else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
+                keyboard_state.update(event.key.keysym.scancode, event.key.state == SDL_PRESSED ? true : false);
             }
         }
+        move(keyboard_state, x, y);
     }
 
     SDL_DestroyTexture(tileset);

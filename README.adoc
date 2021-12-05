@@ -1,0 +1,14 @@
+= Build & run
+
+== How to build
+
+----
+g++ -o main main.cpp `sdl2-config --libs --cflags` -lSDL2_image
+----
+
+== How to run
+
+----
+xhost +local:docker
+sudo docker run --rm -it -e DISPLAY=${DISPLAY} -v /tmp/.X11-unix:/tmp/.X11-unix -v $(pwd):/home/jim/test sdl2
+----

@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <SDL2/SDL.h>
 #include <string>
 #include <unordered_map>
@@ -51,22 +52,24 @@ private:
     bool up{false}, down{false}, left{false}, right{false};
 };
 
-/**
- * Array with a fixed sized and which retains its size. And which can be instantiated with the size known at runtime.
- */
-class SizedArray {
+class Animation {
 public:
-  SizedArray(uint8_t const* array, uint8_t size) : array(array), array_size(size) {}
-  uint8_t size() const {
-      return array_size;
+  Animation(std::unique_ptr<uint8_t const[]> tile_indices, uint8_t period, uint8_t duration)
+    : tile_indices(std::move(tile_indices)), period(period), duration(duration) {}
+  uint8_t get_period() const {
+      return period;
   }
-  uint8_t at(uint8_t index) const {
-      return array[index];
+  uint8_t get_duration() const {
+      return duration;
+  }
+  uint8_t tile_index_at_step(uint8_t step) const {
+      return tile_indices[step];
   }
 
 private:
-  uint8_t const *const array;
-  uint8_t const array_size;
+  uint8_t const duration;
+  std::unique_ptr<uint8_t const[]> tile_indices;
+  uint8_t const period;
 };
 
 class Animations {
@@ -77,10 +80,11 @@ public:
         if (stream.is_open()) {
             char byte{0};
             while ((byte = stream.get()) != std::istream::traits_type::eof()) {
-                uint8_t animation_size{static_cast<uint8_t>(byte)};
-                uint8_t *animation = new uint8_t[animation_size]; // FIXME: Matching delete.
-                stream.read(reinterpret_cast<char*>(animation), animation_size);
-                animations_per_tile_index.emplace(std::piecewise_construct, std::forward_as_tuple(animation[0]), std::forward_as_tuple(animation, animation_size));
+                uint8_t animation_period{static_cast<uint8_t>(byte)};
+                uint8_t animation_duration{static_cast<uint8_t>(stream.get())};
+                auto animation = std::make_unique<uint8_t[]>(animation_period);
+                stream.read(reinterpret_cast<char*>(animation.get()), animation_period);
+                animations_per_tile_index.emplace(std::piecewise_construct, std::forward_as_tuple(animation[0]), std::forward_as_tuple(std::move(animation), animation_period, animation_duration));
             }
             stream.close();
         }
@@ -91,13 +95,12 @@ public:
             return tile_index;
         }
 
-        size_t period{20}; // FIXME: Parametrize.
-        SizedArray const& animation{animations_per_tile_index.at(tile_index)};
-        return animation.at(((tick % (animation.size() * period)) / period));
+        Animation const& animation{animations_per_tile_index.at(tile_index)};
+        return animation.tile_index_at_step(((tick % (animation.get_period() * animation.get_duration())) / animation.get_duration()));
     }
 
 private:
-    std::unordered_map<uint8_t, SizedArray> animations_per_tile_index;
+    std::unordered_map<uint8_t, Animation> animations_per_tile_index;
 };
 
 void load_level(uint8_t level[], size_t level_size, std::string level_file_name) {

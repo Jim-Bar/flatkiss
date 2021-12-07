@@ -54,7 +54,7 @@ private:
 
 class Animation {
 public:
-  Animation(std::unique_ptr<uint8_t const[]> tile_indices, uint8_t period, uint8_t duration)
+  Animation(std::unique_ptr<uint16_t const[]> tile_indices, uint8_t period, uint8_t duration)
     : tile_indices(std::move(tile_indices)), period(period), duration(duration) {}
   uint8_t get_period() const {
       return period;
@@ -62,13 +62,13 @@ public:
   uint8_t get_duration() const {
       return duration;
   }
-  uint8_t tile_index_at_step(uint8_t step) const {
+  uint16_t tile_index_at_step(uint16_t step) const {
       return tile_indices[step];
   }
 
 private:
   uint8_t const duration;
-  std::unique_ptr<uint8_t const[]> tile_indices;
+  std::unique_ptr<uint16_t const[]> tile_indices;
   uint8_t const period;
 };
 
@@ -82,15 +82,15 @@ public:
             while ((byte = stream.get()) != std::istream::traits_type::eof()) {
                 uint8_t animation_period{static_cast<uint8_t>(byte)};
                 uint8_t animation_duration{static_cast<uint8_t>(stream.get())};
-                auto animation = std::make_unique<uint8_t[]>(animation_period);
-                stream.read(reinterpret_cast<char*>(animation.get()), animation_period);
+                auto animation = std::make_unique<uint16_t[]>(animation_period);
+                stream.read(reinterpret_cast<char*>(animation.get()), animation_period * 2); // Two byte per tile.
                 animations_per_tile_index.emplace(std::piecewise_construct, std::forward_as_tuple(animation[0]), std::forward_as_tuple(std::move(animation), animation_period, animation_duration));
             }
             stream.close();
         }
     }
 
-    size_t animated_tile_index_for(size_t tile_index, size_t tick) const {
+  uint16_t animated_tile_index_for(uint16_t tile_index, size_t tick) const {
         if (animations_per_tile_index.find(tile_index) == animations_per_tile_index.end()) { // FIXME: Use contains()
             return tile_index;
         }
@@ -100,23 +100,23 @@ public:
     }
 
 private:
-    std::unordered_map<uint8_t, Animation> animations_per_tile_index;
+    std::unordered_map<uint16_t, Animation> animations_per_tile_index;
 };
 
-void load_level(uint8_t level[], size_t level_size, std::string level_file_name) {
+void load_level(uint16_t level[], size_t level_size, std::string level_file_name) {
     std::ifstream stream;
     stream.open(level_file_name, std::ios::in | std::ios::binary);
     if (stream.is_open()) {
-        stream.read(reinterpret_cast<char*>(level), level_size);
+        stream.read(reinterpret_cast<char*>(level), level_size * 2); // Two byte per tile.
         stream.close();
     }
 }
 
-void render_level(Animations const& animations, size_t tick, uint8_t level[], size_t level_width, size_t level_height, SDL_Renderer *renderer, SDL_Texture *tileset,
+void render_level(Animations const& animations, size_t tick, uint16_t level[], size_t level_width, size_t level_height, SDL_Renderer *renderer, SDL_Texture *tileset,
                   size_t tileset_width_tiles, size_t tile_size_pixels, size_t current_x, size_t current_y) {
     for (size_t y(current_y / tile_size_pixels); y <= (current_y + VIEWPORT_SIZE) / tile_size_pixels; y++) {
         for (size_t x(current_x / tile_size_pixels); x <= (current_x + VIEWPORT_SIZE) / tile_size_pixels; x++) {
-            uint8_t tile_index(animations.animated_tile_index_for(level[y * level_width + x], tick));
+            uint16_t tile_index(animations.animated_tile_index_for(level[y * level_width + x], tick));
 
             SDL_Rect source_rect, dest_rect;
             source_rect.w = tile_size_pixels;
@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
     using std::cerr;
     using std::endl;
 
-    uint8_t level[LEVEL_SIZE_TILES] = {0};
+    uint16_t level[LEVEL_SIZE_TILES] = {0};
     load_level(level, LEVEL_SIZE_TILES, "levels/level.bin");
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {

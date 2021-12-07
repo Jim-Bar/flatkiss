@@ -12,3 +12,16 @@ g++ -o main main.cpp `sdl2-config --libs --cflags` -lSDL2_image
 xhost +local:docker
 sudo docker run --rm -it -e DISPLAY=${DISPLAY} -v /tmp/.X11-unix:/tmp/.X11-unix -v $(pwd):/home/jim/test sdl2
 ----
+
+== Binary files format
+
+=== Level
+
+List of tiles indices (in the tileset) as shorts (two bytes per index, little endian). The dimension (i.e. width) of the
+level is stored outside of the file. For now.
+
+=== Animations
+
+The _period_ of the animation is the number of tiles making it up. It is stored on one byte. The _duration_ of the
+animation is how many ticks pass before the animation goes to the next step / tile. Stored on one byte two. Then are the
+tiles indices (in the tileset) as shorts (two bytes per index, little endian).

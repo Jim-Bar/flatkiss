@@ -3,9 +3,10 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <string>
+#include <unordered_map>
 
 size_t const TILE_SIZE_PIXELS(16);
-size_t const TILESET_WIDTH_TILES(5);
+size_t const TILESET_WIDTH_TILES(24);
 size_t const LEVEL_WIDTH_TILES(20);
 size_t const LEVEL_HEIGHT_TILES(LEVEL_WIDTH_TILES);
 size_t const LEVEL_SIZE_TILES(LEVEL_WIDTH_TILES * LEVEL_HEIGHT_TILES);
@@ -50,6 +51,55 @@ private:
     bool up{false}, down{false}, left{false}, right{false};
 };
 
+/**
+ * Array with a fixed sized and which retains its size. And which can be instantiated with the size known at runtime.
+ */
+class SizedArray {
+public:
+  SizedArray(uint8_t const* array, uint8_t size) : array(array), array_size(size) {}
+  uint8_t size() const {
+      return array_size;
+  }
+  uint8_t at(uint8_t index) const {
+      return array[index];
+  }
+
+private:
+  uint8_t const *const array;
+  uint8_t const array_size;
+};
+
+class Animations {
+public:
+    Animations() {
+        std::ifstream stream;
+        stream.open("assets/animations.bin", std::ios::in | std::ios::binary);
+        if (stream.is_open()) {
+            char byte{0};
+            while ((byte = stream.get()) != std::istream::traits_type::eof()) {
+                uint8_t animation_size{static_cast<uint8_t>(byte)};
+                uint8_t *animation = new uint8_t[animation_size]; // FIXME: Matching delete.
+                stream.read(reinterpret_cast<char*>(animation), animation_size);
+                animations_per_tile_index.emplace(std::piecewise_construct, std::forward_as_tuple(animation[0]), std::forward_as_tuple(animation, animation_size));
+            }
+            stream.close();
+        }
+    }
+
+    size_t animated_tile_index_for(size_t tile_index, size_t tick) const {
+        if (animations_per_tile_index.find(tile_index) == animations_per_tile_index.end()) { // FIXME: Use contains()
+            return tile_index;
+        }
+
+        size_t period{20}; // FIXME: Parametrize.
+        SizedArray const& animation{animations_per_tile_index.at(tile_index)};
+        return animation.at(((tick % (animation.size() * period)) / period));
+    }
+
+private:
+    std::unordered_map<uint8_t, SizedArray> animations_per_tile_index;
+};
+
 void load_level(uint8_t level[], size_t level_size, std::string level_file_name) {
     std::ifstream stream;
     stream.open(level_file_name, std::ios::in | std::ios::binary);
@@ -59,11 +109,11 @@ void load_level(uint8_t level[], size_t level_size, std::string level_file_name)
     }
 }
 
-void render_level(uint8_t level[], size_t level_width, size_t level_height, SDL_Renderer *renderer, SDL_Texture *tileset,
+void render_level(Animations const& animations, size_t tick, uint8_t level[], size_t level_width, size_t level_height, SDL_Renderer *renderer, SDL_Texture *tileset,
                   size_t tileset_width_tiles, size_t tile_size_pixels, size_t current_x, size_t current_y) {
     for (size_t y(current_y / tile_size_pixels); y <= (current_y + VIEWPORT_SIZE) / tile_size_pixels; y++) {
         for (size_t x(current_x / tile_size_pixels); x <= (current_x + VIEWPORT_SIZE) / tile_size_pixels; x++) {
-            uint8_t tile_index(level[y * level_width + x]);
+            uint8_t tile_index(animations.animated_tile_index_for(level[y * level_width + x], tick));
 
             SDL_Rect source_rect, dest_rect;
             source_rect.w = tile_size_pixels;
@@ -177,10 +227,12 @@ int main(int argc, char *argv[])
     bool quit = false;
     SDL_Event event;
     KeyboardState keyboard_state;
+    Animations animations;
     size_t x(0), y(0);
+    size_t tick(0);
     while (!quit) {
         SDL_RenderClear(ren);
-        render_level(level, LEVEL_WIDTH_TILES, LEVEL_HEIGHT_TILES, ren, tileset, TILESET_WIDTH_TILES, TILE_SIZE_PIXELS, x, y);
+        render_level(animations, tick++, level, LEVEL_WIDTH_TILES, LEVEL_HEIGHT_TILES, ren, tileset, TILESET_WIDTH_TILES, TILE_SIZE_PIXELS, x, y);
         SDL_RenderPresent(ren);
         SDL_Delay(16);
         while (SDL_PollEvent(&event)) {

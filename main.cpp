@@ -190,9 +190,6 @@ int main(int argc, char *argv[])
         = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (ren == nullptr) {
         cerr << "SDL_CreateRenderer Error" << SDL_GetError() << endl;
-		if (win != nullptr) {
-			SDL_DestroyWindow(win);
-		}
 		SDL_Quit();
         return EXIT_FAILURE;
     }
@@ -200,12 +197,6 @@ int main(int argc, char *argv[])
     SDL_Surface* bmp = SDL_LoadBMP("assets/tileset.bmp");
     if (bmp == nullptr) {
         cerr << "SDL_LoadBMP Error: " << SDL_GetError() << endl;
-		if (ren != nullptr) {
-			SDL_DestroyRenderer(ren);
-		}
-		if (win != nullptr) {
-			SDL_DestroyWindow(win);
-		}
 		SDL_Quit();
         return EXIT_FAILURE;
     }
@@ -213,15 +204,6 @@ int main(int argc, char *argv[])
     SDL_Texture* tileset = SDL_CreateTextureFromSurface(ren, bmp);
     if (tileset == nullptr) {
         cerr << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << endl;
-		if (bmp != nullptr) {
-			SDL_FreeSurface(bmp);
-		}
-		if (ren != nullptr) {
-			SDL_DestroyRenderer(ren);
-		}
-		if (win != nullptr) {
-			SDL_DestroyWindow(win);
-		}
 		SDL_Quit();
         return EXIT_FAILURE;
     }

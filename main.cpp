@@ -8,6 +8,7 @@
 
 size_t const TILE_SIZE_PIXELS(16);
 size_t const TILESET_WIDTH_TILES(24);
+size_t const TILESET_OFFSET_PIXELS(1);
 size_t const LEVEL_WIDTH_TILES(20);
 size_t const LEVEL_HEIGHT_TILES(LEVEL_WIDTH_TILES);
 size_t const LEVEL_SIZE_TILES(LEVEL_WIDTH_TILES * LEVEL_HEIGHT_TILES);
@@ -109,7 +110,7 @@ void load_level(uint16_t level[], size_t level_size, std::string level_file_name
     if (stream.is_open()) {
         stream.read(reinterpret_cast<char*>(level), level_size * 2); // Two byte per tile.
         stream.close();
-    }
+    } // FIXME: fail.
 }
 
 void render_level(Animations const& animations, size_t tick, uint16_t level[], size_t level_width, size_t level_height, SDL_Renderer *renderer, SDL_Texture *tileset,
@@ -125,8 +126,8 @@ void render_level(Animations const& animations, size_t tick, uint16_t level[], s
             dest_rect.h = source_rect.h;
 
             // + 1 is for the line separatings tiles in the tileset.
-            source_rect.x = (tile_index % tileset_width_tiles) * (source_rect.w + 1);
-            source_rect.y = (tile_index / tileset_width_tiles) * (source_rect.h + 1);
+            source_rect.x = (tile_index % tileset_width_tiles) * (source_rect.w + 1) + TILESET_OFFSET_PIXELS;
+            source_rect.y = (tile_index / tileset_width_tiles) * (source_rect.h + 1) + TILESET_OFFSET_PIXELS;
 
             dest_rect.x = x * source_rect.w - current_x;
             dest_rect.y = y * source_rect.h - current_y;

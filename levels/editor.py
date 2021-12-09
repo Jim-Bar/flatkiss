@@ -3,82 +3,155 @@
 import pyglet
 import struct
 
-from pyglet.window import key
-from pyglet.window import mouse
+from pyglet.image import AbstractImage
+from typing import Callable
 
-TILE_SIZE_PIXELS = 16
-TILESET_WIDTH_TILES = 24  # FIXME: Deduce from image width and size of tiles.
-TILESET_HEIGHT_TILES = 25  # FIXME: Idem
-TILESET_OFFSET_PIXELS = 1
-TILESET_BOTTOM_OFFSET_PIXELS = 2  # FIXME: Deduce from image height, TILESET_HEIGHT_TILES and TILESET_OFFSET_PIXELS
-LEVEL_WIDTH_TILES = 20
-LEVEL_HEIGHT_TILES = LEVEL_WIDTH_TILES
-LEVEL_SIZE_TILES = LEVEL_WIDTH_TILES * LEVEL_HEIGHT_TILES
-SPEED_IN_PIXELS = 3
-VIEWPORT_SIZE = 10 * TILE_SIZE_PIXELS
+# Important note: pyglet's origin is located in the bottom left of images, unlike SDL which is top left. The reference
+# is SDL, so when doing height calculations there are often things like: ``value = height - something``.
 
 
-def load_level():
-    with open('level.bin', 'rb') as level_file:
-        level_bytes = level_file.read()
-    # Convert each two bytes to an unsigned int.
-    return struct.unpack('H' * (len(level_bytes) // 2), level_bytes)
+class _Controller(object):
+    """
+    Windows handling and rendering.
+    """
 
-level = load_level()
+    def __init__(self) -> None:
+        level = _Level('level.bin', 20, 20)
+        tileset = _Tileset('../assets/tileset.bmp', 16, 24, 25, 1, 1, 1)
+        self._level_window = _LevelWindow(level, tileset, self.on_window_closed)
+        self._tileset_window = _TilesetWindow(tileset, self.on_window_closed)
 
-tileset = pyglet.image.load('../assets/tileset.bmp')
+    @staticmethod
+    def run() -> None:
+        pyglet.app.run()
 
-tileset_window = pyglet.window.Window(caption="Tileset", width=tileset.width, height=tileset.height)
-level_window = pyglet.window.Window(caption="Level", width=(LEVEL_WIDTH_TILES * TILE_SIZE_PIXELS), height=(LEVEL_HEIGHT_TILES * TILE_SIZE_PIXELS))
-
-
-@level_window.event
-def on_draw():
-    level_window.clear()
-    for y in range(0, LEVEL_HEIGHT_TILES):
-        for x in range(0, LEVEL_WIDTH_TILES):
-            tile_index = level[y * LEVEL_HEIGHT_TILES + x]
-            tile = tileset.get_region(
-                (tile_index % TILESET_WIDTH_TILES) * (TILE_SIZE_PIXELS + 1) + TILESET_OFFSET_PIXELS,
-                (TILESET_HEIGHT_TILES - 1 - tile_index // TILESET_WIDTH_TILES) * (TILE_SIZE_PIXELS + 1) + TILESET_BOTTOM_OFFSET_PIXELS,
-                TILE_SIZE_PIXELS,
-                TILE_SIZE_PIXELS
-            )
-            tile.blit(x * TILE_SIZE_PIXELS, level_window.height - (y + 1) * TILE_SIZE_PIXELS)
+    def on_window_closed(self) -> None:
+        self._tileset_window.close()
+        self._level_window.close()
 
 
-@level_window.event
-def on_close():
-    tileset_window.close()
+class _Level(object):
+    """
+    Contains a level.
+    """
+
+    def __init__(self, level_path: str, width_in_tiles: int, height_in_tiles: int) -> None:
+        self._width_in_tiles = width_in_tiles
+        self._height_in_tiles = height_in_tiles
+        with open(level_path, 'rb') as level_file:
+            level_bytes = level_file.read()
+        # Convert each two bytes to an unsigned int.
+        self._tiles = struct.unpack('H' * (len(level_bytes) // 2), level_bytes)
+
+    def height_in_tiles(self) -> int:
+        return self._height_in_tiles
+
+    def tile_index(self, x: int, y: int) -> int:
+        return self._tiles[y * self._height_in_tiles + x]
+
+    def width_in_tiles(self) -> int:
+        return self._width_in_tiles
 
 
-@tileset_window.event
-def on_draw():
-    tileset_window.clear()
-    tileset.blit(0, 0)
+class _Tileset(object):
+    """
+    Wrap a tileset image with useful routines.
+    """
+
+    def __init__(self, image_path: str, tiles_size: int, width_in_tiles: int, height_in_tiles: int, left_offset: int,
+                 top_offset: int, gap: int) -> None:
+        """
+        :param image_path: path to the image tileset.
+        :param tiles_size: width and height of the tiles in pixels.
+        :param width_in_tiles: number of tiles making up the tileset horizontally.
+        :param height_in_tiles: number of tiles making up the tileset vertically.
+        :param left_offset: distance separating the first tile vertically from the left of the image, in pixels.
+        :param top_offset: distance separating the first tile vertically from the top of the image, in pixels.
+        :param gap: number of pixels separating the tiles.
+        """
+        self._image = pyglet.image.load(image_path)
+        self._tiles_size = tiles_size
+        self._width_in_tiles = width_in_tiles
+        self._height_in_tiles = height_in_tiles
+        self._left_offset = left_offset
+        # ``+ gap`` because the bottom gap of the last tile is counted in the bottom offset.
+        self._bottom_offset = self._image.height - height_in_tiles * (tiles_size + gap) - top_offset + gap
+        self._gap = gap
+
+    def height_in_tiles(self) -> int:
+        return self._height_in_tiles
+
+    def height_in_pixels(self) -> int:
+        return self._image.height
+
+    def image(self) -> AbstractImage:
+        return self._image
+
+    def tile(self, tile_index: int) -> AbstractImage:
+        return self._image.get_region(
+            (tile_index % self._width_in_tiles) * (self._tiles_size + self._gap) + self._left_offset,
+            (self._height_in_tiles - 1 - tile_index // self._width_in_tiles) * (self._tiles_size + self._gap)
+            + self._bottom_offset,
+            self._tiles_size,
+            self._tiles_size
+        )
+
+    def tiles_size_in_pixels(self) -> int:
+        return self._tiles_size
+
+    def width_in_tiles(self) -> int:
+        return self._width_in_tiles
+
+    def width_in_pixels(self) -> int:
+        return self._image.width
 
 
-@tileset_window.event
-def on_close():
-    level_window.close()
+class _LevelWindow(pyglet.window.Window):
+    """
+    Window containing the level view.
+    """
+
+    def __init__(self, level: _Level, tileset: _Tileset, on_close: Callable) -> None:
+        self._level = level
+        self._on_close_callback = on_close
+        self._tileset = tileset
+        super().__init__(caption='Level', width=(level.width_in_tiles() * tileset.tiles_size_in_pixels()),
+                         height=(level.height_in_tiles() * tileset.tiles_size_in_pixels()))
+
+    def on_close(self) -> None:
+        self._on_close_callback()
+
+    def on_draw(self) -> None:
+        self.clear()
+        for y in range(0, self._level.height_in_tiles()):
+            for x in range(0, self._level.width_in_tiles()):
+                tile_index = self._level.tile_index(x, y)
+                tile = self._tileset.tile(tile_index)
+                tile.blit(x * self._tileset.tiles_size_in_pixels(),
+                          self.height - (y + 1) * self._tileset.tiles_size_in_pixels())
 
 
-# Sample for future use.
-@tileset_window.event
-def on_key_press(symbol, modifiers):
-    if symbol == key.A:
-        print('The "A" key was pressed.')
-    elif symbol == key.LEFT:
-        print('The left arrow key was pressed.')
-    elif symbol == key.ENTER:
-        print('The enter key was pressed.')
+class _TilesetWindow(pyglet.window.Window):
+    """
+    Window containing the tileset view.
+    """
+
+    def __init__(self, tileset: _Tileset, on_close: Callable) -> None:
+        self._on_close_callback = on_close
+        self._tileset = tileset
+        super().__init__(caption='Tileset', width=tileset.width_in_pixels(), height=tileset.height_in_pixels())
+
+    def on_close(self) -> None:
+        self._on_close_callback()
+
+    def on_draw(self) -> None:
+        self.clear()
+        self._tileset.image().blit(0, 0)
 
 
-# Sample for future use.
-@tileset_window.event
-def on_mouse_press(x, y, button, modifiers):
-    if button == mouse.LEFT:
-        print('The left mouse button was pressed.')
+def main():
+    _Controller().run()
 
 
-pyglet.app.run()
+if __name__ == '__main__':
+    main()

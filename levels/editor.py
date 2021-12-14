@@ -10,6 +10,26 @@ from typing import Callable
 # is SDL, so when doing height calculations there are often things like: ``value = height - something``.
 
 
+class _Coordinate(object):
+    """
+    Location of a tile (counting in tiles).
+    """
+
+    def __init__(self, i: int, j: int) -> None:
+        self.i = i
+        self.j = j
+
+
+class _Point(object):
+    """
+    Location of a pixel (counting in pixels).
+    """
+
+    def __init__(self, x: int, y: int) -> None:
+        self.x = x
+        self.y = y
+
+
 class _Configuration(configparser.ConfigParser):
 
     _LEVEL = 'Level'
@@ -90,8 +110,8 @@ class _Level(object):
     def height_in_tiles(self) -> int:
         return self._height_in_tiles
 
-    def tile_index(self, x: int, y: int) -> int:
-        return self._tiles[y * self._height_in_tiles + x]
+    def tile_index(self, i: int, j: int) -> int:
+        return self._tiles[j * self._height_in_tiles + i]
 
     def width_in_tiles(self) -> int:
         return self._width_in_tiles
@@ -158,8 +178,7 @@ class _LevelWindow(pyglet.window.Window):
     def __init__(self, level: _Level, tileset: _Tileset, on_close: Callable) -> None:
         self._level = level
         self._on_close_callback = on_close
-        self._origin_x = 0
-        self._origin_y = 0
+        self._origin = _Point(0, 0)
         self._tileset = tileset
         super().__init__(caption='Level', width=319, height=160,
                          resizable=True)
@@ -172,33 +191,36 @@ class _LevelWindow(pyglet.window.Window):
     def _level_width_in_pixels(self) -> int:
         return self._level.width_in_tiles() * self._tileset.tiles_size_in_pixels()
 
+    def _tile_coordinate_from_point(self, point: _Point) -> _Coordinate:
+        return _Coordinate(point.x // self._tileset.tiles_size_in_pixels(),
+                           point.y // self._tileset.tiles_size_in_pixels())
+
     def on_close(self) -> None:
         self._on_close_callback()
 
     def on_draw(self) -> None:
         self.clear()
-        origin_i = self._origin_x // self._tileset.tiles_size_in_pixels()
-        origin_j = self._origin_y // self._tileset.tiles_size_in_pixels()
-        last_i = (self._origin_x + self.width - 1) // self._tileset.tiles_size_in_pixels()
-        last_j = (self._origin_y + self.height - 1) // self._tileset.tiles_size_in_pixels()
-        for j in range(origin_j, last_j + 1):
-            for i in range(origin_i, last_i + 1):
+        first = self._tile_coordinate_from_point(self._origin)
+        last = self._tile_coordinate_from_point(_Point(self._origin.x + self.width - 1,
+                                                       self._origin.y + self.height - 1))
+        for j in range(first.j, last.j + 1):
+            for i in range(first.i, last.i + 1):
                 tile_index = self._level.tile_index(i, j)
                 tile = self._tileset.tile(tile_index)
-                tile.blit(i * self._tileset.tiles_size_in_pixels() - self._origin_x,
-                          self.height - (j + 1) * self._tileset.tiles_size_in_pixels() + self._origin_y)
+                tile.blit(i * self._tileset.tiles_size_in_pixels() - self._origin.x,
+                          self.height - (j + 1) * self._tileset.tiles_size_in_pixels() + self._origin.y)
 
-    def on_mouse_drag(self, _x: int, _y: int, dx: int, dy: int, buttons: int, _modifiers: int) -> None:
+    def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int) -> None:
         # Move around using the right mouse button.
         if buttons & pyglet.window.mouse.RIGHT != 0:
-            self._origin_x = min(max(self._origin_x - dx, 0), self._level_width_in_pixels() - self.width)
-            self._origin_y = min(max(self._origin_y + dy, 0), self._level_height_in_pixels() - self.height)
+            self._origin.x = min(max(self._origin.x - dx, 0), self._level_width_in_pixels() - self.width)
+            self._origin.y = min(max(self._origin.y + dy, 0), self._level_height_in_pixels() - self.height)
 
     def on_resize(self, width: int, height: int) -> None:
         super().on_resize(width, height)
         # Avoid going beyond the boundaries of the level when increasing the size of the window.
-        self._origin_x = min(self._origin_x, self._level_width_in_pixels() - width)
-        self._origin_y = min(self._origin_y, self._level_height_in_pixels() - height)
+        self._origin.x = min(self._origin.x, self._level_width_in_pixels() - width)
+        self._origin.y = min(self._origin.y, self._level_height_in_pixels() - height)
 
 
 class _TilesetWindow(pyglet.window.Window):

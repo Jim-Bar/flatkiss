@@ -125,7 +125,7 @@ void render_level(Animations const& animations, size_t tick, uint16_t level[], s
             dest_rect.w = source_rect.w;
             dest_rect.h = source_rect.h;
 
-            // + 1 is for the line separatings tiles in the tileset.
+            // + 1 is for the line separating tiles in the tileset.
             source_rect.x = (tile_index % tileset_width_tiles) * (source_rect.w + 1) + TILESET_OFFSET_PIXELS;
             source_rect.y = (tile_index / tileset_width_tiles) * (source_rect.h + 1) + TILESET_OFFSET_PIXELS;
 

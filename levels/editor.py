@@ -4,10 +4,38 @@ import configparser
 import pyglet
 import struct
 
-from typing import Callable
+from typing import Callable, List
 
-# Important note: pyglet's origin is located in the bottom left of images, unlike SDL which is top left. The reference
-# is SDL, so when doing height calculations there are often things like: ``value = height - something``.
+# Important note: pyglet's origin is located in the bottom left of images, unlike SDL which is top left. So for every
+# link with the outside of the editor (e.g. when loading), the indices of the tiles are reversed to migrate between the
+# two coordinate systems, and the lines the level are inverted as well. Makes it possible to work with the editor's code
+# without worrying about reverting things vertically everywhere.
+#
+# For instance, with a tileset of width and height 3, the indices in both systems are:
+#
+# SDL   | pyglet
+# ------+-------
+# 0 1 2 | 6 7 8
+# 3 4 5 | 3 4 5
+# 6 7 8 | 0 1 2
+#
+# With the matching level of width and height 4, the lines in both systems (before indices inversion) are:
+#
+# SDL     | pyglet
+# --------+-------
+# 4 2 0 7 | 2 1 8 6
+# 3 1 0 7 | 8 0 5 3
+# 8 0 5 3 | 3 1 0 7
+# 2 1 8 6 | 4 2 0 7
+#
+# And after the indices inversion:
+#
+# SDL     | pyglet
+# --------+-------
+# 4 2 0 7 | 8 7 2 0
+# 3 1 0 7 | 2 6 5 3
+# 8 0 5 3 | 3 7 6 1
+# 2 1 8 6 | 4 8 6 1
 
 
 class _Coordinate(object):
@@ -76,12 +104,12 @@ class _Controller(object):
     """
 
     def __init__(self, configuration: _Configuration) -> None:
-        level = _Level(configuration.level_path(), configuration.level_width_in_tiles(),
-                       configuration.level_height_in_tiles())
         tileset = _Tileset(configuration.tileset_path(), configuration.tiles_size(),
                            configuration.tileset_width_in_tiles(), configuration.tileset_height_in_tiles(),
                            configuration.tileset_left_offset(), configuration.tileset_top_offset(),
                            configuration.tileset_gap())
+        level = _LevelLoader.load(configuration.level_path(), configuration.level_width_in_tiles(),
+                                  configuration.level_height_in_tiles(), tileset)
         self._level_window = _LevelWindow(level, tileset, self.on_window_closed)
         self._tileset_window = _TilesetWindow(tileset, self.on_window_closed)
 
@@ -94,24 +122,56 @@ class _Controller(object):
         self._level_window.close()
 
 
+class _LevelLoader(object):
+    """
+    Load a level from disk.
+    """
+
+    @staticmethod
+    def _reverse_tile_index(tile_index: int, tileset: '_Tileset') -> int:
+        """
+        Convert a tile index from SDL's (respectively pyglet's) coordinate system (top left) to pyglet's (respectively
+        SDL's) coordinate system (bottom left), and vice-versa.
+
+        :param tile_index: index of the tile in one or another of the coordinate systems.
+        :param tileset: tileset that will be used with the level.
+        :return: index of the tile in the other coordinate system.
+        """
+        i = tile_index % tileset.width_in_tiles()
+        j = tileset.height_in_tiles() - 1 - tile_index // tileset.width_in_tiles()
+        return j * tileset.width_in_tiles() + i
+
+    @staticmethod
+    def load(path: str, width_in_tiles: int, height_in_tiles: int, tileset: '_Tileset') -> '_Level':
+        with open(path, 'rb') as level_file:
+            level_bytes = level_file.read()
+        # Convert each two bytes to an unsigned int.
+        tiles = struct.unpack('H' * (len(level_bytes) // 2), level_bytes)
+
+        # Convert tiles indices in pyglet's coordinate system and invert the rows of the level. Inverting rows is done
+        # by cutting the level in lines of length ``level's width``, reverting it, then flattening it.
+        tiles = [_LevelLoader._reverse_tile_index(index, tileset)
+                 for line in reversed([tiles[i:i + width_in_tiles] for i in range(0, len(tiles), width_in_tiles)])
+                 for index in line]
+
+        return _Level(tiles, width_in_tiles, height_in_tiles)
+
+
 class _Level(object):
     """
     Contains a level.
     """
 
-    def __init__(self, path: str, width_in_tiles: int, height_in_tiles: int) -> None:
+    def __init__(self, tiles: List[int], width_in_tiles: int, height_in_tiles: int) -> None:
         self._width_in_tiles = width_in_tiles
         self._height_in_tiles = height_in_tiles
-        with open(path, 'rb') as level_file:
-            level_bytes = level_file.read()
-        # Convert each two bytes to an unsigned int.
-        self._tiles = struct.unpack('H' * (len(level_bytes) // 2), level_bytes)
+        self._tiles = tiles
 
     def height_in_tiles(self) -> int:
         return self._height_in_tiles
 
     def tile_index(self, i: int, j: int) -> int:
-        return self._tiles[j * self._height_in_tiles + i]
+        return self._tiles[j * self._width_in_tiles + i]
 
     def width_in_tiles(self) -> int:
         return self._width_in_tiles
@@ -154,8 +214,7 @@ class _Tileset(object):
     def tile(self, tile_index: int) -> pyglet.image.AbstractImage:
         return self._image.get_region(
             (tile_index % self._width_in_tiles) * (self._tiles_size + self._gap) + self._left_offset,
-            (self._height_in_tiles - 1 - tile_index // self._width_in_tiles) * (self._tiles_size + self._gap)
-            + self._bottom_offset,
+            (tile_index // self._width_in_tiles) * (self._tiles_size + self._gap) + self._bottom_offset,
             self._tiles_size,
             self._tiles_size
         )
@@ -208,13 +267,13 @@ class _LevelWindow(pyglet.window.Window):
                 tile_index = self._level.tile_index(i, j)
                 tile = self._tileset.tile(tile_index)
                 tile.blit(i * self._tileset.tiles_size_in_pixels() - self._origin.x,
-                          self.height - (j + 1) * self._tileset.tiles_size_in_pixels() + self._origin.y)
+                          j * self._tileset.tiles_size_in_pixels() - self._origin.y)
 
     def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int) -> None:
         # Move around using the right mouse button.
         if buttons & pyglet.window.mouse.RIGHT != 0:
             self._origin.x = min(max(self._origin.x - dx, 0), self._level_width_in_pixels() - self.width)
-            self._origin.y = min(max(self._origin.y + dy, 0), self._level_height_in_pixels() - self.height)
+            self._origin.y = min(max(self._origin.y - dy, 0), self._level_height_in_pixels() - self.height)
 
     def on_resize(self, width: int, height: int) -> None:
         super().on_resize(width, height)

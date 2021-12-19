@@ -38,7 +38,7 @@ from typing import Callable, List
 # 2 1 8 6 | 4 8 6 1
 
 
-class _Coordinate(object):
+class _Location(object):
     """
     Location of a tile (counting in tiles).
     """
@@ -104,22 +104,29 @@ class _Controller(object):
     """
 
     def __init__(self, configuration: _Configuration) -> None:
+        self._current_selected_tile_index = 0
         tileset = _Tileset(configuration.tileset_path(), configuration.tiles_size(),
                            configuration.tileset_width_in_tiles(), configuration.tileset_height_in_tiles(),
                            configuration.tileset_left_offset(), configuration.tileset_top_offset(),
                            configuration.tileset_gap())
-        level = _LevelLoader.load(configuration.level_path(), configuration.level_width_in_tiles(),
-                                  configuration.level_height_in_tiles(), tileset)
-        self._level_window = _LevelWindow(level, tileset, self.on_window_closed)
-        self._tileset_window = _TilesetWindow(tileset, self.on_window_closed)
+        self._level = _LevelLoader.load(configuration.level_path(), configuration.level_width_in_tiles(),
+                                        configuration.level_height_in_tiles(), tileset)
+        self._level_window = _LevelWindow(self._level, tileset, self.on_window_closed, self.on_location_selected)
+        self._tileset_window = _TilesetWindow(tileset, self.on_window_closed, self.on_tile_selected)
 
-    @staticmethod
-    def run() -> None:
-        pyglet.app.run()
+    def on_location_selected(self, location: _Location) -> None:
+        self._level.set_tile_index(location.i, location.j, self._current_selected_tile_index)
+
+    def on_tile_selected(self, tile_index: int) -> None:
+        self._current_selected_tile_index = tile_index
 
     def on_window_closed(self) -> None:
         self._tileset_window.close()
         self._level_window.close()
+
+    @staticmethod
+    def run() -> None:
+        pyglet.app.run()
 
 
 class _LevelLoader(object):
@@ -170,6 +177,9 @@ class _Level(object):
     def height_in_tiles(self) -> int:
         return self._height_in_tiles
 
+    def set_tile_index(self, i: int, j: int, tile_index: int) -> None:
+        self._tiles[j * self._width_in_tiles + i] = tile_index
+
     def tile_index(self, i: int, j: int) -> int:
         return self._tiles[j * self._width_in_tiles + i]
 
@@ -219,6 +229,11 @@ class _Tileset(object):
             self._tiles_size
         )
 
+    def tile_index_at_point_in_tileset(self, point: _Point) -> int:
+        i = (point.x - self._left_offset) // (self._tiles_size + self._gap)
+        j = (point.y - self._bottom_offset) // (self._tiles_size + self._gap)
+        return j * self._width_in_tiles + i
+
     def tiles_size_in_pixels(self) -> int:
         return self._tiles_size
 
@@ -234,9 +249,10 @@ class _LevelWindow(pyglet.window.Window):
     Window containing the level view.
     """
 
-    def __init__(self, level: _Level, tileset: _Tileset, on_close: Callable) -> None:
+    def __init__(self, level: _Level, tileset: _Tileset, on_close: Callable, on_location_selected: Callable) -> None:
         self._level = level
         self._on_close_callback = on_close
+        self._on_location_selected = on_location_selected
         self._origin = _Point(0, 0)
         self._tileset = tileset
         super().__init__(caption='Level', width=319, height=160,
@@ -250,17 +266,21 @@ class _LevelWindow(pyglet.window.Window):
     def _level_width_in_pixels(self) -> int:
         return self._level.width_in_tiles() * self._tileset.tiles_size_in_pixels()
 
-    def _tile_coordinate_from_point(self, point: _Point) -> _Coordinate:
-        return _Coordinate(point.x // self._tileset.tiles_size_in_pixels(),
-                           point.y // self._tileset.tiles_size_in_pixels())
+    def _tile_location_from_point(self, point: _Point) -> _Location:
+        return _Location(point.x // self._tileset.tiles_size_in_pixels(),
+                         point.y // self._tileset.tiles_size_in_pixels())
+
+    def _tile_location_from_point_in_window(self, point_in_window: _Point) -> _Location:
+        return self._tile_location_from_point(_Point(self._origin.x + point_in_window.x,
+                                                     self._origin.y + point_in_window.y))
 
     def on_close(self) -> None:
         self._on_close_callback()
 
     def on_draw(self) -> None:
         self.clear()
-        first = self._tile_coordinate_from_point(self._origin)
-        last = self._tile_coordinate_from_point(_Point(self._origin.x + self.width - 1,
+        first = self._tile_location_from_point(self._origin)
+        last = self._tile_location_from_point(_Point(self._origin.x + self.width - 1,
                                                        self._origin.y + self.height - 1))
         for j in range(first.j, last.j + 1):
             for i in range(first.i, last.i + 1):
@@ -275,6 +295,10 @@ class _LevelWindow(pyglet.window.Window):
             self._origin.x = min(max(self._origin.x - dx, 0), self._level_width_in_pixels() - self.width)
             self._origin.y = min(max(self._origin.y - dy, 0), self._level_height_in_pixels() - self.height)
 
+    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> None:
+        if button == pyglet.window.mouse.LEFT:
+            self._on_location_selected(self._tile_location_from_point_in_window(_Point(x, y)))
+
     def on_resize(self, width: int, height: int) -> None:
         super().on_resize(width, height)
         # Avoid going beyond the boundaries of the level when increasing the size of the window.
@@ -287,8 +311,9 @@ class _TilesetWindow(pyglet.window.Window):
     Window containing the tileset view.
     """
 
-    def __init__(self, tileset: _Tileset, on_close: Callable) -> None:
+    def __init__(self, tileset: _Tileset, on_close: Callable, on_tile_selected: Callable) -> None:
         self._on_close_callback = on_close
+        self._on_tile_selected = on_tile_selected
         self._tileset = tileset
         super().__init__(caption='Tileset', width=tileset.width_in_pixels(), height=tileset.height_in_pixels())
 
@@ -298,6 +323,10 @@ class _TilesetWindow(pyglet.window.Window):
     def on_draw(self) -> None:
         self.clear()
         self._tileset.image().blit(0, 0)
+
+    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> None:
+        if button == pyglet.window.mouse.LEFT:
+            self._on_tile_selected(self._tileset.tile_index_at_point_in_tileset(_Point(x, y)))
 
 
 def main():

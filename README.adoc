@@ -33,7 +33,6 @@ Move around using the right mouse button.
 == TODOs
 
 . Editor: compute ideal sizes for windows when starting
-. Editor: select tiles from the tileset and put them in the level
 . Editor: save the level
 . Editor: caption adds an `*` when changing the level
 . Editor: play animations

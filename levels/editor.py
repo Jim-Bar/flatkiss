@@ -290,10 +290,11 @@ class _LevelWindow(pyglet.window.Window):
                           j * self._tileset.tiles_size_in_pixels() - self._origin.y)
 
     def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int) -> None:
-        # Move around using the right mouse button.
-        if buttons & pyglet.window.mouse.RIGHT != 0:
+        if buttons & pyglet.window.mouse.RIGHT != 0:  # Move around using the right mouse button.
             self._origin.x = min(max(self._origin.x - dx, 0), self._level_width_in_pixels() - self.width)
             self._origin.y = min(max(self._origin.y - dy, 0), self._level_height_in_pixels() - self.height)
+        elif buttons & pyglet.window.mouse.LEFT != 0:  # Place tiles down with the left mouse button.
+            self._on_location_selected(self._tile_location_from_point_in_window(_Point(x, y)))
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> None:
         if button == pyglet.window.mouse.LEFT:

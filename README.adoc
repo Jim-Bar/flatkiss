@@ -33,7 +33,7 @@ tile by left-clicking on a location in the level view. Save the level by pressin
 
 == TODOs
 
-. Editor: compute ideal sizes for windows when starting
 . Editor: caption adds an `*` when changing the level
 . Editor: play animations
 . Two layers of tiles
+. Editor: resizable tileset window

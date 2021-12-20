@@ -60,12 +60,19 @@ class _Point(object):
 
 class _Configuration(configparser.ConfigParser):
 
+    _EDITOR = 'Editor'
     _LEVEL = 'Level'
     _TILESET = 'Tileset'
 
     def __init__(self, path: str) -> None:
         super().__init__()
         self.read(path)
+
+    def editor_caption_level_window(self) -> str:
+        return self.get(_Configuration._EDITOR, 'caption_level_window')
+
+    def editor_caption_tileset_window(self) -> str:
+        return self.get(_Configuration._EDITOR, 'caption_tileset_window')
 
     def level_height_in_tiles(self) -> int:
         return self.getint(_Configuration._LEVEL, 'height_in_tiles')
@@ -104,6 +111,7 @@ class _Controller(object):
     """
 
     def __init__(self, configuration: _Configuration) -> None:
+        self._configuration = configuration
         self._current_selected_tile_index = 0
         self._tileset = _Tileset(configuration.tileset_path(), configuration.tiles_size(),
                                  configuration.tileset_width_in_tiles(), configuration.tileset_height_in_tiles(),
@@ -111,10 +119,10 @@ class _Controller(object):
                                  configuration.tileset_gap())
         self._level = _LevelLoader.load(configuration.level_path(), configuration.level_width_in_tiles(),
                                         configuration.level_height_in_tiles(), self._tileset)
-        self._level_window, self._tileset_window = self._create_windows(self._level, self._tileset)
-        self._save_path = configuration.level_path()
+        self._level_window, self._tileset_window = self._create_windows(configuration, self._level, self._tileset)
 
-    def _create_windows(self, level: '_Level', tileset: '_Tileset') -> Tuple['_LevelWindow', '_TilesetWindow']:
+    def _create_windows(self, configuration: _Configuration, level: '_Level',
+                        tileset: '_Tileset') -> Tuple['_LevelWindow', '_TilesetWindow']:
         # The tileset window always matches the tileset because it cannot be resized. Then the level window occupies the
         # width left. The height is not conditioned to the tileset because monitors are (almost) always larger than
         # higher, thus the windows are put next to each other by the system instead of next to one another.
@@ -125,18 +133,24 @@ class _Controller(object):
                                  screen.width - tileset.width_in_pixels())
         level_window_height = min(level.height_in_tiles() * tileset.tiles_size_in_pixels(), screen.height)
 
-        level_window = _LevelWindow(level_window_width, level_window_height, level, tileset, self.on_window_closed,
-                                    self.on_save_requested, self.on_location_selected)
-        tileset_window = _TilesetWindow(tileset.width_in_pixels(), tileset.height_in_pixels(), tileset,
-                                        self.on_window_closed, self.on_save_requested, self.on_tile_selected)
+        level_window = _LevelWindow(configuration.editor_caption_level_window(), level_window_width,
+                                    level_window_height, level, tileset, self.on_window_closed, self.on_save_requested,
+                                    self.on_location_selected)
+        tileset_window = _TilesetWindow(configuration.editor_caption_tileset_window(), tileset.width_in_pixels(),
+                                        tileset.height_in_pixels(), tileset, self.on_window_closed,
+                                        self.on_save_requested, self.on_tile_selected)
 
         return level_window, tileset_window
 
     def on_location_selected(self, location: _Location) -> None:
+        self._level_window.set_caption('{}*'.format(self._configuration.editor_caption_level_window()))
+        self._tileset_window.set_caption('{}*'.format(self._configuration.editor_caption_tileset_window()))
         self._level.set_tile_index(location.i, location.j, self._current_selected_tile_index)
 
     def on_save_requested(self) -> None:
-        _LevelLoader.save(self._level, self._save_path, self._tileset)
+        _LevelLoader.save(self._level, self._configuration.level_path(), self._tileset)
+        self._level_window.set_caption(self._configuration.editor_caption_level_window())
+        self._tileset_window.set_caption(self._configuration.editor_caption_tileset_window())
 
     def on_tile_selected(self, tile_index: int) -> None:
         self._current_selected_tile_index = tile_index
@@ -287,7 +301,7 @@ class _LevelWindow(pyglet.window.Window):
     Window containing the level view.
     """
 
-    def __init__(self, width: int, height: int, level: _Level, tileset: _Tileset, on_close: Callable,
+    def __init__(self, caption: str, width: int, height: int, level: _Level, tileset: _Tileset, on_close: Callable,
                  on_save_requested: Callable, on_location_selected: Callable) -> None:
         self._level = level
         self._on_close_callback = on_close
@@ -295,7 +309,7 @@ class _LevelWindow(pyglet.window.Window):
         self._on_save_requested = on_save_requested
         self._origin = _Point(0, 0)
         self._tileset = tileset
-        super().__init__(caption='Level', width=width, height=height, resizable=True)
+        super().__init__(caption=caption, width=width, height=height, resizable=True)
         self.set_maximum_size(level.width_in_tiles() * tileset.tiles_size_in_pixels(),
                               level.height_in_tiles() * tileset.tiles_size_in_pixels())
 
@@ -359,13 +373,13 @@ class _TilesetWindow(pyglet.window.Window):
     Window containing the tileset view.
     """
 
-    def __init__(self, width: int, height: int, tileset: _Tileset, on_close: Callable, on_save_requested: Callable,
-                 on_tile_selected: Callable) -> None:
+    def __init__(self, caption: str, width: int, height: int, tileset: _Tileset, on_close: Callable,
+                 on_save_requested: Callable, on_tile_selected: Callable) -> None:
         self._on_close_callback = on_close
         self._on_save_requested = on_save_requested
         self._on_tile_selected = on_tile_selected
         self._tileset = tileset
-        super().__init__(caption='Tileset', width=width, height=height)
+        super().__init__(caption=caption, width=width, height=height)
 
     def on_close(self) -> None:
         self._on_close_callback()

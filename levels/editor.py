@@ -105,17 +105,23 @@ class _Controller(object):
 
     def __init__(self, configuration: _Configuration) -> None:
         self._current_selected_tile_index = 0
-        tileset = _Tileset(configuration.tileset_path(), configuration.tiles_size(),
-                           configuration.tileset_width_in_tiles(), configuration.tileset_height_in_tiles(),
-                           configuration.tileset_left_offset(), configuration.tileset_top_offset(),
-                           configuration.tileset_gap())
+        self._tileset = _Tileset(configuration.tileset_path(), configuration.tiles_size(),
+                                 configuration.tileset_width_in_tiles(), configuration.tileset_height_in_tiles(),
+                                 configuration.tileset_left_offset(), configuration.tileset_top_offset(),
+                                 configuration.tileset_gap())
         self._level = _LevelLoader.load(configuration.level_path(), configuration.level_width_in_tiles(),
-                                        configuration.level_height_in_tiles(), tileset)
-        self._level_window = _LevelWindow(self._level, tileset, self.on_window_closed, self.on_location_selected)
-        self._tileset_window = _TilesetWindow(tileset, self.on_window_closed, self.on_tile_selected)
+                                        configuration.level_height_in_tiles(), self._tileset)
+        self._level_window = _LevelWindow(self._level, self._tileset, self.on_window_closed, self.on_save_requested,
+                                          self.on_location_selected)
+        self._save_path = configuration.level_path()
+        self._tileset_window = _TilesetWindow(self._tileset, self.on_window_closed, self.on_save_requested,
+                                              self.on_tile_selected)
 
     def on_location_selected(self, location: _Location) -> None:
         self._level.set_tile_index(location.i, location.j, self._current_selected_tile_index)
+
+    def on_save_requested(self) -> None:
+        _LevelLoader.save(self._level, self._save_path, self._tileset)
 
     def on_tile_selected(self, tile_index: int) -> None:
         self._current_selected_tile_index = tile_index
@@ -131,7 +137,7 @@ class _Controller(object):
 
 class _LevelLoader(object):
     """
-    Load a level from disk.
+    Load /save a level from / to disk.
     """
 
     @staticmethod
@@ -162,6 +168,23 @@ class _LevelLoader(object):
                  for index in line]
 
         return _Level(tiles, width_in_tiles, height_in_tiles)
+
+    @staticmethod
+    def save(level: '_Level', path: str, tileset: '_Tileset') -> None:
+        # Organize the level in rows of tiles, and at the same time convert tiles indices in SDL's coordinate system.
+        rows = list()
+        for j in range(0, level.height_in_tiles()):
+            row = list()
+            for i in range(0, level.width_in_tiles()):
+                row.append(_LevelLoader._reverse_tile_index(level.tile_index(i, j), tileset))
+            rows.append(row)
+
+        # Invert rows of the level and flatten.
+        tiles = [tile_index for row in reversed(rows) for tile_index in row]
+
+        with open(path, 'wb') as level_file:
+            for i in tiles:
+                level_file.write(i.to_bytes(2, 'little'))
 
 
 class _Level(object):
@@ -249,10 +272,12 @@ class _LevelWindow(pyglet.window.Window):
     Window containing the level view.
     """
 
-    def __init__(self, level: _Level, tileset: _Tileset, on_close: Callable, on_location_selected: Callable) -> None:
+    def __init__(self, level: _Level, tileset: _Tileset, on_close: Callable, on_save_requested: Callable,
+                 on_location_selected: Callable) -> None:
         self._level = level
         self._on_close_callback = on_close
         self._on_location_selected = on_location_selected
+        self._on_save_requested = on_save_requested
         self._origin = _Point(0, 0)
         self._tileset = tileset
         super().__init__(caption='Level', width=319, height=160,
@@ -289,6 +314,10 @@ class _LevelWindow(pyglet.window.Window):
                 tile.blit(i * self._tileset.tiles_size_in_pixels() - self._origin.x,
                           j * self._tileset.tiles_size_in_pixels() - self._origin.y)
 
+    def on_key_press(self, symbol: int, modifiers: int) -> None:
+        if symbol == pyglet.window.key.S:
+            self._on_save_requested()
+
     def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int) -> None:
         if buttons & pyglet.window.mouse.RIGHT != 0:  # Move around using the right mouse button.
             self._origin.x = min(max(self._origin.x - dx, 0), self._level_width_in_pixels() - self.width)
@@ -312,8 +341,10 @@ class _TilesetWindow(pyglet.window.Window):
     Window containing the tileset view.
     """
 
-    def __init__(self, tileset: _Tileset, on_close: Callable, on_tile_selected: Callable) -> None:
+    def __init__(self, tileset: _Tileset, on_close: Callable, on_save_requested: Callable,
+                 on_tile_selected: Callable) -> None:
         self._on_close_callback = on_close
+        self._on_save_requested = on_save_requested
         self._on_tile_selected = on_tile_selected
         self._tileset = tileset
         super().__init__(caption='Tileset', width=tileset.width_in_pixels(), height=tileset.height_in_pixels())
@@ -324,6 +355,10 @@ class _TilesetWindow(pyglet.window.Window):
     def on_draw(self) -> None:
         self.clear()
         self._tileset.image().blit(0, 0)
+
+    def on_key_press(self, symbol: int, modifiers: int) -> None:
+        if symbol == pyglet.window.key.S:
+            self._on_save_requested()
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> None:
         if button == pyglet.window.mouse.LEFT:

@@ -28,12 +28,13 @@ tiles indices (in the tileset) as shorts (two bytes per index, little endian).
 
 == Editor
 
-Move around using the right mouse button.
+Move around using the right mouse button. Select a tile to place by left-clicking on it in the tileset view. Place a
+tile by left-clicking on a location in the level view. Save the level by pressing `S`.
 
 == TODOs
 
+. Editor: fix paint dragging outside of the window
 . Editor: compute ideal sizes for windows when starting
-. Editor: save the level
 . Editor: caption adds an `*` when changing the level
 . Editor: play animations
 . Two layers of tiles

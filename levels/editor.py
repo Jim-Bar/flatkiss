@@ -285,6 +285,9 @@ class _LevelWindow(pyglet.window.Window):
         self.set_maximum_size(level.width_in_tiles() * tileset.tiles_size_in_pixels(),
                               level.height_in_tiles() * tileset.tiles_size_in_pixels())
 
+    def _is_inbounds(self, point: _Point) -> bool:
+        return 0 <= point.x < self.width and 0 <= point.y < self.height
+
     def _level_height_in_pixels(self) -> int:
         return self._level.height_in_tiles() * self._tileset.tiles_size_in_pixels()
 
@@ -323,7 +326,8 @@ class _LevelWindow(pyglet.window.Window):
             self._origin.x = min(max(self._origin.x - dx, 0), self._level_width_in_pixels() - self.width)
             self._origin.y = min(max(self._origin.y - dy, 0), self._level_height_in_pixels() - self.height)
         elif buttons & pyglet.window.mouse.LEFT != 0:  # Place tiles down with the left mouse button.
-            self._on_location_selected(self._tile_location_from_point_in_window(_Point(x, y)))
+            if self._is_inbounds(_Point(x, y)):
+                self._on_location_selected(self._tile_location_from_point_in_window(_Point(x, y)))
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> None:
         if button == pyglet.window.mouse.LEFT:

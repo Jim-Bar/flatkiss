@@ -4,7 +4,7 @@ import configparser
 import pyglet
 import struct
 
-from typing import Callable, List, Tuple
+from typing import Any, Callable, List, Tuple
 
 # Important note: pyglet's origin is located in the bottom left of images, unlike SDL which is top left. So for every
 # link with the outside of the editor (e.g. when loading), the indices of the tiles are reversed to migrate between the
@@ -47,6 +47,14 @@ class _Location(object):
         self.i = i
         self.j = j
 
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, _Location):
+            return self.i == other.i and self.j == other.j
+        return NotImplemented
+
+    def __hash__(self) -> int:
+        return hash(tuple(sorted(self.__dict__.items())))
+
 
 class _Point(object):
     """
@@ -56,6 +64,14 @@ class _Point(object):
     def __init__(self, x: int, y: int) -> None:
         self.x = x
         self.y = y
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, _Point):
+            return self.x == other.x and self.y == other.y
+        return NotImplemented
+
+    def __hash__(self) -> int:
+        return hash(tuple(sorted(self.__dict__.items())))
 
 
 class _Configuration(configparser.ConfigParser):
@@ -354,8 +370,9 @@ class _LevelWindow(pyglet.window.Window):
             self._origin.x = min(max(self._origin.x - dx, 0), self._level_width_in_pixels() - self.width)
             self._origin.y = min(max(self._origin.y - dy, 0), self._level_height_in_pixels() - self.height)
         elif buttons & pyglet.window.mouse.LEFT != 0:  # Place tiles down with the left mouse button.
-            if self._is_inbounds(_Point(x, y)):
-                self._on_location_selected(self._tile_location_from_point_in_window(_Point(x, y)))
+            cursor_point = _Point(x, y)
+            if self._is_inbounds(cursor_point):
+                self._on_location_selected(self._tile_location_from_point_in_window(cursor_point))
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> None:
         if button == pyglet.window.mouse.LEFT:

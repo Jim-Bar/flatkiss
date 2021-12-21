@@ -4,7 +4,7 @@ import configparser
 import pyglet
 import struct
 
-from typing import Any, Callable, List, Tuple
+from typing import Any, Callable, Dict, List, Tuple
 
 # Important note: pyglet's origin is located in the bottom left of images, unlike SDL which is top left. So for every
 # link with the outside of the editor (e.g. when loading), the indices of the tiles are reversed to migrate between the
@@ -36,6 +36,20 @@ from typing import Any, Callable, List, Tuple
 # 3 1 0 7 | 2 6 5 3
 # 8 0 5 3 | 3 7 6 1
 # 2 1 8 6 | 4 8 6 1
+
+
+def _reverse_tile_index(tile_index: int, tileset: '_Tileset') -> int:
+    """
+    Convert a tile index from SDL's (respectively pyglet's) coordinate system (top left) to pyglet's (respectively
+    SDL's) coordinate system (bottom left), and vice-versa.
+
+    :param tile_index: index of the tile in one or another of the coordinate systems.
+    :param tileset: tileset that will be used with the level.
+    :return: index of the tile in the other coordinate system.
+    """
+    i = tile_index % tileset.width_in_tiles()
+    j = tileset.height_in_tiles() - 1 - tile_index // tileset.width_in_tiles()
+    return j * tileset.width_in_tiles() + i
 
 
 class _Location(object):
@@ -74,8 +88,68 @@ class _Point(object):
         return hash(tuple(sorted(self.__dict__.items())))
 
 
+class _Animation(object):
+    """
+    Class representing a animation for a particular tile.
+    """
+
+    def __init__(self, duration: int, tiles_indices: Tuple[int]) -> None:
+        self._duration = duration
+        self._tiles_indices = tiles_indices
+
+    def duration(self) -> int:
+        return self._duration
+
+    def period(self) -> int:
+        return len(self._tiles_indices)
+
+    def tile_index_at_step(self, step: int) -> int:
+        return self._tiles_indices[step]
+
+
+class _AnimationLoader(object):
+    """
+    Import animations from a file.
+    """
+
+    @staticmethod
+    def load_from_file(path: str, tileset: '_Tileset') -> Dict[int, _Animation]:
+        animations = dict()
+        with open(path, 'rb') as animations_file:
+            byte_array = animations_file.read(1)
+            while len(byte_array) > 0:
+                period = byte_array[0]
+                duration = animations_file.read(1)[0]
+                # Convert each two bytes to an unsigned int.
+                tiles_indices = struct.unpack('H' * period, animations_file.read(period * 2))
+                # Convert tiles indices in pyglet's coordinate system.
+                tiles_indices = tuple(_reverse_tile_index(tile_index, tileset) for tile_index in tiles_indices)
+                animations[tiles_indices[0]] = _Animation(duration, tiles_indices)
+                byte_array = animations_file.read(1)
+
+        return animations
+
+
+class _AnimationPlayer(object):
+    """
+    Maps the current tile and tick to the according tile to show.
+    """
+
+    def __init__(self, animations: Dict[int, _Animation]) -> None:
+        self._animations = animations
+
+    def animated_tile_index_for(self, tile_index: int, tick: int) -> int:
+        if tile_index in self._animations:
+            animation = self._animations[tile_index]
+            return animation.tile_index_at_step((tick % (animation.period() * animation.duration()))
+                                                // animation.duration())
+
+        return tile_index
+
+
 class _Configuration(configparser.ConfigParser):
 
+    _ANIMATIONS = 'Animations'
     _EDITOR = 'Editor'
     _LEVEL = 'Level'
     _TILESET = 'Tileset'
@@ -83,6 +157,9 @@ class _Configuration(configparser.ConfigParser):
     def __init__(self, path: str) -> None:
         super().__init__()
         self.read(path)
+
+    def animations_path(self) -> str:
+        return self.get(_Configuration._ANIMATIONS, 'path')
 
     def editor_caption_level_window(self) -> str:
         return self.get(_Configuration._EDITOR, 'caption_level_window')
@@ -145,13 +222,15 @@ class _Controller(object):
 
         screen = pyglet.canvas.get_display().get_default_screen()
 
+        animation_player = _AnimationPlayer(_AnimationLoader.load_from_file(configuration.animations_path(), tileset))
+
         level_window_width = min(level.width_in_tiles() * tileset.tiles_size_in_pixels(),
                                  screen.width - tileset.width_in_pixels())
         level_window_height = min(level.height_in_tiles() * tileset.tiles_size_in_pixels(), screen.height)
 
         level_window = _LevelWindow(configuration.editor_caption_level_window(), level_window_width,
-                                    level_window_height, level, tileset, self.on_window_closed, self.on_save_requested,
-                                    self.on_location_selected)
+                                    level_window_height, level, tileset, animation_player, self.on_window_closed,
+                                    self.on_save_requested, self.on_location_selected)
         tileset_window = _TilesetWindow(configuration.editor_caption_tileset_window(), tileset.width_in_pixels(),
                                         tileset.height_in_pixels(), tileset, self.on_window_closed,
                                         self.on_save_requested, self.on_tile_selected)
@@ -182,22 +261,8 @@ class _Controller(object):
 
 class _LevelLoader(object):
     """
-    Load /save a level from / to disk.
+    Load / save a level from / to disk.
     """
-
-    @staticmethod
-    def _reverse_tile_index(tile_index: int, tileset: '_Tileset') -> int:
-        """
-        Convert a tile index from SDL's (respectively pyglet's) coordinate system (top left) to pyglet's (respectively
-        SDL's) coordinate system (bottom left), and vice-versa.
-
-        :param tile_index: index of the tile in one or another of the coordinate systems.
-        :param tileset: tileset that will be used with the level.
-        :return: index of the tile in the other coordinate system.
-        """
-        i = tile_index % tileset.width_in_tiles()
-        j = tileset.height_in_tiles() - 1 - tile_index // tileset.width_in_tiles()
-        return j * tileset.width_in_tiles() + i
 
     @staticmethod
     def load(path: str, width_in_tiles: int, height_in_tiles: int, tileset: '_Tileset') -> '_Level':
@@ -208,7 +273,7 @@ class _LevelLoader(object):
 
         # Convert tiles indices in pyglet's coordinate system and invert the rows of the level. Inverting rows is done
         # by cutting the level in lines of length ``level's width``, reverting it, then flattening it.
-        tiles = [_LevelLoader._reverse_tile_index(index, tileset)
+        tiles = [_reverse_tile_index(index, tileset)
                  for line in reversed([tiles[i:i + width_in_tiles] for i in range(0, len(tiles), width_in_tiles)])
                  for index in line]
 
@@ -221,7 +286,7 @@ class _LevelLoader(object):
         for j in range(0, level.height_in_tiles()):
             row = list()
             for i in range(0, level.width_in_tiles()):
-                row.append(_LevelLoader._reverse_tile_index(level.tile_index(i, j), tileset))
+                row.append(_reverse_tile_index(level.tile_index(i, j), tileset))
             rows.append(row)
 
         # Invert rows of the level and flatten.
@@ -317,17 +382,24 @@ class _LevelWindow(pyglet.window.Window):
     Window containing the level view.
     """
 
-    def __init__(self, caption: str, width: int, height: int, level: _Level, tileset: _Tileset, on_close: Callable,
-                 on_save_requested: Callable, on_location_selected: Callable) -> None:
+    def __init__(self, caption: str, width: int, height: int, level: _Level, tileset: _Tileset,
+                 animation_player: _AnimationPlayer, on_close: Callable, on_save_requested: Callable,
+                 on_location_selected: Callable) -> None:
+        self._animation_player = animation_player
         self._level = level
         self._on_close_callback = on_close
         self._on_location_selected = on_location_selected
         self._on_save_requested = on_save_requested
         self._origin = _Point(0, 0)
         self._tileset = tileset
+        self._ticks = 0
         super().__init__(caption=caption, width=width, height=height, resizable=True)
         self.set_maximum_size(level.width_in_tiles() * tileset.tiles_size_in_pixels(),
                               level.height_in_tiles() * tileset.tiles_size_in_pixels())
+        pyglet.clock.schedule_interval(self._next_tick, 1 / 60)
+
+    def _next_tick(self, _) -> None:
+        self._ticks += 1
 
     def _is_inbounds(self, point: _Point) -> bool:
         return 0 <= point.x < self.width and 0 <= point.y < self.height
@@ -352,11 +424,10 @@ class _LevelWindow(pyglet.window.Window):
     def on_draw(self) -> None:
         self.clear()
         first = self._tile_location_from_point(self._origin)
-        last = self._tile_location_from_point(_Point(self._origin.x + self.width - 1,
-                                                       self._origin.y + self.height - 1))
+        last = self._tile_location_from_point(_Point(self._origin.x + self.width - 1, self._origin.y + self.height - 1))
         for j in range(first.j, last.j + 1):
             for i in range(first.i, last.i + 1):
-                tile_index = self._level.tile_index(i, j)
+                tile_index = self._animation_player.animated_tile_index_for(self._level.tile_index(i, j), self._ticks)
                 tile = self._tileset.tile(tile_index)
                 tile.blit(i * self._tileset.tiles_size_in_pixels() - self._origin.x,
                           j * self._tileset.tiles_size_in_pixels() - self._origin.y)

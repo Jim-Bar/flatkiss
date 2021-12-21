@@ -23,8 +23,8 @@ level is stored outside of the file. For now.
 === Animations
 
 The _period_ of the animation is the number of tiles making it up. It is stored on one byte. The _duration_ of the
-animation is how many ticks pass before the animation goes to the next step / tile. Stored on one byte two. Then are the
-tiles indices (in the tileset) as shorts (two bytes per index, little endian).
+animation is how many ticks pass before the animation goes to the next step / tile. Stored on the next byte. Then are
+the tiles indices (in the tileset) as shorts (two bytes per index, little endian).
 
 == Editor
 
@@ -33,6 +33,6 @@ tile by left-clicking on a location in the level view. Save the level by pressin
 
 == TODOs
 
-. Editor: play animations
+. Editor: fix performance issue (use pyglet's sprites)
 . Two layers of tiles
 . Editor: resizable tileset window

@@ -97,7 +97,7 @@ public:
         }
 
         Animation const& animation{animations_per_tile_index.at(tile_index)};
-        return animation.tile_index_at_step(((tick % (animation.get_period() * animation.get_duration())) / animation.get_duration()));
+        return animation.tile_index_at_step((tick % (animation.get_period() * animation.get_duration())) / animation.get_duration());
     }
 
 private:

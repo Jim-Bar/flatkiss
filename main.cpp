@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 
+size_t const TICK_DURATION_MS(16);
 size_t const TILE_SIZE_PIXELS(16);
 size_t const TILESET_WIDTH_TILES(24);
 size_t const TILESET_OFFSET_PIXELS(1);
@@ -220,7 +221,7 @@ int main(int argc, char *argv[])
         SDL_RenderClear(ren);
         render_level(animations, tick++, level, LEVEL_WIDTH_TILES, LEVEL_HEIGHT_TILES, ren, tileset, TILESET_WIDTH_TILES, TILE_SIZE_PIXELS, x, y);
         SDL_RenderPresent(ren);
-        SDL_Delay(16);
+        SDL_Delay(TICK_DURATION_MS);
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 SDL_Log("Program quit after %i ticks", event.quit.timestamp);

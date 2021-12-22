@@ -33,6 +33,6 @@ tile by left-clicking on a location in the level view. Save the level by pressin
 
 == TODOs
 
-. Editor: fix performance issue (use pyglet's sprites)
+. Editor: fix performance issue (use pyglet's sprites, batches and animations)
 . Two layers of tiles
 . Editor: resizable tileset window

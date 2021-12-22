@@ -151,6 +151,7 @@ class _Configuration(configparser.ConfigParser):
 
     _ANIMATIONS = 'Animations'
     _EDITOR = 'Editor'
+    _ENGINE = 'Engine'
     _LEVEL = 'Level'
     _TILESET = 'Tileset'
 
@@ -166,6 +167,9 @@ class _Configuration(configparser.ConfigParser):
 
     def editor_caption_tileset_window(self) -> str:
         return self.get(_Configuration._EDITOR, 'caption_tileset_window')
+
+    def engine_tick_duration_ms(self) -> int:
+        return self.getint(_Configuration._ENGINE, 'tick_duration_ms')
 
     def level_height_in_tiles(self) -> int:
         return self.getint(_Configuration._LEVEL, 'height_in_tiles')
@@ -229,7 +233,8 @@ class _Controller(object):
         level_window_height = min(level.height_in_tiles() * tileset.tiles_size_in_pixels(), screen.height)
 
         level_window = _LevelWindow(configuration.editor_caption_level_window(), level_window_width,
-                                    level_window_height, level, tileset, animation_player, self.on_window_closed,
+                                    level_window_height, level, tileset, animation_player,
+                                    configuration.engine_tick_duration_ms(), self.on_window_closed,
                                     self.on_save_requested, self.on_location_selected)
         tileset_window = _TilesetWindow(configuration.editor_caption_tileset_window(), tileset.width_in_pixels(),
                                         tileset.height_in_pixels(), tileset, self.on_window_closed,
@@ -383,8 +388,8 @@ class _LevelWindow(pyglet.window.Window):
     """
 
     def __init__(self, caption: str, width: int, height: int, level: _Level, tileset: _Tileset,
-                 animation_player: _AnimationPlayer, on_close: Callable, on_save_requested: Callable,
-                 on_location_selected: Callable) -> None:
+                 animation_player: _AnimationPlayer, tick_duration_ms: int, on_close: Callable,
+                 on_save_requested: Callable, on_location_selected: Callable) -> None:
         self._animation_player = animation_player
         self._level = level
         self._on_close_callback = on_close
@@ -396,7 +401,7 @@ class _LevelWindow(pyglet.window.Window):
         super().__init__(caption=caption, width=width, height=height, resizable=True)
         self.set_maximum_size(level.width_in_tiles() * tileset.tiles_size_in_pixels(),
                               level.height_in_tiles() * tileset.tiles_size_in_pixels())
-        pyglet.clock.schedule_interval(self._next_tick, 1 / 60)
+        pyglet.clock.schedule_interval(self._next_tick, tick_duration_ms / 1000)
 
     def _next_tick(self, _) -> None:
         self._ticks += 1

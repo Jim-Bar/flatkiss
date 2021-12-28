@@ -54,7 +54,7 @@ def _reverse_tile_index(tile_index: int, tileset: '_Tileset') -> int:
 
 class _Location(object):
     """
-    Location of a tile (counting in tiles).
+    Location of a tile (counting in tiles) in the level.
     """
 
     def __init__(self, i: int, j: int) -> None:
@@ -72,7 +72,7 @@ class _Location(object):
 
 class _Point(object):
     """
-    Location of a pixel (counting in pixels).
+    Location of a pixel (counting in pixels) in the window.
     """
 
     def __init__(self, x: int, y: int) -> None:
@@ -391,7 +391,9 @@ class _LevelWindow(pyglet.window.Window):
                  animation_player: _AnimationPlayer, tick_duration_ms: int, on_close: Callable,
                  on_save_requested: Callable, on_location_selected: Callable) -> None:
         self._animation_player = animation_player
+        self._batch = pyglet.graphics.Batch()
         self._level = level
+        self._tiles = _LevelWindow._create_tiles_sprites(level, tileset, self._batch)
         self._on_close_callback = on_close
         self._on_location_selected = on_location_selected
         self._on_save_requested = on_save_requested
@@ -402,6 +404,24 @@ class _LevelWindow(pyglet.window.Window):
         self.set_maximum_size(level.width_in_tiles() * tileset.tiles_size_in_pixels(),
                               level.height_in_tiles() * tileset.tiles_size_in_pixels())
         pyglet.clock.schedule_interval(self._next_tick, tick_duration_ms / 1000)
+
+    @staticmethod
+    def _build_tile_sprite_at_location(location: _Location, level: _Level, tileset: _Tileset,
+                                       batch: pyglet.graphics.Batch) -> pyglet.sprite.Sprite:
+        return pyglet.sprite.Sprite(tileset.tile(level.tile_index(location.i, location.j)),
+                                    location.i * tileset.tiles_size_in_pixels(),
+                                    location.j * tileset.tiles_size_in_pixels(), batch=batch)
+
+    @staticmethod
+    def _create_tiles_sprites(level: _Level, tileset: _Tileset,
+                              batch: pyglet.graphics.Batch) -> List[List[pyglet.sprite.Sprite]]:
+        tiles = list()
+        for i in range(0, level.width_in_tiles()):
+            tiles.append(list())
+            for j in range(0, level.height_in_tiles()):
+                tiles[i].append(_LevelWindow._build_tile_sprite_at_location(_Location(i, j), level, tileset, batch))
+
+        return tiles
 
     def _next_tick(self, _) -> None:
         self._ticks += 1
@@ -423,19 +443,25 @@ class _LevelWindow(pyglet.window.Window):
         return self._tile_location_from_point(_Point(self._origin.x + point_in_window.x,
                                                      self._origin.y + point_in_window.y))
 
+    def _update_tile_at_location(self, location: _Location) -> None:
+        self._tiles[location.i][location.j].delete()
+        # FIXME: This is wrong when the window has been resized (not showing the full level), the view has moved around
+        #        by dragging, and a tile is placed down. The location is only correct if the origin has not changed.
+        self._tiles[location.i][location.j] = _LevelWindow._build_tile_sprite_at_location(location, self._level,
+                                                                                          self._tileset, self._batch)
+
+    def _update_tiles_positions(self) -> None:
+        for i in range(0, self._level.width_in_tiles()):
+            for j in range(0, self._level.height_in_tiles()):
+                self._tiles[i][j].update(i * self._tileset.tiles_size_in_pixels() - self._origin.x,
+                                         j * self._tileset.tiles_size_in_pixels() - self._origin.y)
+
     def on_close(self) -> None:
         self._on_close_callback()
 
     def on_draw(self) -> None:
         self.clear()
-        first = self._tile_location_from_point(self._origin)
-        last = self._tile_location_from_point(_Point(self._origin.x + self.width - 1, self._origin.y + self.height - 1))
-        for j in range(first.j, last.j + 1):
-            for i in range(first.i, last.i + 1):
-                tile_index = self._animation_player.animated_tile_index_for(self._level.tile_index(i, j), self._ticks)
-                tile = self._tileset.tile(tile_index)
-                tile.blit(i * self._tileset.tiles_size_in_pixels() - self._origin.x,
-                          j * self._tileset.tiles_size_in_pixels() - self._origin.y)
+        self._batch.draw()
 
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         if symbol == pyglet.window.key.S:
@@ -445,20 +471,27 @@ class _LevelWindow(pyglet.window.Window):
         if buttons & pyglet.window.mouse.RIGHT != 0:  # Move around using the right mouse button.
             self._origin.x = min(max(self._origin.x - dx, 0), self._level_width_in_pixels() - self.width)
             self._origin.y = min(max(self._origin.y - dy, 0), self._level_height_in_pixels() - self.height)
+            self._update_tiles_positions()
         elif buttons & pyglet.window.mouse.LEFT != 0:  # Place tiles down with the left mouse button.
             cursor_point = _Point(x, y)
             if self._is_inbounds(cursor_point):
-                self._on_location_selected(self._tile_location_from_point_in_window(cursor_point))
+                tile_location = self._tile_location_from_point_in_window(cursor_point)
+                self._on_location_selected(tile_location)
+                self._update_tile_at_location(tile_location)
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int) -> None:
         if button == pyglet.window.mouse.LEFT:
-            self._on_location_selected(self._tile_location_from_point_in_window(_Point(x, y)))
+            cursor_point = _Point(x, y)
+            tile_location = self._tile_location_from_point_in_window(cursor_point)
+            self._on_location_selected(tile_location)
+            self._update_tile_at_location(tile_location)
 
     def on_resize(self, width: int, height: int) -> None:
         super().on_resize(width, height)
         # Avoid going beyond the boundaries of the level when increasing the size of the window.
         self._origin.x = min(self._origin.x, self._level_width_in_pixels() - width)
         self._origin.y = min(self._origin.y, self._level_height_in_pixels() - height)
+        self._update_tiles_positions()
 
 
 class _TilesetWindow(pyglet.window.Window):

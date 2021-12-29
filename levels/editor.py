@@ -199,8 +199,7 @@ class _Controller(object):
         level_window_height = min(level.height_in_tiles() * tileset.tiles_size_in_pixels(), screen.height)
 
         level_window = _LevelWindow(configuration.editor_caption_level_window(), level_window_width,
-                                    level_window_height, level, tileset, animations,
-                                    configuration.engine_tick_duration_ms(), self.on_window_closed,
+                                    level_window_height, level, tileset, animations, self.on_window_closed,
                                     self.on_save_requested, self.on_location_selected)
         tileset_window = _TilesetWindow(configuration.editor_caption_tileset_window(), tileset.width_in_pixels(),
                                         tileset.height_in_pixels(), tileset, self.on_window_closed,
@@ -354,8 +353,8 @@ class _LevelWindow(pyglet.window.Window):
     """
 
     def __init__(self, caption: str, width: int, height: int, level: _Level, tileset: _Tileset,
-                 animations: Dict[int, pyglet.image.Animation], tick_duration_ms: int, on_close: Callable,
-                 on_save_requested: Callable, on_location_selected: Callable) -> None:
+                 animations: Dict[int, pyglet.image.Animation], on_close: Callable, on_save_requested: Callable,
+                 on_location_selected: Callable) -> None:
         self._animations = animations
         self._batch = pyglet.graphics.Batch()
         self._level = level
@@ -363,12 +362,10 @@ class _LevelWindow(pyglet.window.Window):
         self._on_location_selected = on_location_selected
         self._on_save_requested = on_save_requested
         self._origin = _Point(0, 0)
-        self._ticks = 0
         self._tileset = tileset
         self._tiles = self._create_tiles_sprites()
         super().__init__(caption=caption, width=width, height=height, resizable=True)
         self.set_maximum_size(self._level_width_in_pixels(), self._level_height_in_pixels())
-        pyglet.clock.schedule_interval(self._next_tick, tick_duration_ms / 1000)
 
     def _build_tile_sprite_at_location(self, location: _Location) -> pyglet.sprite.Sprite:
         point = self._point_in_window_from_location(location)
@@ -388,9 +385,6 @@ class _LevelWindow(pyglet.window.Window):
                 tiles[i].append(self._build_tile_sprite_at_location(_Location(i, j)))
 
         return tiles
-
-    def _next_tick(self, _) -> None:
-        self._ticks += 1
 
     def _is_inbounds(self, point: _Point) -> bool:
         return 0 <= point.x < self.width and 0 <= point.y < self.height

@@ -393,33 +393,28 @@ class _LevelWindow(pyglet.window.Window):
         self._animation_player = animation_player
         self._batch = pyglet.graphics.Batch()
         self._level = level
-        self._tiles = _LevelWindow._create_tiles_sprites(level, tileset, self._batch)
         self._on_close_callback = on_close
         self._on_location_selected = on_location_selected
         self._on_save_requested = on_save_requested
         self._origin = _Point(0, 0)
-        self._tileset = tileset
         self._ticks = 0
+        self._tileset = tileset
+        self._tiles = self._create_tiles_sprites()
         super().__init__(caption=caption, width=width, height=height, resizable=True)
-        self.set_maximum_size(level.width_in_tiles() * tileset.tiles_size_in_pixels(),
-                              level.height_in_tiles() * tileset.tiles_size_in_pixels())
+        self.set_maximum_size(self._level_width_in_pixels(), self._level_height_in_pixels())
         pyglet.clock.schedule_interval(self._next_tick, tick_duration_ms / 1000)
 
-    @staticmethod
-    def _build_tile_sprite_at_location(location: _Location, level: _Level, tileset: _Tileset,
-                                       batch: pyglet.graphics.Batch) -> pyglet.sprite.Sprite:
-        return pyglet.sprite.Sprite(tileset.tile(level.tile_index(location.i, location.j)),
-                                    location.i * tileset.tiles_size_in_pixels(),
-                                    location.j * tileset.tiles_size_in_pixels(), batch=batch)
+    def _build_tile_sprite_at_location(self, location: _Location) -> pyglet.sprite.Sprite:
+        point = self._point_in_window_from_location(location)
+        return pyglet.sprite.Sprite(self._tileset.tile(self._level.tile_index(location.i, location.j)), point.x,
+                                    point.y, batch=self._batch)
 
-    @staticmethod
-    def _create_tiles_sprites(level: _Level, tileset: _Tileset,
-                              batch: pyglet.graphics.Batch) -> List[List[pyglet.sprite.Sprite]]:
+    def _create_tiles_sprites(self) -> List[List[pyglet.sprite.Sprite]]:
         tiles = list()
-        for i in range(0, level.width_in_tiles()):
+        for i in range(0, self._level.width_in_tiles()):
             tiles.append(list())
-            for j in range(0, level.height_in_tiles()):
-                tiles[i].append(_LevelWindow._build_tile_sprite_at_location(_Location(i, j), level, tileset, batch))
+            for j in range(0, self._level.height_in_tiles()):
+                tiles[i].append(self._build_tile_sprite_at_location(_Location(i, j)))
 
         return tiles
 
@@ -435,6 +430,10 @@ class _LevelWindow(pyglet.window.Window):
     def _level_width_in_pixels(self) -> int:
         return self._level.width_in_tiles() * self._tileset.tiles_size_in_pixels()
 
+    def _point_in_window_from_location(self, location: _Location) -> _Point:
+        return _Point(location.i * self._tileset.tiles_size_in_pixels() - self._origin.x,
+                      location.j * self._tileset.tiles_size_in_pixels() - self._origin.y)
+
     def _tile_location_from_point(self, point: _Point) -> _Location:
         return _Location(point.x // self._tileset.tiles_size_in_pixels(),
                          point.y // self._tileset.tiles_size_in_pixels())
@@ -445,16 +444,13 @@ class _LevelWindow(pyglet.window.Window):
 
     def _update_tile_at_location(self, location: _Location) -> None:
         self._tiles[location.i][location.j].delete()
-        # FIXME: This is wrong when the window has been resized (not showing the full level), the view has moved around
-        #        by dragging, and a tile is placed down. The location is only correct if the origin has not changed.
-        self._tiles[location.i][location.j] = _LevelWindow._build_tile_sprite_at_location(location, self._level,
-                                                                                          self._tileset, self._batch)
+        self._tiles[location.i][location.j] = self._build_tile_sprite_at_location(location)
 
     def _update_tiles_positions(self) -> None:
         for i in range(0, self._level.width_in_tiles()):
             for j in range(0, self._level.height_in_tiles()):
-                self._tiles[i][j].update(i * self._tileset.tiles_size_in_pixels() - self._origin.x,
-                                         j * self._tileset.tiles_size_in_pixels() - self._origin.y)
+                point = self._point_in_window_from_location(_Location(i, j))
+                self._tiles[i][j].update(point.x, point.y)
 
     def on_close(self) -> None:
         self._on_close_callback()

@@ -88,63 +88,28 @@ class _Point(object):
         return hash(tuple(sorted(self.__dict__.items())))
 
 
-class _Animation(object):
-    """
-    Class representing a animation for a particular tile.
-    """
-
-    def __init__(self, duration: int, tiles_indices: Tuple[int]) -> None:
-        self._duration = duration
-        self._tiles_indices = tiles_indices
-
-    def duration(self) -> int:
-        return self._duration
-
-    def period(self) -> int:
-        return len(self._tiles_indices)
-
-    def tile_index_at_step(self, step: int) -> int:
-        return self._tiles_indices[step]
-
-
 class _AnimationLoader(object):
     """
     Import animations from a file.
     """
 
     @staticmethod
-    def load_from_file(path: str, tileset: '_Tileset') -> Dict[int, _Animation]:
+    def load_from_file(path: str, tileset: '_Tileset', tick_duration_ms: int) -> Dict[int, pyglet.image.Animation]:
         animations = dict()
         with open(path, 'rb') as animations_file:
             byte_array = animations_file.read(1)
             while len(byte_array) > 0:
                 period = byte_array[0]
-                duration = animations_file.read(1)[0]
+                duration = (tick_duration_ms * animations_file.read(1)[0]) / 1000
                 # Convert each two bytes to an unsigned int.
                 tiles_indices = struct.unpack('H' * period, animations_file.read(period * 2))
                 # Convert tiles indices in pyglet's coordinate system.
                 tiles_indices = tuple(_reverse_tile_index(tile_index, tileset) for tile_index in tiles_indices)
-                animations[tiles_indices[0]] = _Animation(duration, tiles_indices)
+                tiles_images = (tileset.tile(tile_index) for tile_index in tiles_indices)
+                animations[tiles_indices[0]] = pyglet.image.Animation.from_image_sequence(tiles_images, duration)
                 byte_array = animations_file.read(1)
 
         return animations
-
-
-class _AnimationPlayer(object):
-    """
-    Maps the current tile and tick to the according tile to show.
-    """
-
-    def __init__(self, animations: Dict[int, _Animation]) -> None:
-        self._animations = animations
-
-    def animated_tile_index_for(self, tile_index: int, tick: int) -> int:
-        if tile_index in self._animations:
-            animation = self._animations[tile_index]
-            return animation.tile_index_at_step((tick % (animation.period() * animation.duration()))
-                                                // animation.duration())
-
-        return tile_index
 
 
 class _Configuration(configparser.ConfigParser):
@@ -226,14 +191,15 @@ class _Controller(object):
 
         screen = pyglet.canvas.get_display().get_default_screen()
 
-        animation_player = _AnimationPlayer(_AnimationLoader.load_from_file(configuration.animations_path(), tileset))
+        animations = _AnimationLoader.load_from_file(configuration.animations_path(), tileset,
+                                                     configuration.engine_tick_duration_ms())
 
         level_window_width = min(level.width_in_tiles() * tileset.tiles_size_in_pixels(),
                                  screen.width - tileset.width_in_pixels())
         level_window_height = min(level.height_in_tiles() * tileset.tiles_size_in_pixels(), screen.height)
 
         level_window = _LevelWindow(configuration.editor_caption_level_window(), level_window_width,
-                                    level_window_height, level, tileset, animation_player,
+                                    level_window_height, level, tileset, animations,
                                     configuration.engine_tick_duration_ms(), self.on_window_closed,
                                     self.on_save_requested, self.on_location_selected)
         tileset_window = _TilesetWindow(configuration.editor_caption_tileset_window(), tileset.width_in_pixels(),
@@ -388,9 +354,9 @@ class _LevelWindow(pyglet.window.Window):
     """
 
     def __init__(self, caption: str, width: int, height: int, level: _Level, tileset: _Tileset,
-                 animation_player: _AnimationPlayer, tick_duration_ms: int, on_close: Callable,
+                 animations: Dict[int, pyglet.image.Animation], tick_duration_ms: int, on_close: Callable,
                  on_save_requested: Callable, on_location_selected: Callable) -> None:
-        self._animation_player = animation_player
+        self._animations = animations
         self._batch = pyglet.graphics.Batch()
         self._level = level
         self._on_close_callback = on_close
@@ -406,8 +372,13 @@ class _LevelWindow(pyglet.window.Window):
 
     def _build_tile_sprite_at_location(self, location: _Location) -> pyglet.sprite.Sprite:
         point = self._point_in_window_from_location(location)
-        return pyglet.sprite.Sprite(self._tileset.tile(self._level.tile_index(location.i, location.j)), point.x,
-                                    point.y, batch=self._batch)
+        tile_index = self._level.tile_index(location.i, location.j)
+        if tile_index in self._animations:
+            tile_image = self._animations[tile_index]
+        else:
+            tile_image = self._tileset.tile(tile_index)
+
+        return pyglet.sprite.Sprite(tile_image, point.x, point.y, batch=self._batch)
 
     def _create_tiles_sprites(self) -> List[List[pyglet.sprite.Sprite]]:
         tiles = list()

@@ -28,11 +28,25 @@ the tiles indices (in the tileset) as shorts (two bytes per index, little endian
 
 == Editor
 
+=== How to use
+
 Move around using the right mouse button. Select a tile to place by left-clicking on it in the tileset view. Place a
 tile by left-clicking on a location in the level view. Save the level by pressing `S`.
 
+=== About animations
+
+The editor plays the animations. However be aware that the animations will go out of sync when placing animated tiles
+down: the animation starts playing immediately, which means two identical animated tiles can be at a different frame of
+animation depending on when they were placed. To synchronize animations, restart the editor.
+
+Note also that the speed of animations can slightly differ from the engine, depending on the performance of the editor.
+
 == TODOs
 
-. Editor: fix performance issue (use pyglet's sprites, batches and animations)
+. Editor: synchronize animated tiles when placing them
 . Two layers of tiles
 . Editor: resizable tileset window
+
+== Random ideas
+
+. Any QR Code => SHA512 sum => Generate trainer to fight (deterministic)

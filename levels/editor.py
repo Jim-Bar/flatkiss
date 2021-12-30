@@ -169,7 +169,7 @@ class _Configuration(configparser.ConfigParser):
 
 class _Controller(object):
     """
-    Windows handling and rendering.
+    Windows and events handling. Does not manage rendering, this is left for the windows classes.
     """
 
     def __init__(self, configuration: _Configuration) -> None:
@@ -269,7 +269,7 @@ class _LevelLoader(object):
 
 class _Level(object):
     """
-    Contains a level.
+    Model for a level.
     """
 
     def __init__(self, tiles: List[int], width_in_tiles: int, height_in_tiles: int) -> None:
@@ -292,7 +292,7 @@ class _Level(object):
 
 class _Tileset(object):
     """
-    Wrap a tileset image with useful routines.
+    Model for a tileset. Wraps a tileset image with useful routines.
     """
 
     def __init__(self, path: str, tiles_size: int, width_in_tiles: int, height_in_tiles: int, left_offset: int,
@@ -349,7 +349,8 @@ class _Tileset(object):
 
 class _LevelWindow(pyglet.window.Window):
     """
-    Window containing the level view.
+    Window containing the level view. Handles all the rendering related to the level view. Events handling is delegated
+    to the :class:`_Controller`.
     """
 
     def __init__(self, caption: str, width: int, height: int, level: _Level, tileset: _Tileset,
@@ -457,7 +458,8 @@ class _LevelWindow(pyglet.window.Window):
 
 class _TilesetWindow(pyglet.window.Window):
     """
-    Window containing the tileset view.
+    Window containing the tileset view. Handles all the rendering related to the tileset view. Events handling is
+    delegated to the :class:`_Controller`.
     """
 
     def __init__(self, caption: str, width: int, height: int, tileset: _Tileset, on_close: Callable,

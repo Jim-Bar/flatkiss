@@ -8,12 +8,13 @@
 
 size_t const TICK_DURATION_MS(16);
 size_t const TILE_SIZE_PIXELS(16);
+size_t const CHARACTER_SIZE_PIXELS(16);
 size_t const TILESET_WIDTH_TILES(24);
 size_t const TILESET_OFFSET_PIXELS(1);
 size_t const LEVEL_WIDTH_TILES(20);
 size_t const LEVEL_HEIGHT_TILES(LEVEL_WIDTH_TILES);
 size_t const LEVEL_SIZE_TILES(LEVEL_WIDTH_TILES * LEVEL_HEIGHT_TILES);
-size_t const SPEED_IN_PIXELS(3);
+size_t const SPEED_IN_PIXELS(2);
 size_t const VIEWPORT_SIZE(10 * TILE_SIZE_PIXELS);
 
 class KeyboardState {
@@ -138,7 +139,17 @@ void render_level(Animations const& animations, size_t tick, uint16_t level[], s
     }
 }
 
-void move(KeyboardState const& keyboard_state, size_t& x, size_t& y) {
+void render_character(SDL_Renderer *renderer, SDL_Texture *character, size_t character_x, size_t character_y, size_t viewport_x, size_t viewport_y) {
+    SDL_Rect dest_rect;
+    dest_rect.x = character_x - viewport_x;
+    dest_rect.y = character_y - viewport_y;
+    dest_rect.w = CHARACTER_SIZE_PIXELS;
+    dest_rect.h = CHARACTER_SIZE_PIXELS;
+
+    SDL_RenderCopy(renderer, character, nullptr, &dest_rect);
+}
+
+void move(KeyboardState const& keyboard_state, size_t& x, size_t& y, size_t& viewport_x, size_t& viewport_y) {
     if (keyboard_state.is_pressed(SDL_SCANCODE_UP)) {
         if (y < SPEED_IN_PIXELS) {
             y = 0;
@@ -147,8 +158,8 @@ void move(KeyboardState const& keyboard_state, size_t& x, size_t& y) {
         }
     }
     if (keyboard_state.is_pressed(SDL_SCANCODE_DOWN)) {
-        if (y + VIEWPORT_SIZE >= LEVEL_HEIGHT_TILES * TILE_SIZE_PIXELS) {
-            y = LEVEL_HEIGHT_TILES * TILE_SIZE_PIXELS - VIEWPORT_SIZE;
+        if (y + CHARACTER_SIZE_PIXELS >= LEVEL_HEIGHT_TILES * TILE_SIZE_PIXELS) {
+            y = LEVEL_HEIGHT_TILES * TILE_SIZE_PIXELS - CHARACTER_SIZE_PIXELS;
         } else {
             y += SPEED_IN_PIXELS;
         }
@@ -161,11 +172,26 @@ void move(KeyboardState const& keyboard_state, size_t& x, size_t& y) {
         }
     }
     if (keyboard_state.is_pressed(SDL_SCANCODE_RIGHT)) {
-        if (x + VIEWPORT_SIZE >= LEVEL_WIDTH_TILES * TILE_SIZE_PIXELS) {
-            x = LEVEL_WIDTH_TILES * TILE_SIZE_PIXELS - VIEWPORT_SIZE;
+        if (x + CHARACTER_SIZE_PIXELS >= LEVEL_WIDTH_TILES * TILE_SIZE_PIXELS) {
+            x = LEVEL_WIDTH_TILES * TILE_SIZE_PIXELS - CHARACTER_SIZE_PIXELS;
         } else {
             x += SPEED_IN_PIXELS;
         }
+    }
+
+    if (y < VIEWPORT_SIZE / 2 - CHARACTER_SIZE_PIXELS / 2) {
+        viewport_y = 0;
+    } else if (y > LEVEL_HEIGHT_TILES * TILE_SIZE_PIXELS - VIEWPORT_SIZE / 2 - CHARACTER_SIZE_PIXELS / 2) {
+        viewport_y = LEVEL_HEIGHT_TILES * TILE_SIZE_PIXELS - VIEWPORT_SIZE;
+    } else {
+        viewport_y = y - VIEWPORT_SIZE / 2 + CHARACTER_SIZE_PIXELS / 2;
+    }
+    if (x < VIEWPORT_SIZE / 2 - CHARACTER_SIZE_PIXELS / 2) {
+        viewport_x = 0;
+    } else if (x > LEVEL_WIDTH_TILES * TILE_SIZE_PIXELS - VIEWPORT_SIZE / 2 - CHARACTER_SIZE_PIXELS / 2) {
+        viewport_x = LEVEL_WIDTH_TILES * TILE_SIZE_PIXELS - VIEWPORT_SIZE;
+    } else {
+        viewport_x = x - VIEWPORT_SIZE / 2 + CHARACTER_SIZE_PIXELS / 2;
     }
 }
 
@@ -211,15 +237,31 @@ int main(int argc, char *argv[])
     }
     SDL_FreeSurface(bmp);
 
+    SDL_Surface* characterSurface = SDL_LoadBMP("assets/character.bmp");
+    if (bmp == nullptr) {
+        cerr << "SDL_LoadBMP Error: " << SDL_GetError() << endl;
+        SDL_Quit();
+        return EXIT_FAILURE;
+    }
+
+    SDL_Texture* character = SDL_CreateTextureFromSurface(ren, characterSurface);
+    if (character == nullptr) {
+        cerr << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << endl;
+        SDL_Quit();
+        return EXIT_FAILURE;
+    }
+    SDL_FreeSurface(characterSurface);
+
     bool quit = false;
     SDL_Event event;
     KeyboardState keyboard_state;
     Animations animations;
-    size_t x(0), y(0);
+    size_t x(0), y(0), character_x(0), character_y(0);
     size_t tick(0);
     while (!quit) {
         SDL_RenderClear(ren);
         render_level(animations, tick++, level, LEVEL_WIDTH_TILES, LEVEL_HEIGHT_TILES, ren, tileset, TILESET_WIDTH_TILES, TILE_SIZE_PIXELS, x, y);
+        render_character(ren, character, character_x, character_y, x, y);
         SDL_RenderPresent(ren);
         SDL_Delay(TICK_DURATION_MS);
         while (SDL_PollEvent(&event)) {
@@ -230,9 +272,11 @@ int main(int argc, char *argv[])
                 keyboard_state.update(event.key.keysym.scancode, event.key.state == SDL_PRESSED ? true : false);
             }
         }
-        move(keyboard_state, x, y);
+        move(keyboard_state, character_x, character_y, x, y);
     }
 
+    // FIXME: Do those cleanups in error cases too.
+    SDL_DestroyTexture(character);
     SDL_DestroyTexture(tileset);
     SDL_DestroyRenderer(ren);
     SDL_DestroyWindow(win);

@@ -487,7 +487,7 @@ class _TilesetWindow(pyglet.window.Window):
 
 
 def main():
-    _Controller(_Configuration('../configuration.ini')).run()
+    _Controller(_Configuration('configuration.ini')).run()
 
 
 if __name__ == '__main__':

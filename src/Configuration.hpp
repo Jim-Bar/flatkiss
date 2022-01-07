@@ -3,35 +3,41 @@
 
 #include <string>
 
+/**
+ * @brief Provider of configurable constants.
+ *
+ * Loads a configuration file in the INI style, and provides getters on the
+ * constants from that file.
+ */
 class Configuration {
 public:
     Configuration(std::string const& configuration_file_path);
-    std::string const& get_animations_path() const;
-    size_t get_engine_tick_duration_ms() const;
-    size_t get_level_height_in_tiles() const;
-    std::string const& get_level_path() const;
-    size_t get_level_width_in_tiles() const;
-    size_t get_tileset_gap() const;
-    size_t get_tileset_height_in_tiles() const;
-    size_t get_tileset_left_offset() const;
-    std::string const& get_tileset_path() const;
-    size_t get_tileset_tiles_size() const;
-    size_t get_tileset_top_offset() const;
-    size_t get_tileset_width_in_tiles() const;
+    std::string const& animationsPath() const;
+    size_t engineTickDurationMs() const;
+    size_t levelHeightInTiles() const;
+    std::string const& levelPath() const;
+    size_t levelWidthInTiles() const;
+    size_t tilesetGap() const;
+    size_t tilesetHeightInTiles() const;
+    size_t tilesetLeftOffset() const;
+    std::string const& tilesetPath() const;
+    size_t tilesetTilesSize() const;
+    size_t tilesetTopOffset() const;
+    size_t tilesetWidthInTiles() const;
 
 private:
-    std::string animations_path;
-    size_t engine_tick_duration_ms;
-    size_t level_height_in_tiles;
-    std::string level_path;
-    size_t level_width_in_tiles;
-    size_t tileset_gap;
-    size_t tileset_height_in_tiles;
-    size_t tileset_left_offset;
-    std::string tileset_path;
-    size_t tileset_tiles_size;
-    size_t tileset_top_offset;
-    size_t tileset_width_in_tiles;
+    std::string AnimationsPath;
+    size_t EngineTickDurationMs;
+    size_t LevelHeightInTiles;
+    std::string LevelPath;
+    size_t LevelWidthInTiles;
+    size_t TilesetGap;
+    size_t TilesetHeightInTiles;
+    size_t TilesetLeftOffset;
+    std::string TilesetPath;
+    size_t TilesetTilesSize;
+    size_t TilesetTopOffset;
+    size_t TilesetWidthInTiles;
 };
 
 #endif

@@ -2,6 +2,7 @@
 build/
 *.bin
 *.bmp
+*.gif
 *.idea
 *.png
 

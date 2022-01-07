@@ -6,7 +6,8 @@
 #include <string>
 #include <unordered_map>
 
-size_t const TICK_DURATION_MS(16);
+#include "Configuration.hpp"
+
 size_t const TILE_SIZE_PIXELS(16);
 size_t const CHARACTER_SIZE_PIXELS(16);
 size_t const TILESET_WIDTH_TILES(24);
@@ -200,6 +201,8 @@ int main(int argc, char *argv[])
     using std::cerr;
     using std::endl;
 
+    Configuration configuration{"configuration.ini"};
+
     uint16_t level[LEVEL_SIZE_TILES] = {0};
     load_level(level, LEVEL_SIZE_TILES, "levels/level.bin");
 
@@ -263,7 +266,7 @@ int main(int argc, char *argv[])
         render_level(animations, tick++, level, LEVEL_WIDTH_TILES, LEVEL_HEIGHT_TILES, ren, tileset, TILESET_WIDTH_TILES, TILE_SIZE_PIXELS, x, y);
         render_character(ren, character, character_x, character_y, x, y);
         SDL_RenderPresent(ren);
-        SDL_Delay(TICK_DURATION_MS);
+        SDL_Delay(configuration.engine_tick_duration_ms());
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 SDL_Log("Program quit after %i ticks", event.quit.timestamp);

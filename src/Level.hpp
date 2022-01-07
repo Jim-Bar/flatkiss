@@ -7,8 +7,8 @@
 /**
  * @brief Models a level.
  *
- * A level is a list of tiles indices, with dimensions. Once created, this class
- * provides handy methods to access the content of the level.
+ * A level is a list of tiles indices, with dimensions. Once created, this class provides handy methods to access the
+ * content of the level.
  */
 class Level {
 public:
@@ -19,7 +19,7 @@ public:
 
 private:
     size_t const HeightInTiles;
-    std::unique_ptr<uint16_t const[]> Tiles;
+    std::unique_ptr<uint16_t const[]> const Tiles;
     size_t const WidthInTiles;
 };
 

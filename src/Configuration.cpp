@@ -3,9 +3,9 @@
 
 #include "Configuration.hpp"
 
-Configuration::Configuration(std::string const& configuration_file_path) {
+Configuration::Configuration(std::string const& file_path) {
     inipp::Ini<char> ini;
-    std::ifstream configuration_input_stream(configuration_file_path);
+    std::ifstream configuration_input_stream(file_path);
     ini.parse(configuration_input_stream);
 
     // The values are retrieved at construction time to fail early if something is wrong.

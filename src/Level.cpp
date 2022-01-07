@@ -25,7 +25,7 @@ size_t Level::widthInTiles() const {
 
 unique_ptr<Level const> LevelLoader::load(string const& Path, size_t WidthInTiles, size_t HeightInTiles) {
     size_t const SizeInBytes{WidthInTiles * HeightInTiles * 2}; // Two byte per tile.
-    unique_ptr<uint16_t[]> Tiles{make_unique<uint16_t[]>(SizeInBytes)};
+    auto Tiles{make_unique<uint16_t[]>(SizeInBytes)};
     std::ifstream Stream;
     Stream.open(Path, std::ios::in | std::ios::binary);
     if (Stream.is_open()) {

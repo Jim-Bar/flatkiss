@@ -266,7 +266,7 @@ int main(int argc, char *argv[])
         render_level(animations, tick++, level, LEVEL_WIDTH_TILES, LEVEL_HEIGHT_TILES, ren, tileset, TILESET_WIDTH_TILES, TILE_SIZE_PIXELS, x, y);
         render_character(ren, character, character_x, character_y, x, y);
         SDL_RenderPresent(ren);
-        SDL_Delay(configuration.engine_tick_duration_ms());
+        SDL_Delay(configuration.get_engine_tick_duration_ms());
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 SDL_Log("Program quit after %i ticks", event.quit.timestamp);

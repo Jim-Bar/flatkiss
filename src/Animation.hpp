@@ -16,4 +16,8 @@ private:
     std::unique_ptr<uint16_t const[]> TileIndices;
 };
 
+class AnimationLoader {
+
+};
+
 #endif

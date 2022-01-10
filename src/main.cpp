@@ -140,7 +140,7 @@ void move(KeyboardState const& keyboard_state, size_t& x, size_t& y, size_t& vie
         }
     }
     if (keyboard_state.is_pressed(SDL_SCANCODE_DOWN)) {
-        if (y + CHARACTER_SIZE_PIXELS >= Level->heightInTiles() * Tileset.tilesSize()) {
+        if (y + CHARACTER_SIZE_PIXELS + SPEED_IN_PIXELS >= Level->heightInTiles() * Tileset.tilesSize()) {
             y = Level->heightInTiles() * Tileset.tilesSize() - CHARACTER_SIZE_PIXELS;
         } else {
             y += SPEED_IN_PIXELS;
@@ -154,7 +154,7 @@ void move(KeyboardState const& keyboard_state, size_t& x, size_t& y, size_t& vie
         }
     }
     if (keyboard_state.is_pressed(SDL_SCANCODE_RIGHT)) {
-        if (x + CHARACTER_SIZE_PIXELS >= Level->widthInTiles() * Tileset.tilesSize()) {
+        if (x + CHARACTER_SIZE_PIXELS + SPEED_IN_PIXELS >= Level->widthInTiles() * Tileset.tilesSize()) {
             x = Level->widthInTiles() * Tileset.tilesSize() - CHARACTER_SIZE_PIXELS;
         } else {
             x += SPEED_IN_PIXELS;

@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "Animation.hpp"
 #include "Configuration.hpp"
 #include "Level.hpp"
 #include "Tileset.hpp"
@@ -52,31 +53,11 @@ private:
     bool up{false}, down{false}, left{false}, right{false};
 };
 
-class Animation {
-public:
-  Animation(std::unique_ptr<uint16_t const[]> tile_indices, uint8_t period, uint8_t duration)
-    : tile_indices(std::move(tile_indices)), period(period), duration(duration) {}
-  uint8_t get_period() const {
-      return period;
-  }
-  uint8_t get_duration() const {
-      return duration;
-  }
-  uint16_t tile_index_at_step(uint16_t step) const {
-      return tile_indices[step];
-  }
-
-private:
-  uint8_t const duration;
-  std::unique_ptr<uint16_t const[]> tile_indices;
-  uint8_t const period;
-};
-
 class Animations {
 public:
-    Animations() {
+    Animations(std::string const& FilePath) {
         std::ifstream stream;
-        stream.open("assets/animations.bin", std::ios::in | std::ios::binary);
+        stream.open(FilePath, std::ios::in | std::ios::binary);
         if (stream.is_open()) {
             char byte{0};
             while ((byte = stream.get()) != std::istream::traits_type::eof()) {
@@ -96,7 +77,7 @@ public:
         }
 
         Animation const& animation{animations_per_tile_index.at(tile_index)};
-        return animation.tile_index_at_step((tick % (animation.get_period() * animation.get_duration())) / animation.get_duration());
+        return animation.tileIndexAtStep((tick % (animation.getPeriod() * animation.getDuration())) / animation.getDuration());
     }
 
 private:
@@ -225,7 +206,7 @@ int main(int argc, char *argv[])
     bool quit = false;
     SDL_Event event;
     KeyboardState keyboard_state;
-    Animations animations;
+    Animations animations{configuration.animationsPath()};
     size_t x(0), y(0), character_x(0), character_y(0);
     size_t tick(0);
     while (!quit) {

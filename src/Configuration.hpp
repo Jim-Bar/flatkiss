@@ -11,7 +11,7 @@
  */
 class Configuration {
 public:
-    Configuration(std::string const& file_path);
+    Configuration(std::string const& FilePath);
     std::string const& animationsPath() const;
     size_t engineTickDurationMs() const;
     size_t levelHeightInTiles() const;

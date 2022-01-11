@@ -95,8 +95,8 @@ int main(int argc, char *argv[])
     using std::cerr;
     using std::endl;
 
-    Configuration configuration{"configuration.ini"};
-    std::unique_ptr<Level const> Level{LevelLoader::load(configuration.levelPath(), configuration.levelWidthInTiles(), configuration.levelHeightInTiles())};
+    Configuration Configuration{"configuration.ini"};
+    std::unique_ptr<Level const> Level{LevelLoader::load(Configuration.levelPath(), Configuration.levelWidthInTiles(), Configuration.levelHeightInTiles())};
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         cerr << "SDL_Init Error: " << SDL_GetError() << endl;
@@ -117,8 +117,8 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    Tileset const Tileset{configuration.tilesetPath(), configuration.tilesetTilesSize(), configuration.tilesetWidthInTiles(),
-        configuration.tilesetHeightInTiles(), configuration.tilesetLeftOffset(), configuration.tilesetTopOffset(), configuration.tilesetGap(), ren};
+    Tileset const Tileset{Configuration.tilesetPath(), Configuration.tilesetTilesSize(), Configuration.tilesetWidthInTiles(),
+        Configuration.tilesetHeightInTiles(), Configuration.tilesetLeftOffset(), Configuration.tilesetTopOffset(), Configuration.tilesetGap(), ren};
 
     SDL_Surface* characterSurface = SDL_LoadBMP("assets/character.bmp");
     if (characterSurface == nullptr) {
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
     bool quit = false;
     SDL_Event event;
     KeyboardState keyboard_state;
-    AnimationPlayer AnimationPlayer{AnimationLoader::load(configuration.animationsPath())};
+    AnimationPlayer AnimationPlayer{AnimationLoader::load(Configuration.animationsPath())};
     size_t x(0), y(0), character_x(0), character_y(0);
     size_t tick(0);
     while (!quit) {
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
         render_level(AnimationPlayer, tick++, Level, ren, Tileset, x, y);
         render_character(ren, character, character_x, character_y, x, y);
         SDL_RenderPresent(ren);
-        SDL_Delay(configuration.engineTickDurationMs());
+        SDL_Delay(Configuration.engineTickDurationMs());
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 SDL_Log("Program quit after %i ticks", event.quit.timestamp);

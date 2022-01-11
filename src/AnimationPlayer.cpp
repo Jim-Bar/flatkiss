@@ -1,7 +1,6 @@
 #include "AnimationPlayer.hpp"
 
-AnimationPlayer::AnimationPlayer(std::unordered_map<uint16_t, Animation>& AnimationsPerTileIndex) {
-    // TODO: Check if it is possible to pass references with std::move().
+AnimationPlayer::AnimationPlayer(std::unordered_map<uint16_t, Animation const>&& AnimationsPerTileIndex) {
     this->AnimationsPerTileIndex.swap(AnimationsPerTileIndex);
 }
 

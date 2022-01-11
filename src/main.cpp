@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "Animation.hpp"
+#include "AnimationPlayer.hpp"
 #include "Configuration.hpp"
 #include "Level.hpp"
 #include "Tileset.hpp"
@@ -53,42 +53,11 @@ private:
     bool up{false}, down{false}, left{false}, right{false};
 };
 
-class Animations {
-public:
-    Animations(std::string const& FilePath) {
-        std::ifstream stream;
-        stream.open(FilePath, std::ios::in | std::ios::binary);
-        if (stream.is_open()) {
-            char byte{0};
-            while ((byte = stream.get()) != std::istream::traits_type::eof()) {
-                uint8_t animation_period{static_cast<uint8_t>(byte)};
-                uint8_t animation_duration{static_cast<uint8_t>(stream.get())};
-                auto animation = std::make_unique<uint16_t[]>(animation_period);
-                stream.read(reinterpret_cast<char*>(animation.get()), animation_period * 2); // Two byte per tile.
-                animations_per_tile_index.emplace(std::piecewise_construct, std::forward_as_tuple(animation[0]), std::forward_as_tuple(std::move(animation), animation_period, animation_duration));
-            }
-            stream.close();
-        }
-    }
-
-  uint16_t animated_tile_index_for(uint16_t tile_index, size_t tick) const {
-        if (animations_per_tile_index.find(tile_index) == animations_per_tile_index.end()) { // FIXME: Use contains()
-            return tile_index;
-        }
-
-        Animation const& animation{animations_per_tile_index.at(tile_index)};
-        return animation.tileIndexAtStep((tick % (animation.getPeriod() * animation.getDuration())) / animation.getDuration());
-    }
-
-private:
-    std::unordered_map<uint16_t, Animation> animations_per_tile_index;
-};
-
-void render_level(Animations const& animations, size_t tick, std::unique_ptr<Level const>& Level, SDL_Renderer *renderer,
+void render_level(AnimationPlayer const& AnimationPlayer, size_t tick, std::unique_ptr<Level const>& Level, SDL_Renderer *renderer,
                   Tileset const& Tileset, size_t current_x, size_t current_y) {
     for (size_t y(current_y / Tileset.tilesSize()); y <= (current_y + VIEWPORT_SIZE) / Tileset.tilesSize(); y++) {
         for (size_t x(current_x / Tileset.tilesSize()); x <= (current_x + VIEWPORT_SIZE) / Tileset.tilesSize(); x++) {
-            uint16_t tile_index(animations.animated_tile_index_for(Level->tileIndex(x, y), tick));
+            uint16_t tile_index(AnimationPlayer.animatedTileIndexFor(Level->tileIndex(x, y), tick));
 
             SDL_Rect source_rect{Tileset.rectForTileIndex(tile_index)};
             SDL_Rect dest_rect;
@@ -206,12 +175,12 @@ int main(int argc, char *argv[])
     bool quit = false;
     SDL_Event event;
     KeyboardState keyboard_state;
-    Animations animations{configuration.animationsPath()};
+    AnimationPlayer AnimationPlayer{AnimationLoader::load(configuration.animationsPath())};
     size_t x(0), y(0), character_x(0), character_y(0);
     size_t tick(0);
     while (!quit) {
         SDL_RenderClear(ren);
-        render_level(animations, tick++, Level, ren, Tileset, x, y);
+        render_level(AnimationPlayer, tick++, Level, ren, Tileset, x, y);
         render_character(ren, character, character_x, character_y, x, y);
         SDL_RenderPresent(ren);
         SDL_Delay(configuration.engineTickDurationMs());

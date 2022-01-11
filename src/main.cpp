@@ -8,50 +8,13 @@
 
 #include "AnimationPlayer.hpp"
 #include "Configuration.hpp"
+#include "KeyboardState.hpp"
 #include "Level.hpp"
 #include "Tileset.hpp"
 
 size_t const CHARACTER_SIZE_PIXELS(16);
 size_t const SPEED_IN_PIXELS(2);
 size_t const VIEWPORT_SIZE(160);
-
-class KeyboardState {
-public:
-    bool is_pressed(SDL_Scancode key) const {
-        switch (key) {
-            case SDL_SCANCODE_UP:
-                return up;
-            case SDL_SCANCODE_DOWN:
-                return down;
-            case SDL_SCANCODE_LEFT:
-                return left;
-            case SDL_SCANCODE_RIGHT:
-                return right;
-        }
-
-        return false; // FIXME: Exception.
-    }
-
-    void update(SDL_Scancode key, bool pressed) {
-        switch (key) {
-            case SDL_SCANCODE_UP:
-                up = pressed;
-                return;
-            case SDL_SCANCODE_DOWN:
-                down = pressed;
-                return;
-            case SDL_SCANCODE_LEFT:
-                left = pressed;
-                return;
-            case SDL_SCANCODE_RIGHT:
-                right = pressed;
-                return;
-        }
-    }
-
-private:
-    bool up{false}, down{false}, left{false}, right{false};
-};
 
 void render_level(AnimationPlayer const& AnimationPlayer, size_t tick, std::unique_ptr<Level const>& Level, SDL_Renderer *renderer,
                   Tileset const& Tileset, size_t current_x, size_t current_y) {
@@ -82,28 +45,28 @@ void render_character(SDL_Renderer *renderer, SDL_Texture *character, size_t cha
 }
 
 void move(KeyboardState const& keyboard_state, size_t& x, size_t& y, size_t& viewport_x, size_t& viewport_y, std::unique_ptr<Level const>& Level, Tileset const& Tileset) {
-    if (keyboard_state.is_pressed(SDL_SCANCODE_UP)) {
+    if (keyboard_state.isPressed(SDL_SCANCODE_UP)) {
         if (y < SPEED_IN_PIXELS) {
             y = 0;
         } else {
             y -= SPEED_IN_PIXELS;
         }
     }
-    if (keyboard_state.is_pressed(SDL_SCANCODE_DOWN)) {
+    if (keyboard_state.isPressed(SDL_SCANCODE_DOWN)) {
         if (y + CHARACTER_SIZE_PIXELS + SPEED_IN_PIXELS >= Level->heightInTiles() * Tileset.tilesSize()) {
             y = Level->heightInTiles() * Tileset.tilesSize() - CHARACTER_SIZE_PIXELS;
         } else {
             y += SPEED_IN_PIXELS;
         }
     }
-    if (keyboard_state.is_pressed(SDL_SCANCODE_LEFT)) {
+    if (keyboard_state.isPressed(SDL_SCANCODE_LEFT)) {
         if (x < SPEED_IN_PIXELS) {
             x = 0;
         } else {
             x -= SPEED_IN_PIXELS;
         }
     }
-    if (keyboard_state.is_pressed(SDL_SCANCODE_RIGHT)) {
+    if (keyboard_state.isPressed(SDL_SCANCODE_RIGHT)) {
         if (x + CHARACTER_SIZE_PIXELS + SPEED_IN_PIXELS >= Level->widthInTiles() * Tileset.tilesSize()) {
             x = Level->widthInTiles() * Tileset.tilesSize() - CHARACTER_SIZE_PIXELS;
         } else {

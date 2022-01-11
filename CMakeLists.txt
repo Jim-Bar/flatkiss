@@ -10,6 +10,7 @@ add_executable(2d-rendering-engine-test
     src/Animation.cpp
     src/AnimationPlayer.cpp
     src/Configuration.cpp
+    src/KeyboardState.cpp
     src/Level.cpp
     src/Tileset.cpp)
 target_link_libraries(2d-rendering-engine-test ${SDL2_LIBRARIES})

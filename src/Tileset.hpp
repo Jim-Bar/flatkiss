@@ -4,6 +4,8 @@
 #include <SDL2/SDL.h>
 #include <string>
 
+class Renderer; // Forward declaration to break the cycle Tileset / Renderer.
+
 /**
  * @brief Models a tileset.
  *
@@ -14,7 +16,7 @@
  */
 class Tileset {
 public:
-    Tileset(std::string const& FilePath, size_t TilesSize, size_t WidthInTiles, size_t HeightInTiles, size_t LeftOffset, size_t TopOffset, size_t Gap, SDL_Renderer* Renderer);
+    Tileset(std::string const& FilePath, size_t TilesSize, size_t WidthInTiles, size_t HeightInTiles, size_t LeftOffset, size_t TopOffset, size_t Gap, Renderer const& Renderer);
     ~Tileset();
     size_t const gap() const;
     size_t const heightInTiles() const;
@@ -38,10 +40,10 @@ private:
      * @brief For creating the texture of the tileset in the initializer list.
      * 
      * @param FilePath Path to the tileset picture.
-     * @param Renderer Pointer to the renderer for creating the texture, not owned by this class.
+     * @param Renderer Pointer to the renderer for creating the texture.
      * @return Newly created texture, the caller must handle its destruction.
      */
-    static SDL_Texture* loadTexture(std::string const& FilePath, SDL_Renderer* Renderer);
+    static SDL_Texture* loadTexture(std::string const& FilePath, Renderer const& Renderer);
 };
 
 #endif

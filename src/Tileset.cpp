@@ -1,8 +1,9 @@
+#include "Renderer.hpp"
 #include "Tileset.hpp"
 
 using std::string;
 
-Tileset::Tileset(string const& FilePath, size_t TilesSize, size_t WidthInTiles, size_t HeightInTiles, size_t LeftOffset, size_t TopOffset, size_t Gap, SDL_Renderer* Renderer) :
+Tileset::Tileset(string const& FilePath, size_t TilesSize, size_t WidthInTiles, size_t HeightInTiles, size_t LeftOffset, size_t TopOffset, size_t Gap, Renderer const& Renderer) :
     TilesSize(TilesSize), WidthInTiles(WidthInTiles), HeightInTiles(HeightInTiles), LeftOffset(LeftOffset), TopOffset(TopOffset), Gap(Gap), Texture(Tileset::loadTexture(FilePath, Renderer)) {
 
 }
@@ -23,11 +24,11 @@ size_t const Tileset::leftOffset() const {
     return LeftOffset;
 }
 
-SDL_Texture* Tileset::loadTexture(std::string const& FilePath, SDL_Renderer* Renderer) {
+SDL_Texture* Tileset::loadTexture(std::string const& FilePath, Renderer const& Renderer) {
     SDL_Surface* Surface = SDL_LoadBMP(FilePath.c_str());
     SDL_Texture* Texture = nullptr;
     if (Surface != nullptr) {
-        Texture = SDL_CreateTextureFromSurface(Renderer, Surface); // TODO: Check nullity / raise exception.
+        Texture = Renderer.createTextureFromSurface(Surface); // TODO: Check nullity / raise exception.
         SDL_FreeSurface(Surface);
     } // TODO: Raise exception.
 

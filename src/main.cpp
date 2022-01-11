@@ -10,39 +10,12 @@
 #include "Configuration.hpp"
 #include "KeyboardState.hpp"
 #include "Level.hpp"
+#include "Renderer.hpp"
 #include "Tileset.hpp"
 
 size_t const CHARACTER_SIZE_PIXELS(16);
 size_t const SPEED_IN_PIXELS(2);
 size_t const VIEWPORT_SIZE(160);
-
-void render_level(AnimationPlayer const& AnimationPlayer, size_t tick, std::unique_ptr<Level const>& Level, SDL_Renderer *renderer,
-                  Tileset const& Tileset, size_t current_x, size_t current_y) {
-    for (size_t y(current_y / Tileset.tilesSize()); y <= (current_y + VIEWPORT_SIZE) / Tileset.tilesSize(); y++) {
-        for (size_t x(current_x / Tileset.tilesSize()); x <= (current_x + VIEWPORT_SIZE) / Tileset.tilesSize(); x++) {
-            uint16_t tile_index(AnimationPlayer.animatedTileIndexFor(Level->tileIndex(x, y), tick));
-
-            SDL_Rect source_rect{Tileset.rectForTileIndex(tile_index)};
-            SDL_Rect dest_rect;
-            dest_rect.w = Tileset.tilesSize();
-            dest_rect.h = Tileset.tilesSize();
-            dest_rect.x = x * Tileset.tilesSize() - current_x;
-            dest_rect.y = y * Tileset.tilesSize() - current_y;
-
-            SDL_RenderCopy(renderer, Tileset.texture(), &source_rect, &dest_rect);
-        }
-    }
-}
-
-void render_character(SDL_Renderer *renderer, SDL_Texture *character, size_t character_x, size_t character_y, size_t viewport_x, size_t viewport_y) {
-    SDL_Rect dest_rect;
-    dest_rect.x = character_x - viewport_x;
-    dest_rect.y = character_y - viewport_y;
-    dest_rect.w = CHARACTER_SIZE_PIXELS;
-    dest_rect.h = CHARACTER_SIZE_PIXELS;
-
-    SDL_RenderCopy(renderer, character, nullptr, &dest_rect);
-}
 
 void move(KeyboardState const& keyboard_state, size_t& x, size_t& y, size_t& viewport_x, size_t& viewport_y, std::unique_ptr<Level const>& Level, Tileset const& Tileset) {
     if (keyboard_state.isPressed(SDL_SCANCODE_UP)) {
@@ -103,22 +76,16 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    SDL_Window* win = SDL_CreateWindow("Hello World!", 100, 100, VIEWPORT_SIZE, VIEWPORT_SIZE, SDL_WINDOW_SHOWN);
-    if (win == nullptr) {
+    SDL_Window* Window = SDL_CreateWindow("2d-rendering-engine-test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, VIEWPORT_SIZE, VIEWPORT_SIZE, SDL_WINDOW_SHOWN);
+    if (Window == nullptr) {
         cerr << "SDL_CreateWindow Error: " << SDL_GetError() << endl;
         return EXIT_FAILURE;
     }
 
-    SDL_Renderer* ren
-        = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (ren == nullptr) {
-        cerr << "SDL_CreateRenderer Error" << SDL_GetError() << endl;
-		SDL_Quit();
-        return EXIT_FAILURE;
-    }
+    Renderer Renderer{Window};
 
     Tileset const Tileset{Configuration.tilesetPath(), Configuration.tilesetTilesSize(), Configuration.tilesetWidthInTiles(),
-        Configuration.tilesetHeightInTiles(), Configuration.tilesetLeftOffset(), Configuration.tilesetTopOffset(), Configuration.tilesetGap(), ren};
+        Configuration.tilesetHeightInTiles(), Configuration.tilesetLeftOffset(), Configuration.tilesetTopOffset(), Configuration.tilesetGap(), Renderer};
 
     SDL_Surface* characterSurface = SDL_LoadBMP("assets/character.bmp");
     if (characterSurface == nullptr) {
@@ -127,7 +94,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    SDL_Texture* character = SDL_CreateTextureFromSurface(ren, characterSurface);
+    SDL_Texture* character = Renderer.createTextureFromSurface(characterSurface);
     if (character == nullptr) {
         cerr << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << endl;
         SDL_Quit();
@@ -140,12 +107,9 @@ int main(int argc, char *argv[])
     KeyboardState keyboard_state;
     AnimationPlayer AnimationPlayer{AnimationLoader::load(Configuration.animationsPath())};
     size_t x(0), y(0), character_x(0), character_y(0);
-    size_t tick(0);
+    size_t Tick(0);
     while (!quit) {
-        SDL_RenderClear(ren);
-        render_level(AnimationPlayer, tick++, Level, ren, Tileset, x, y);
-        render_character(ren, character, character_x, character_y, x, y);
-        SDL_RenderPresent(ren);
+        Renderer.render(AnimationPlayer, Level, Tileset, x, y, VIEWPORT_SIZE, Tick++, character, character_x, character_y, CHARACTER_SIZE_PIXELS);
         SDL_Delay(Configuration.engineTickDurationMs());
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
@@ -160,8 +124,7 @@ int main(int argc, char *argv[])
 
     // FIXME: Do those cleanups in error cases too.
     SDL_DestroyTexture(character);
-    SDL_DestroyRenderer(ren);
-    SDL_DestroyWindow(win);
+    SDL_DestroyWindow(Window);
     SDL_Quit();
 
     return EXIT_SUCCESS;

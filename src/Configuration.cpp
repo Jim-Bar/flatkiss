@@ -10,6 +10,7 @@ Configuration::Configuration(std::string const& FilePath) {
 
     // The values are retrieved at construction time to fail early if something is wrong.
     inipp::get_value(Ini.sections["Animations"], "path", AnimationsPath);
+    inipp::get_value(Ini.sections["Collisions"], "path", CollisionsPath);
     inipp::get_value(Ini.sections["Engine"], "tick_duration_ms", EngineTickDurationMs);
     inipp::get_value(Ini.sections["Level"], "height_in_tiles", LevelHeightInTiles);
     inipp::get_value(Ini.sections["Level"], "path", LevelPath);
@@ -25,6 +26,10 @@ Configuration::Configuration(std::string const& FilePath) {
 
 std::string const& Configuration::animationsPath() const {
     return AnimationsPath;
+}
+
+std::string const& Configuration::collisionsPath() const {
+    return CollisionsPath;
 }
 
 size_t Configuration::engineTickDurationMs() const {

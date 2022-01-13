@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 #include "AnimationPlayer.hpp"
+#include "Collision.hpp"
 #include "Configuration.hpp"
 #include "KeyboardState.hpp"
 #include "Level.hpp"
@@ -106,6 +107,7 @@ int main(int argc, char *argv[])
     SDL_Event event;
     KeyboardState keyboard_state;
     AnimationPlayer AnimationPlayer{AnimationLoader::load(Configuration.animationsPath())};
+    std::unordered_map<uint16_t, Collision const> Collisions{CollisionLoader::load(Configuration.collisionsPath())}; // TODO: Move in a new "Collider" class.
     size_t x(0), y(0), character_x(0), character_y(0);
     size_t Tick(0);
     while (!quit) {

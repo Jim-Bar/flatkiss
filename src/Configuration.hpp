@@ -13,6 +13,7 @@ class Configuration {
 public:
     Configuration(std::string const& FilePath);
     std::string const& animationsPath() const;
+    std::string const& collisionsPath() const;
     size_t engineTickDurationMs() const;
     size_t levelHeightInTiles() const;
     std::string const& levelPath() const;
@@ -27,6 +28,7 @@ public:
 
 private:
     std::string AnimationsPath;
+    std::string CollisionsPath;
     size_t EngineTickDurationMs;
     size_t LevelHeightInTiles;
     std::string LevelPath;

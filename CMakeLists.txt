@@ -9,6 +9,7 @@ add_executable(2d-rendering-engine-test
     src/main.cpp
     src/Animation.cpp
     src/AnimationPlayer.cpp
+    src/Collision.cpp
     src/Configuration.cpp
     src/KeyboardState.cpp
     src/Level.cpp

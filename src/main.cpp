@@ -7,7 +7,7 @@
 #include <unordered_map>
 
 #include "AnimationPlayer.hpp"
-#include "Collision.hpp"
+#include "Collider.hpp"
 #include "Configuration.hpp"
 #include "KeyboardState.hpp"
 #include "Level.hpp"
@@ -18,35 +18,53 @@ size_t const CHARACTER_SIZE_PIXELS(16);
 size_t const SPEED_IN_PIXELS(2);
 size_t const VIEWPORT_SIZE(160);
 
-void move(KeyboardState const& keyboard_state, size_t& x, size_t& y, size_t& viewport_x, size_t& viewport_y, std::unique_ptr<Level const>& Level, Tileset const& Tileset) {
+void move(KeyboardState const& keyboard_state, Collider const& Collider, size_t& x, size_t& y, size_t& viewport_x, size_t& viewport_y, std::unique_ptr<Level const>& Level, Tileset const& Tileset) {
+    size_t NewX{x};
+    size_t NewY{y};
     if (keyboard_state.isPressed(SDL_SCANCODE_UP)) {
         if (y < SPEED_IN_PIXELS) {
-            y = 0;
+            NewY = 0;
         } else {
-            y -= SPEED_IN_PIXELS;
+            NewY -= SPEED_IN_PIXELS;
         }
     }
     if (keyboard_state.isPressed(SDL_SCANCODE_DOWN)) {
         if (y + CHARACTER_SIZE_PIXELS + SPEED_IN_PIXELS >= Level->heightInTiles() * Tileset.tilesSize()) {
-            y = Level->heightInTiles() * Tileset.tilesSize() - CHARACTER_SIZE_PIXELS;
+            NewY = Level->heightInTiles() * Tileset.tilesSize() - CHARACTER_SIZE_PIXELS;
         } else {
-            y += SPEED_IN_PIXELS;
+            NewY += SPEED_IN_PIXELS;
         }
     }
     if (keyboard_state.isPressed(SDL_SCANCODE_LEFT)) {
         if (x < SPEED_IN_PIXELS) {
-            x = 0;
+            NewX = 0;
         } else {
-            x -= SPEED_IN_PIXELS;
+            NewX -= SPEED_IN_PIXELS;
         }
     }
     if (keyboard_state.isPressed(SDL_SCANCODE_RIGHT)) {
         if (x + CHARACTER_SIZE_PIXELS + SPEED_IN_PIXELS >= Level->widthInTiles() * Tileset.tilesSize()) {
-            x = Level->widthInTiles() * Tileset.tilesSize() - CHARACTER_SIZE_PIXELS;
+            NewX = Level->widthInTiles() * Tileset.tilesSize() - CHARACTER_SIZE_PIXELS;
         } else {
-            x += SPEED_IN_PIXELS;
+            NewX += SPEED_IN_PIXELS;
         }
     }
+
+    if (x == NewX && y == NewY) {
+        return;
+    }
+
+    for (size_t Y(NewY / Tileset.tilesSize()); Y <= (NewY + CHARACTER_SIZE_PIXELS) / Tileset.tilesSize(); Y++) {
+        for (size_t X(NewX / Tileset.tilesSize()); X <= (NewX + CHARACTER_SIZE_PIXELS) / Tileset.tilesSize(); X++) {
+            uint16_t TileIndex(Level->tileIndex(X, Y));
+            if (Collider.collides(TileIndex, NewX, NewY, X * Tileset.tilesSize(), Y * Tileset.tilesSize(), CHARACTER_SIZE_PIXELS)) {
+                return;
+            }
+        }
+    }
+
+    x = NewX;
+    y = NewY;
 
     if (y < VIEWPORT_SIZE / 2 - CHARACTER_SIZE_PIXELS / 2) {
         viewport_y = 0;
@@ -107,7 +125,7 @@ int main(int argc, char *argv[])
     SDL_Event event;
     KeyboardState keyboard_state;
     AnimationPlayer AnimationPlayer{AnimationLoader::load(Configuration.animationsPath())};
-    std::unordered_map<uint16_t, Collision const> Collisions{CollisionLoader::load(Configuration.collisionsPath())}; // TODO: Move in a new "Collider" class.
+    Collider Collider{CollisionLoader::load(Configuration.collisionsPath())};
     size_t x(0), y(0), character_x(0), character_y(0);
     size_t Tick(0);
     while (!quit) {
@@ -121,7 +139,7 @@ int main(int argc, char *argv[])
                 keyboard_state.update(event.key.keysym.scancode, event.key.state == SDL_PRESSED ? true : false);
             }
         }
-        move(keyboard_state, character_x, character_y, x, y, Level, Tileset);
+        move(keyboard_state, Collider, character_x, character_y, x, y, Level, Tileset);
     }
 
     // FIXME: Do those cleanups in error cases too.

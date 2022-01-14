@@ -26,6 +26,16 @@ The _period_ of the animation is the number of tiles making it up. It is stored 
 animation is how many ticks pass before the animation goes to the next step / tile. Stored on the next byte. Then are
 the tiles indices (in the tileset) as shorts (two bytes per index, little endian).
 
+=== Collisions
+
+Collisions are rectangles which cannot be crossed. They are delimitated by an origin (x, y) at the top left of the tile,
+and a size (width, height). They are associated with tiles indices. For instance, if tiles are 16x16 pixels, the
+collision of origin (12, 12) and size (4, 4) makes a tile not walkable on the square of 4x4 pixels at its bottom right.
+A collision is stored as:
+
+. First two bytes: tile index
+. Then on the four next bytes (each on one byte): x, y, width, height
+
 == Editor
 
 === How to use

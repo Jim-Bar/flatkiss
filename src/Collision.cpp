@@ -2,8 +2,24 @@
 
 #include "Collision.hpp"
 
-Collision::Collision(uint8_t X, uint8_t Y, uint8_t Width, uint8_t Height) {
+Collision::Collision(uint8_t X, uint8_t Y, uint8_t Width, uint8_t Height) : X(X), Y(Y), Width(Width), Height(Height) {
 
+}
+
+uint8_t Collision::height() const {
+    return Height;
+}
+
+uint8_t Collision::x() const {
+    return X;
+}
+
+uint8_t Collision::y() const {
+    return Y;
+}
+
+uint8_t Collision::width() const {
+    return Width;
 }
 
 std::unordered_map<uint16_t, Collision const> CollisionLoader::load(std::string const& FilePath) {

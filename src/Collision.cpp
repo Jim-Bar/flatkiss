@@ -2,24 +2,21 @@
 
 #include "Collision.hpp"
 
-Collision::Collision(uint8_t X, uint8_t Y, uint8_t Width, uint8_t Height) : X(X), Y(Y), Width(Width), Height(Height) {
+using std::move;
+using std::unique_ptr;
+
+Collision::Collision(unique_ptr<Rectangle const[]> Rectangles, size_t RectanglesCount) : Rectangles(move(Rectangles)), RectanglesCount(RectanglesCount) {
 
 }
 
-uint8_t Collision::height() const {
-    return Height;
-}
+bool Collision::collidesWith(PositionedRectangle const& PositionedRect, Position const WhenAtPosition) const {
+    for (size_t I{0}; I < RectanglesCount; I++) {
+        if (PositionedRect.intersectsWith(PositionedRectangle(WhenAtPosition, Rectangles[I]))) {
+            return true;
+        }
+    }
 
-uint8_t Collision::x() const {
-    return X;
-}
-
-uint8_t Collision::y() const {
-    return Y;
-}
-
-uint8_t Collision::width() const {
-    return Width;
+    return false;
 }
 
 std::unordered_map<uint16_t, Collision const> CollisionLoader::load(std::string const& FilePath) {
@@ -35,7 +32,7 @@ std::unordered_map<uint16_t, Collision const> CollisionLoader::load(std::string 
             uint8_t Y{static_cast<uint8_t>(Stream.get())};
             uint8_t Width{static_cast<uint8_t>(Stream.get())};
             uint8_t Height{static_cast<uint8_t>(Stream.get())};
-            CollisionsPerTileIndex.emplace(std::piecewise_construct, std::forward_as_tuple(TileIndex), std::forward_as_tuple(X, Y, Width, Height));
+            CollisionsPerTileIndex.emplace(std::piecewise_construct, std::forward_as_tuple(TileIndex), std::forward_as_tuple(X, Y, Width, Height)); // FIXME: fix.
         }
         Stream.close();
     } // FIXME: Raise exception.

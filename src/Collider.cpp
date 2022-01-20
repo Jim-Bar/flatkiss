@@ -8,7 +8,7 @@ bool Collider::collides(uint16_t TileIndex, size_t CharacterX, size_t CharacterY
     if (CollisionsPerTileIndex.find(TileIndex) == CollisionsPerTileIndex.end()) { // FIXME: Use contains()
         return false;
     }
-
+/*
     Collision const& Collision{CollisionsPerTileIndex.at(TileIndex)};
 
     if (CharacterX + CharacterSize <= TileX + Collision.x()) {
@@ -25,7 +25,7 @@ bool Collider::collides(uint16_t TileIndex, size_t CharacterX, size_t CharacterY
 
     if (CharacterY > TileY + Collision.y() + Collision.height()) {
         return false;
-    }
+    }*/
 
     return true;
 }

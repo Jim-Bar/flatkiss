@@ -14,6 +14,9 @@ add_executable(2d-rendering-engine-test
     src/Configuration.cpp
     src/KeyboardState.cpp
     src/Level.cpp
+    src/Position.cpp
+    src/PositionedRectangle.cpp
+    src/Rectangle.cpp
     src/Renderer.cpp
     src/Tileset.cpp)
 target_link_libraries(2d-rendering-engine-test ${SDL2_LIBRARIES})

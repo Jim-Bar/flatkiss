@@ -1,25 +1,23 @@
 #ifndef COLLISION_HPP_INCLUDED
 #define COLLISION_HPP_INCLUDED
 
+#include <memory>
 #include <string>
 #include <unordered_map>
+
+#include "PositionedRectangle.hpp"
 
 /**
  * @brief For now just a rectangle delimitating a zone which cannot be crossed.
  */
 class Collision {
 public:
-    Collision(uint8_t X, uint8_t Y, uint8_t Width, uint8_t Height);
-    uint8_t height() const;
-    uint8_t x() const;
-    uint8_t y() const;
-    uint8_t width() const;
+    Collision(std::unique_ptr<Rectangle const[]> Rectangles, size_t RectanglesCount);
+    bool collidesWith(PositionedRectangle const& PositionedRectangle, Position const WhenAtPosition) const;
 
 private:
-    uint8_t Height;
-    uint8_t X;
-    uint8_t Y;
-    uint8_t Width;
+    std::unique_ptr<Rectangle const[]> Rectangles; // FIXME: Must be PositionedRectangle.
+    size_t const RectanglesCount;
 };
 
 class CollisionLoader {

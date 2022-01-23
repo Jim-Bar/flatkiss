@@ -24,9 +24,8 @@ std::unordered_map<uint16_t, Animation const> AnimationLoader::load(std::string 
     std::unordered_map<uint16_t, Animation const> AnimationsPerTileIndex;
     Stream.open(FilePath, std::ios::in | std::ios::binary);
     if (Stream.is_open()) {
-        char Byte{0};
-        while ((Byte = Stream.get()) != std::istream::traits_type::eof()) {
-            uint8_t AnimationPeriod{static_cast<uint8_t>(Byte)};
+        while (Stream.peek() != std::istream::traits_type::eof()) {
+            uint8_t AnimationPeriod{static_cast<uint8_t>(Stream.get())};
             uint8_t AnimationDuration{static_cast<uint8_t>(Stream.get())};
             auto Animation = std::make_unique<uint16_t[]>(AnimationPeriod);
             Stream.read(reinterpret_cast<char*>(Animation.get()), AnimationPeriod * 2); // Two bytes per tile.

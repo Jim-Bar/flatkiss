@@ -25,7 +25,6 @@ std::unordered_map<uint16_t, Collision const> CollisionLoader::load(std::string 
     std::unordered_map<uint16_t, Collision const> CollisionsPerTileIndex;
     Stream.open(FilePath, std::ios::in | std::ios::binary);
     if (Stream.is_open()) {
-        // TODO: Use peek() for Animation and Level too.
         while (Stream.peek() != std::istream::traits_type::eof()) {
             uint16_t TileIndex{0};
             Stream.read(reinterpret_cast<char*>(&TileIndex), 2); // Two bytes per tile index.

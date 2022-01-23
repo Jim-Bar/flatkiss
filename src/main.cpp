@@ -11,6 +11,7 @@
 #include "Configuration.hpp"
 #include "KeyboardState.hpp"
 #include "Level.hpp"
+#include "Main.hpp"
 #include "Renderer.hpp"
 #include "Tileset.hpp"
 
@@ -95,7 +96,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    SDL_Window* Window = SDL_CreateWindow("2d-rendering-engine-test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, VIEWPORT_SIZE, VIEWPORT_SIZE, SDL_WINDOW_SHOWN);
+    SDL_Window* Window = SDL_CreateWindow(PROJECT_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, VIEWPORT_SIZE, VIEWPORT_SIZE, SDL_WINDOW_SHOWN);
     if (Window == nullptr) {
         cerr << "SDL_CreateWindow Error: " << SDL_GetError() << endl;
         return EXIT_FAILURE;

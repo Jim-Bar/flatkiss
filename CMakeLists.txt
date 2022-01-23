@@ -1,11 +1,16 @@
 cmake_minimum_required(VERSION 3.18)
 
-project(2d-rendering-engine-test)
+project(FlatKiss)
+
+configure_file(
+    src/Main.hpp.in
+    src/Main.hpp
+)
 
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
-add_executable(2d-rendering-engine-test
+add_executable(${PROJECT_NAME}
     src/main.cpp
     src/Animation.cpp
     src/AnimationPlayer.cpp
@@ -19,4 +24,4 @@ add_executable(2d-rendering-engine-test
     src/Rectangle.cpp
     src/Renderer.cpp
     src/Tileset.cpp)
-target_link_libraries(2d-rendering-engine-test ${SDL2_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})

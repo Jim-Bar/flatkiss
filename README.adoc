@@ -53,6 +53,7 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
+. Replace "pixel" by "point" in the code that does not deal with graphics
 . Editor: synchronize animated tiles when placing them
 . Two layers of tiles
 . Editor: resizable tileset window

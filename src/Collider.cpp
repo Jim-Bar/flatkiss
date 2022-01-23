@@ -8,24 +8,9 @@ bool Collider::collides(uint16_t TileIndex, size_t CharacterX, size_t CharacterY
     if (CollisionsPerTileIndex.find(TileIndex) == CollisionsPerTileIndex.end()) { // FIXME: Use contains()
         return false;
     }
-/*
+
     Collision const& Collision{CollisionsPerTileIndex.at(TileIndex)};
 
-    if (CharacterX + CharacterSize <= TileX + Collision.x()) {
-        return false;
-    }
-
-    if (CharacterX > TileX + Collision.x() + Collision.width()) {
-        return false;
-    }
-
-    if (CharacterY + CharacterSize <= TileY + Collision.y()) {
-        return false;
-    }
-
-    if (CharacterY > TileY + Collision.y() + Collision.height()) {
-        return false;
-    }*/
-
-    return true;
+    // FIXME: Create the Position, Rectangle and such higher in the stack.
+    return Collision.collidesWith(PositionedRectangle{Position{CharacterX, CharacterY}, Rectangle{CharacterSize, CharacterSize}}, Position{TileX, TileY});
 }

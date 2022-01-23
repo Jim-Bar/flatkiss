@@ -12,11 +12,11 @@
  */
 class Collision {
 public:
-    Collision(std::unique_ptr<Rectangle const[]> Rectangles, size_t RectanglesCount);
+    Collision(std::unique_ptr<PositionedRectangle const[]> PositionedRectangles, size_t RectanglesCount);
     bool collidesWith(PositionedRectangle const& PositionedRectangle, Position const WhenAtPosition) const;
 
 private:
-    std::unique_ptr<Rectangle const[]> Rectangles; // FIXME: Must be PositionedRectangle.
+    std::unique_ptr<PositionedRectangle const[]> PositionedRectangles;
     size_t const RectanglesCount;
 };
 

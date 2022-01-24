@@ -1,4 +1,17 @@
-= Build & run
+= FlatKiss
+:1: https://en.wikipedia.org/wiki/KISS_principle
+
+FlatKiss is a 2D tile based game engine.
+
+== Paradigm
+
+First and foremost the mindset driving this project is *_simple_*. It follows the {1}[KISS] principle. Simple comes
+before performance / optimization. Simple is different from easy. It is easy to complicate things, but hard to make them
+simple. In this project, before implementing anything the question which is asked is: "_Is this simple?_". If it is not,
+then rethink it.
+
+Concerns about performance only come after. When the project starts behaving slowly, *then* things can be torn to
+accomodate performance. This is C++ with SDL, so (unless doing crazy things) performance often comes out of the box.
 
 == How to build
 
@@ -41,7 +54,8 @@ A collision is stored as:
 === How to use
 
 Move around using the right mouse button. Select a tile to place by left-clicking on it in the tileset view. Place a
-tile by left-clicking on a location in the level view. Save the level by pressing `S`.
+tile by left-clicking on a location in the level view. Save the level by pressing `S`. The title bars display a `*` when
+the work is not saved.
 
 === About animations
 
@@ -53,6 +67,9 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
+. Improve the README: building in docker, development environment, required dependencies for running out of docker, ...
+. Collisions made up of several positioned rectangles
+. Navigation to slide along obstacles when possible
 . Replace "pixel" by "point" in the code that does not deal with graphics
 . Editor: synchronize animated tiles when placing them
 . Two layers of tiles

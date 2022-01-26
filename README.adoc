@@ -67,6 +67,7 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
+. Check whether the built binary can run on a system without libsdl2
 . Improve the README: building in docker, development environment, required dependencies for running out of docker, ...
 . Navigation to slide along obstacles when possible
 . Replace "pixel" by "point" in the code that does not deal with graphics

@@ -5,13 +5,13 @@ FlatKiss is a 2D tile based game engine.
 
 == Paradigm
 
-First and foremost the mindset driving this project is *_simple_*. It follows the {1}[KISS] principle. Simple comes
+First and foremost the mindset driving this project is *_simple_*. It embraces the {1}[KISS] principle. Simplicity comes
 before performance / optimization. Simple is different from easy. It is easy to complicate things, but hard to make them
 simple. In this project, before implementing anything the question which is asked is: "_Is this simple?_". If it is not,
-then rethink it.
+then revamp it.
 
 Concerns about performance only come after. When the project starts behaving slowly, *then* things can be torn to
-accomodate performance. This is C++ with SDL, so (unless doing crazy things) performance often comes out of the box.
+accomodate performance. This is C++ with SDL, so unless doing crazy things performance often comes out of the box.
 
 == How to build
 

@@ -45,3 +45,8 @@ add_executable(${PROJECT_NAME}
     src/Tileset.hpp
 )
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
+
+# Setting the C++ version, from Moder CMake:
+# https://cliutils.gitlab.io/modern-cmake/chapters/features/cpp11.html
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)

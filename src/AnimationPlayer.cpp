@@ -5,7 +5,7 @@ AnimationPlayer::AnimationPlayer(std::unordered_map<uint16_t, Animation const>&&
 }
 
 uint16_t AnimationPlayer::animatedTileIndexFor(uint16_t TileIndex, size_t Tick) const {
-    if (AnimationsPerTileIndex.find(TileIndex) == AnimationsPerTileIndex.end()) { // FIXME: Use contains()
+    if (!AnimationsPerTileIndex.contains(TileIndex)) {
         return TileIndex;
     }
 

@@ -32,7 +32,7 @@ unordered_map<uint16_t, Collision const> CollisionLoader::load(std::string const
             Stream.read(reinterpret_cast<char*>(&TileIndex), 2); // Two bytes per tile index.
             Position Position{static_cast<uint8_t>(Stream.get()), static_cast<uint8_t>(Stream.get())};
             Rectangle Rectangle{static_cast<uint8_t>(Stream.get()), static_cast<uint8_t>(Stream.get())};
-            if (VectorsPerTileIndex.find(TileIndex) == VectorsPerTileIndex.end()) { // FIXME: Use contains()
+            if (!VectorsPerTileIndex.contains(TileIndex)) {
                 VectorsPerTileIndex.emplace(TileIndex, vector<PositionedRectangle>{});
             }
             VectorsPerTileIndex[TileIndex].emplace_back(Position, Rectangle);

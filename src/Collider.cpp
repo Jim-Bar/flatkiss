@@ -5,7 +5,7 @@ Collider::Collider(std::unordered_map<uint16_t, Collision const>&& CollisionsPer
 }
 
 bool Collider::collides(uint16_t TileIndex, size_t CharacterX, size_t CharacterY, size_t TileX, size_t TileY, size_t CharacterSize) const {
-    if (CollisionsPerTileIndex.find(TileIndex) == CollisionsPerTileIndex.end()) { // FIXME: Use contains()
+    if (!CollisionsPerTileIndex.contains(TileIndex)) {
         return false;
     }
 

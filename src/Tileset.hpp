@@ -32,7 +32,7 @@ private:
     size_t const HeightInTiles;
     size_t const LeftOffset;
     SDL_Texture* const Texture;
-    size_t const TilesSize;
+    size_t const TilesSize; // FIXME: Probably that does not belong to the tileset (but to the model instead).
     size_t const TopOffset;
     size_t const WidthInTiles;
 

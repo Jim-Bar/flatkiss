@@ -12,6 +12,8 @@
 #include "KeyboardState.hpp"
 #include "Level.hpp"
 #include "Main.hpp"
+#include "Navigator.hpp"
+#include "PositionedRectangle.hpp"
 #include "Renderer.hpp"
 #include "Tileset.hpp"
 
@@ -19,7 +21,7 @@ size_t const CHARACTER_SIZE_PIXELS(16);
 size_t const SPEED_IN_PIXELS(2);
 size_t const VIEWPORT_SIZE(160);
 
-void move(KeyboardState const& keyboard_state, Collider const& Collider, size_t& x, size_t& y, size_t& viewport_x, size_t& viewport_y, std::unique_ptr<Level const>& Level, Tileset const& Tileset) {
+void move(KeyboardState const& keyboard_state, Navigator const& Navigator, size_t& x, size_t& y, size_t& viewport_x, size_t& viewport_y, std::unique_ptr<Level const>& Level, Tileset const& Tileset) {
     size_t NewX{x};
     size_t NewY{y};
     if (keyboard_state.isPressed(SDL_SCANCODE_UP)) {
@@ -55,17 +57,10 @@ void move(KeyboardState const& keyboard_state, Collider const& Collider, size_t&
         return;
     }
 
-    for (size_t Y(NewY / Tileset.tilesSize()); Y <= (NewY + CHARACTER_SIZE_PIXELS) / Tileset.tilesSize(); Y++) {
-        for (size_t X(NewX / Tileset.tilesSize()); X <= (NewX + CHARACTER_SIZE_PIXELS) / Tileset.tilesSize(); X++) {
-            uint16_t TileIndex(Level->tileIndex(X, Y));
-            if (Collider.collides(TileIndex, NewX, NewY, X * Tileset.tilesSize(), Y * Tileset.tilesSize(), CHARACTER_SIZE_PIXELS)) {
-                return;
-            }
-        }
-    }
+    Position NewPosition{Navigator.navigateTo(PositionedRectangle{Position{x, y}, Rectangle{CHARACTER_SIZE_PIXELS, CHARACTER_SIZE_PIXELS}}, Position{NewX, NewY})};
 
-    x = NewX;
-    y = NewY;
+    x = NewPosition.x();
+    y = NewPosition.y();
 
     if (y < VIEWPORT_SIZE / 2 - CHARACTER_SIZE_PIXELS / 2) {
         viewport_y = 0;
@@ -127,6 +122,7 @@ int main(int argc, char *argv[])
     KeyboardState keyboard_state;
     AnimationPlayer AnimationPlayer{AnimationLoader::load(Configuration.animationsPath())};
     Collider Collider{CollisionLoader::load(Configuration.collisionsPath())};
+    Navigator Navigator{Collider, *Level, Tileset.tilesSize()}; // FIXME: Reference from a pointer.
     size_t x(0), y(0), character_x(0), character_y(0);
     size_t Tick(0);
     while (!quit) {
@@ -140,7 +136,7 @@ int main(int argc, char *argv[])
                 keyboard_state.update(event.key.keysym.scancode, event.key.state == SDL_PRESSED ? true : false);
             }
         }
-        move(keyboard_state, Collider, character_x, character_y, x, y, Level, Tileset);
+        move(keyboard_state, Navigator, character_x, character_y, x, y, Level, Tileset);
     }
 
     // FIXME: Do those cleanups in error cases too.

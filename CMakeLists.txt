@@ -33,6 +33,8 @@ add_executable(${PROJECT_NAME}
     src/Level.cpp
     src/Level.hpp
     src/Main.hpp
+    src/Navigator.cpp
+    src/Navigator.hpp
     src/Position.cpp
     src/Position.hpp
     src/PositionedRectangle.cpp

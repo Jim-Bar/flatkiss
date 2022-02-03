@@ -23,6 +23,7 @@ public:
      */
     PositionedRectangle operator+(Position const& Position) const;
     Position const& position() const;
+    Rectangle const& rectangle() const;
     size_t width() const;
     size_t x() const;
     size_t y() const;

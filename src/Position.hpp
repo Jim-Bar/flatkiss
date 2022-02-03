@@ -3,6 +3,8 @@
 
 #include <cstddef>
 
+#include "Vector.hpp"
+
 class PositionedRectangle; // Forward declaration to break the cycle Position / PositionedRectangle.
 
 /**
@@ -21,12 +23,21 @@ public:
      * @return PositionedRectangle A new positioned rectangle moved by the current position.
      */
     PositionedRectangle operator+(PositionedRectangle const& PositionedRectangle) const;
+    /**
+     * @brief Returns a new delta between the two positions.
+     * 
+     * @param Position The other position that will be substracted from the current position.
+     * @return Vector A new vector from the other position to the current one.
+     */
+    Vector operator-(Position const& Position) const;
     size_t x() const;
     size_t y() const;
 
 private:
     size_t const X;
     size_t const Y;
+
+    int64_t substractSizes(size_t Size1, size_t Size2) const;
 };
 
 #endif

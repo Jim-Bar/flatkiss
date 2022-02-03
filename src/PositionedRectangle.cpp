@@ -37,6 +37,10 @@ Position const& PositionedRectangle::position() const {
     return Pos;
 }
 
+Rectangle const& PositionedRectangle::rectangle() const {
+    return Rect;
+}
+
 size_t PositionedRectangle::width() const {
     return Rect.width();
 }

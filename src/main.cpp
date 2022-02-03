@@ -38,7 +38,7 @@ void move(KeyboardState const& keyboard_state, Navigator const& Navigator, size_
         Dx += SPEED_IN_PIXELS;
     }
 
-    Position NewPosition{Navigator.navigateTo(PositionedRectangle{Position{x, y}, Rectangle{CHARACTER_SIZE_PIXELS, CHARACTER_SIZE_PIXELS}}, Vector{Dx, Dy})};
+    Position NewPosition{Navigator.moveBy(PositionedRectangle{Position{x, y}, Rectangle{CHARACTER_SIZE_PIXELS, CHARACTER_SIZE_PIXELS}}, Vector{Dx, Dy})};
 
     x = NewPosition.x();
     y = NewPosition.y();

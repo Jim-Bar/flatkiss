@@ -12,7 +12,7 @@
 class Navigator {
 public:
     Navigator(Collider const& Collider, Level const& Level, size_t const TilesSize);
-    Position navigateTo(PositionedRectangle const& SourcePositionedRectangle, Vector const& Displacement) const;
+    Position moveBy(PositionedRectangle const& SourcePositionedRectangle, Vector const& DesiredDisplacement) const;
 
 private:
     Collider const& TheCollider;
@@ -20,6 +20,8 @@ private:
     size_t const TilesSize;
 
     size_t clampToLevelBounds(size_t ObjectPosition, size_t ObjectSize, int64_t DeltaValue, size_t LevelSize) const;
+    bool collidesWithTiles(PositionedRectangle const& PositionedRectangle) const; // FIXME: Move to Collider?
+    Position findNearestPositionToDestination(PositionedRectangle const& SourcePositionedRectangle, Position const& Destination) const;
 };
 
 #endif

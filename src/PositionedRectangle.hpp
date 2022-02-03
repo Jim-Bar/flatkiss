@@ -22,6 +22,7 @@ public:
      * @return PositionedRectangle A new positioned rectangle moved by the position.
      */
     PositionedRectangle operator+(Position const& Position) const;
+    Position const& position() const;
     size_t width() const;
     size_t x() const;
     size_t y() const;

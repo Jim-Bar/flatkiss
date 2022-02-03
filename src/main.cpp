@@ -16,48 +16,29 @@
 #include "PositionedRectangle.hpp"
 #include "Renderer.hpp"
 #include "Tileset.hpp"
+#include "Vector.hpp"
 
 size_t const CHARACTER_SIZE_PIXELS(16);
 size_t const SPEED_IN_PIXELS(2);
 size_t const VIEWPORT_SIZE(160);
 
 void move(KeyboardState const& keyboard_state, Navigator const& Navigator, size_t& x, size_t& y, size_t& viewport_x, size_t& viewport_y, std::unique_ptr<Level const>& Level, Tileset const& Tileset) {
-    size_t NewX{x};
-    size_t NewY{y};
+    int64_t Dx{0};
+    int64_t Dy{0};
     if (keyboard_state.isPressed(SDL_SCANCODE_UP)) {
-        if (y < SPEED_IN_PIXELS) {
-            NewY = 0;
-        } else {
-            NewY -= SPEED_IN_PIXELS;
-        }
+        Dy -= SPEED_IN_PIXELS;
     }
     if (keyboard_state.isPressed(SDL_SCANCODE_DOWN)) {
-        if (y + CHARACTER_SIZE_PIXELS + SPEED_IN_PIXELS >= Level->heightInTiles() * Tileset.tilesSize()) {
-            NewY = Level->heightInTiles() * Tileset.tilesSize() - CHARACTER_SIZE_PIXELS;
-        } else {
-            NewY += SPEED_IN_PIXELS;
-        }
+        Dy += SPEED_IN_PIXELS;
     }
     if (keyboard_state.isPressed(SDL_SCANCODE_LEFT)) {
-        if (x < SPEED_IN_PIXELS) {
-            NewX = 0;
-        } else {
-            NewX -= SPEED_IN_PIXELS;
-        }
+        Dx -= SPEED_IN_PIXELS;
     }
     if (keyboard_state.isPressed(SDL_SCANCODE_RIGHT)) {
-        if (x + CHARACTER_SIZE_PIXELS + SPEED_IN_PIXELS >= Level->widthInTiles() * Tileset.tilesSize()) {
-            NewX = Level->widthInTiles() * Tileset.tilesSize() - CHARACTER_SIZE_PIXELS;
-        } else {
-            NewX += SPEED_IN_PIXELS;
-        }
+        Dx += SPEED_IN_PIXELS;
     }
 
-    if (x == NewX && y == NewY) {
-        return;
-    }
-
-    Position NewPosition{Navigator.navigateTo(PositionedRectangle{Position{x, y}, Rectangle{CHARACTER_SIZE_PIXELS, CHARACTER_SIZE_PIXELS}}, Position{NewX, NewY})};
+    Position NewPosition{Navigator.navigateTo(PositionedRectangle{Position{x, y}, Rectangle{CHARACTER_SIZE_PIXELS, CHARACTER_SIZE_PIXELS}}, Vector{Dx, Dy})};
 
     x = NewPosition.x();
     y = NewPosition.y();

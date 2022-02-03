@@ -45,6 +45,8 @@ add_executable(${PROJECT_NAME}
     src/Renderer.hpp
     src/Tileset.cpp
     src/Tileset.hpp
+    src/Vector.cpp
+    src/Vector.hpp
 )
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
 

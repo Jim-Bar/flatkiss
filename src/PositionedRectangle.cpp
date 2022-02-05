@@ -28,9 +28,8 @@ bool PositionedRectangle::intersectsWith(PositionedRectangle const& Other) const
     return true;
 }
 
-PositionedRectangle PositionedRectangle::operator+(Position const& Position) const {
-    // Using the operator+ from the class Position.
-    return Position + *this;
+PositionedRectangle PositionedRectangle::operator+(Vector const& Vector) const {
+    return PositionedRectangle{position() + Vector, rectangle()};
 }
 
 Position const& PositionedRectangle::position() const {

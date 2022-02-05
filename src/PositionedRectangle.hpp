@@ -3,6 +3,7 @@
 
 #include "Position.hpp"
 #include "Rectangle.hpp"
+#include "Vector.hpp"
 
 /**
  * @brief A rectangle with a position.
@@ -15,13 +16,12 @@ public:
     size_t height() const;
     bool intersectsWith(PositionedRectangle const& Other) const;
     /**
-     * @brief Returns a new positioned rectangle moved by the position.
-     * The position here can be considered as a vector, or a distance.
+     * @brief Returns a new positioned rectangle moved by the provided displacement.
      *
-     * @param Position The position considered as a vector to apply.
-     * @return PositionedRectangle A new positioned rectangle moved by the position.
+     * @param Vector The displacement to apply.
+     * @return PositionedRectangle A new positioned rectangle moved by the vector.
      */
-    PositionedRectangle operator+(Position const& Position) const;
+    PositionedRectangle operator+(Vector const& Vector) const;
     Position const& position() const;
     Rectangle const& rectangle() const;
     size_t width() const;

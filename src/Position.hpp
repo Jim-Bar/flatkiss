@@ -23,6 +23,7 @@ public:
      * @return PositionedRectangle A new positioned rectangle moved by the current position.
      */
     PositionedRectangle operator+(PositionedRectangle const& PositionedRectangle) const;
+    Position operator+(Vector const& Vector) const;
     /**
      * @brief Returns a new delta between the two positions.
      * 
@@ -30,6 +31,7 @@ public:
      * @return Vector A new vector from the other position to the current one.
      */
     Vector operator-(Position const& Position) const;
+    bool operator==(Position const& Position) const;
     size_t x() const;
     size_t y() const;
 

@@ -6,12 +6,12 @@ Navigator::Navigator(Collider const& Collider, Level const& Level, size_t const 
 
 }
 
-size_t Navigator::clampToLevelBounds(size_t ObjectPosition, size_t ObjectSize, int64_t DeltaValue, size_t LevelSize) const {
+size_t Navigator::clampToBounds(size_t ObjectPosition, size_t ObjectSize, int64_t DeltaValue, size_t UpperBound) const {
     // Here care is taken to deal with unsigned integers and substractions.
     if (DeltaValue < 0 && ObjectPosition < -DeltaValue) {
         return 0;
-    } else if (DeltaValue > 0 && ObjectPosition + ObjectSize + DeltaValue >= LevelSize * TilesSize) {
-        return LevelSize * TilesSize - ObjectSize;
+    } else if (DeltaValue > 0 && ObjectPosition + ObjectSize + DeltaValue >= UpperBound) {
+        return UpperBound - ObjectSize;
     } else {
         return ObjectPosition + DeltaValue;
     }
@@ -31,15 +31,18 @@ bool Navigator::collidesWithTiles(PositionedRectangle const& PositionedRectangle
 }
 
 Position Navigator::findNearestPositionToDestination(PositionedRectangle const& SourcePositionedRectangle, Position const& Destination) const {
+    /* Decompose the displacement in steps. Each step is a point. Because the components of the displacement can be
+    different, first find the greatest of the two. This is the number of steps. Then move step by step (point by point).
+    On the first collision, return the last position (it did not collide). This is the nearest position to the
+    destination, and which does not collide. */
     Vector Displacement{Destination - SourcePositionedRectangle.position()};
-    size_t MaxDisplacement{std::max(std::abs(Displacement.dx()), std::abs(Displacement.dy()))}; // FIXME: Narrowing conversion.
-    for (size_t Step{1}; Step <= MaxDisplacement; Step++) {
-        int64_t DX{static_cast<int64_t>(static_cast<double>(Step * Displacement.dx()) / static_cast<double>(MaxDisplacement))};
-        int64_t DY{static_cast<int64_t>(static_cast<double>(Step * Displacement.dy()) / static_cast<double>(MaxDisplacement))};
-        Position NewStepPosition{SourcePositionedRectangle.x() + DX, SourcePositionedRectangle.y() + DY};
-        if (collidesWithTiles(PositionedRectangle{NewStepPosition, SourcePositionedRectangle.rectangle()})) {
+    int64_t MaxDisplacement{std::max(std::abs(Displacement.dx()), std::abs(Displacement.dy()))};
+    for (int64_t Step{1}; Step <= MaxDisplacement; Step++) {
+        Vector PartialDisplacement{(Step * Displacement.dx()) / MaxDisplacement, (Step * Displacement.dy()) / MaxDisplacement};
+        if (collidesWithTiles(SourcePositionedRectangle + PartialDisplacement)) {
             // Return the last step for which the position does not collide (for the first step this is the original position).
-            // TODO.
+            return Position{SourcePositionedRectangle.x() + ((Step - 1) * Displacement.dx()) / MaxDisplacement,
+                SourcePositionedRectangle.y() + ((Step - 1) * Displacement.dy()) / MaxDisplacement};
         }
     }
 
@@ -48,17 +51,20 @@ Position Navigator::findNearestPositionToDestination(PositionedRectangle const& 
 }
 
 Position Navigator::moveBy(PositionedRectangle const& SourcePositionedRectangle, Vector const& DesiredDisplacement) const {
-    Position Destination{clampToLevelBounds(SourcePositionedRectangle.x(), SourcePositionedRectangle.width(), DesiredDisplacement.dx(), TheLevel.widthInTiles()),
-        clampToLevelBounds(SourcePositionedRectangle.y(), SourcePositionedRectangle.height(), DesiredDisplacement.dy(), TheLevel.heightInTiles())};
+    // First collide with the bounds of the level. Compute the resulting (potential) destination.
+    Position Destination{clampToBounds(SourcePositionedRectangle.x(), SourcePositionedRectangle.width(), DesiredDisplacement.dx(), TheLevel.widthInTiles() * TilesSize),
+        clampToBounds(SourcePositionedRectangle.y(), SourcePositionedRectangle.height(), DesiredDisplacement.dy(), TheLevel.heightInTiles() * TilesSize)};
 
-    if (SourcePositionedRectangle.x() == Destination.x() && SourcePositionedRectangle.y() == Destination.y()) {
+    // Secondly, if the destination is the same as the current position, nothing to do.
+    if (SourcePositionedRectangle.position() == Destination) {
         return SourcePositionedRectangle.position();
     }
 
+    // Otherwise if there is a collision with a tile, make sure to stick to the tile.
     if (collidesWithTiles(PositionedRectangle{Destination, SourcePositionedRectangle.rectangle()})) {
-        // FIXME: call findNearestPositionToDestination().
-        return SourcePositionedRectangle.position();
+        return findNearestPositionToDestination(SourcePositionedRectangle, Destination);
     }
 
+    // But if there is not collision, just go to the final destination.
     return Destination;
 }

@@ -34,7 +34,8 @@ Position Navigator::findNearestPositionToDestination(PositionedRectangle const& 
     /* Decompose the displacement in steps. Each step is a point. Because the components of the displacement can be
     different, first find the greatest of the two. This is the number of steps. Then move step by step (point by point).
     On the first collision, return the last position (it did not collide). This is the nearest position to the
-    destination, and which does not collide. */
+    destination, and which does not collide. Note that this implementation find the nearest position on the line between
+    the source and the destination. It will not return the actual nearest position when it is outside of that line. */
     Vector Displacement{Destination - SourcePositionedRectangle.position()};
     int64_t MaxDisplacement{std::max(std::abs(Displacement.dx()), std::abs(Displacement.dy()))};
     for (int64_t Step{1}; Step <= MaxDisplacement; Step++) {
@@ -47,7 +48,7 @@ Position Navigator::findNearestPositionToDestination(PositionedRectangle const& 
     }
 
     // FIXME: Raise an exception (this must only be called when the destination cannot be reached).
-    return SourcePositionedRectangle.position();
+    return Destination;
 }
 
 Position Navigator::moveBy(PositionedRectangle const& SourcePositionedRectangle, Vector const& DesiredDisplacement) const {
@@ -62,7 +63,35 @@ Position Navigator::moveBy(PositionedRectangle const& SourcePositionedRectangle,
 
     // Otherwise if there is a collision with a tile, make sure to stick to the tile.
     if (collidesWithTiles(PositionedRectangle{Destination, SourcePositionedRectangle.rectangle()})) {
-        return findNearestPositionToDestination(SourcePositionedRectangle, Destination);
+        Position NearestPosition{findNearestPositionToDestination(SourcePositionedRectangle, Destination)};
+        if (SourcePositionedRectangle.position() != NearestPosition) {
+            return NearestPosition;
+        }
+
+        // Maybe it is possible to slide against the obstacle along the X axis.
+        Position DestinationX{Destination.x(), SourcePositionedRectangle.y()};
+        if (collidesWithTiles(PositionedRectangle{DestinationX, SourcePositionedRectangle.rectangle()})) {
+            Position NearestPositionX{findNearestPositionToDestination(SourcePositionedRectangle, DestinationX)};
+            if (SourcePositionedRectangle.position() != NearestPositionX) {
+                return NearestPositionX;
+            }
+        } else {
+            return DestinationX;
+        }
+
+        // Or along the Y axis.
+        Position DestinationY{SourcePositionedRectangle.x(), Destination.y()};
+        if (collidesWithTiles(PositionedRectangle{DestinationY, SourcePositionedRectangle.rectangle()})) {
+            Position NearestPositionY{findNearestPositionToDestination(SourcePositionedRectangle, DestinationY)};
+            if (SourcePositionedRectangle.position() != NearestPositionY) {
+                return NearestPositionY;
+            }
+        } else {
+            return DestinationY;
+        }
+
+        // It is not possible to get to a nearer position.
+        return SourcePositionedRectangle.position();
     }
 
     // But if there is not collision, just go to the final destination.

@@ -6,6 +6,10 @@ Position::Position(size_t X, size_t Y) : X(X), Y(Y) {
 
 }
 
+bool Position::operator!=(Position const& Position) const {
+    return !(*this == Position);
+}
+
 PositionedRectangle Position::operator+(PositionedRectangle const& PositionedRect) const {
     return PositionedRectangle{Position{x() + PositionedRect.x(), y() + PositionedRect.y()}, Rectangle{PositionedRect.width(), PositionedRect.height()}};
 }

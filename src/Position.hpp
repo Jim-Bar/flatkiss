@@ -15,6 +15,7 @@ class PositionedRectangle; // Forward declaration to break the cycle Position / 
 class Position {
 public:
     Position(size_t X, size_t Y);
+    bool operator!=(Position const& Position) const;
     /**
      * @brief Returns a new positioned rectangle moved by the position.
      * The position here can be considered as a vector, or a distance.

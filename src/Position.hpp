@@ -5,6 +5,7 @@
 
 #include "Vector.hpp"
 
+class PositionedEllipse; // Forward declaration to break the cycle Position / PositionedEllipse;
 class PositionedRectangle; // Forward declaration to break the cycle Position / PositionedRectangle.
 
 /**
@@ -16,6 +17,15 @@ class Position {
 public:
     Position(size_t X, size_t Y);
     bool operator!=(Position const& Position) const;
+    Position operator+(Position const& OtherPosition) const;
+    /**
+     * @brief Returns a new positioned ellipse moved by the position.
+     * The position here can be considered as a vector, or a distance.
+     * 
+     * @param PositionedEllipse The positioned ellipse that will be moved.
+     * @return PositionedEllipse A new positioned ellipse moved by the current position.
+     */
+    PositionedEllipse operator+(PositionedEllipse const& PositionedEllipse) const;
     /**
      * @brief Returns a new positioned rectangle moved by the position.
      * The position here can be considered as a vector, or a distance.

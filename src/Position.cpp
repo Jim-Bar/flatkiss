@@ -1,4 +1,5 @@
 #include "Position.hpp"
+#include "PositionedEllipse.hpp"
 #include "PositionedRectangle.hpp"
 #include "Rectangle.hpp"
 
@@ -10,8 +11,16 @@ bool Position::operator!=(Position const& Position) const {
     return !(*this == Position);
 }
 
+Position Position::operator+(Position const& OtherPosition) const {
+    return Position{x() + OtherPosition.x(), y() + OtherPosition.y()};
+}
+
+PositionedEllipse Position::operator+(PositionedEllipse const& PositionedEll) const {
+    return PositionedEllipse{*this + PositionedEll.position(), PositionedEll.ellipse()};
+}
+
 PositionedRectangle Position::operator+(PositionedRectangle const& PositionedRect) const {
-    return PositionedRectangle{Position{x() + PositionedRect.x(), y() + PositionedRect.y()}, Rectangle{PositionedRect.width(), PositionedRect.height()}};
+    return PositionedRectangle{*this + PositionedRect.position(), PositionedRect.rectangle()};
 }
 
 Position Position::operator+(Vector const& Vector) const {

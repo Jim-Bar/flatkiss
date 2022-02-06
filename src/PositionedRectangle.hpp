@@ -14,6 +14,7 @@ class PositionedRectangle {
 public:
     PositionedRectangle(Position const Position, Rectangle const Rectangle);
     size_t height() const;
+    bool intersectsWith(PositionedEllipse const& Other) const;
     bool intersectsWith(PositionedRectangle const& Other) const;
     /**
      * @brief Returns a new positioned rectangle moved by the provided displacement.

@@ -41,12 +41,21 @@ the tiles indices (in the tileset) as shorts (two bytes per index, little endian
 
 === Collisions
 
-Collisions are rectangles which cannot be crossed. They are delimitated by an origin (x, y) at the top left of the tile,
-and a size (width, height). They are associated with tiles indices. For instance, if tiles are 16x16 pixels, the
-collision of origin (12, 12) and size (4, 4) makes a tile not walkable on the square of 4x4 pixels at its bottom right.
+Collisions are either rectangles or ellipses which cannot be crossed.
+
+Rectangle collisions are delimitated by an origin (x, y) at the top left of the tile, and a size (width, height). They
+are associated with tiles indices. For instance, if tiles are 16x16 pixels, the collision of origin (12, 12) and size
+(4, 4) makes a tile not walkable on the square of 4x4 pixels at its bottom right.
+
+Ellipse collisions are delimitated by an ellipse whose center (x, y) is at the top left of the tile, and two radii for
+each axis (radiusX, radiusY). As for rectangle collisions, they are associated with tiles indices. For instance, if
+tiles are 16x16 pixels, the collision of origin (4, 4) and radii (4, 4) makes a tile not walkable on the circle of 8x8
+pixels at its top left.
+
 A collision is stored as:
 
 . First two bytes: tile index
+. Next byte: collision type (0 for rectangle, 1 for circle)
 . Then on the four next bytes (each on one byte): x, y, width, height
 
 == Editor
@@ -73,7 +82,6 @@ Note also that the speed of animations can slightly differ from the engine, depe
 . Improve the README: building in docker, development environment, required dependencies for running out of docker, ...
 . Navigation to slide along obstacles when possible
 . Replace "pixel" by "point" in the code that does not deal with graphics
-. Editor: tile index of the currently selected displayed somewhere (title bar?)
 . Editor: synchronize animated tiles when placing them
 . Two layers of tiles
 . Editor: resizable tileset window

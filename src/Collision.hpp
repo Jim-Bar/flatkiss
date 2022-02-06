@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "PositionedEllipse.hpp"
 #include "PositionedRectangle.hpp"
 
 /**
@@ -12,12 +13,12 @@
  */
 class Collision {
 public:
-    Collision(std::vector<PositionedRectangle> const PositionedRectangles, size_t RectanglesCount);
+    Collision(std::vector<PositionedEllipse> const PositionedEllipses, std::vector<PositionedRectangle> const PositionedRectangles);
     bool collidesWith(PositionedRectangle const& PositionedRectangle, Position const WhenAtPosition) const;
 
 private:
+    std::vector<PositionedEllipse> const PositionedEllipses;
     std::vector<PositionedRectangle> const PositionedRectangles;
-    size_t const RectanglesCount;
 };
 
 class CollisionLoader {

@@ -1,3 +1,4 @@
+#include "PositionedEllipse.hpp"
 #include "PositionedRectangle.hpp"
 
 PositionedRectangle::PositionedRectangle(Position const Position, Rectangle const Rectangle) : Pos(Position), Rect(Rectangle) {
@@ -6,6 +7,14 @@ PositionedRectangle::PositionedRectangle(Position const Position, Rectangle cons
 
 size_t PositionedRectangle::height() const {
     return Rect.height();
+}
+
+bool PositionedRectangle::intersectsWith(PositionedEllipse const& Other) const {
+    // https://math.stackexchange.com/a/76463
+    // FIXME: Will not work when x() < Other.x() (same with y).
+    return Other.radiusY() * Other.radiusY() * (x() - Other.x()) * (x() - Other.x())
+        + Other.radiusX() * Other.radiusX() * (y() - Other.y()) * (y() - Other.y())
+        <= Other.radiusX() * Other.radiusX() * Other.radiusY() * Other.radiusY();
 }
 
 bool PositionedRectangle::intersectsWith(PositionedRectangle const& Other) const {

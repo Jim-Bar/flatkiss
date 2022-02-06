@@ -174,14 +174,16 @@ class _Controller(object):
 
     def __init__(self, configuration: _Configuration) -> None:
         self._configuration = configuration
-        self._current_selected_tile_index = 0
         self._tileset = _Tileset(configuration.tileset_path(), configuration.tiles_size(),
                                  configuration.tileset_width_in_tiles(), configuration.tileset_height_in_tiles(),
                                  configuration.tileset_left_offset(), configuration.tileset_top_offset(),
                                  configuration.tileset_gap())
         self._level = _LevelLoader.load(configuration.level_path(), configuration.level_width_in_tiles(),
                                         configuration.level_height_in_tiles(), self._tileset)
+        # Default to the first index in SDL's coordinate system.
+        self._current_selected_tile_index = _reverse_tile_index(0, self._tileset)
         self._level_window, self._tileset_window = self._create_windows(configuration, self._level, self._tileset)
+        self._update_windows_captions(True)
 
     def _create_windows(self, configuration: _Configuration, level: '_Level',
                         tileset: '_Tileset') -> Tuple['_LevelWindow', '_TilesetWindow']:
@@ -198,27 +200,31 @@ class _Controller(object):
                                  screen.width - tileset.width_in_pixels())
         level_window_height = min(level.height_in_tiles() * tileset.tiles_size_in_pixels(), screen.height)
 
-        level_window = _LevelWindow(configuration.editor_caption_level_window(), level_window_width,
-                                    level_window_height, level, tileset, animations, self.on_window_closed,
-                                    self.on_save_requested, self.on_location_selected)
-        tileset_window = _TilesetWindow(configuration.editor_caption_tileset_window(), tileset.width_in_pixels(),
-                                        tileset.height_in_pixels(), tileset, self.on_window_closed,
-                                        self.on_save_requested, self.on_tile_selected)
+        level_window = _LevelWindow(level_window_width, level_window_height, level, tileset, animations,
+                                    self.on_window_closed, self.on_save_requested, self.on_location_selected)
+        tileset_window = _TilesetWindow(tileset.width_in_pixels(), tileset.height_in_pixels(), tileset,
+                                        self.on_window_closed, self.on_save_requested, self.on_tile_selected)
 
         return level_window, tileset_window
 
+    def _update_windows_captions(self, saved: bool) -> None:
+        # Display the tile index in SDL's coordinate system.
+        reversed_tile_index = _reverse_tile_index(self._current_selected_tile_index, self._tileset)
+        suffix = '({}){}'.format(reversed_tile_index, '' if saved else '*')
+        self._level_window.set_caption('{} {}'.format(self._configuration.editor_caption_level_window(), suffix))
+        self._tileset_window.set_caption('{} {}'.format(self._configuration.editor_caption_tileset_window(), suffix))
+
     def on_location_selected(self, location: _Location) -> None:
-        self._level_window.set_caption('{}*'.format(self._configuration.editor_caption_level_window()))
-        self._tileset_window.set_caption('{}*'.format(self._configuration.editor_caption_tileset_window()))
+        self._update_windows_captions(False)
         self._level.set_tile_index(location.i, location.j, self._current_selected_tile_index)
 
     def on_save_requested(self) -> None:
         _LevelLoader.save(self._level, self._configuration.level_path(), self._tileset)
-        self._level_window.set_caption(self._configuration.editor_caption_level_window())
-        self._tileset_window.set_caption(self._configuration.editor_caption_tileset_window())
+        self._update_windows_captions(True)
 
     def on_tile_selected(self, tile_index: int) -> None:
         self._current_selected_tile_index = tile_index
+        self._update_windows_captions(False)
 
     def on_window_closed(self) -> None:
         self._tileset_window.close()
@@ -227,7 +233,6 @@ class _Controller(object):
     @staticmethod
     def run() -> None:
         pyglet.app.run()
-
 
 class _LevelLoader(object):
     """
@@ -353,7 +358,7 @@ class _LevelWindow(pyglet.window.Window):
     to the :class:`_Controller`.
     """
 
-    def __init__(self, caption: str, width: int, height: int, level: _Level, tileset: _Tileset,
+    def __init__(self, width: int, height: int, level: _Level, tileset: _Tileset,
                  animations: Dict[int, pyglet.image.Animation], on_close: Callable, on_save_requested: Callable,
                  on_location_selected: Callable) -> None:
         self._animations = animations
@@ -365,7 +370,7 @@ class _LevelWindow(pyglet.window.Window):
         self._origin = _Point(0, 0)
         self._tileset = tileset
         self._tiles = self._create_tiles_sprites()
-        super().__init__(caption=caption, width=width, height=height, resizable=True)
+        super().__init__(width=width, height=height, resizable=True)
         self.set_maximum_size(self._level_width_in_pixels(), self._level_height_in_pixels())
 
     def _build_tile_sprite_at_location(self, location: _Location) -> pyglet.sprite.Sprite:
@@ -462,13 +467,13 @@ class _TilesetWindow(pyglet.window.Window):
     delegated to the :class:`_Controller`.
     """
 
-    def __init__(self, caption: str, width: int, height: int, tileset: _Tileset, on_close: Callable,
-                 on_save_requested: Callable, on_tile_selected: Callable) -> None:
+    def __init__(self, width: int, height: int, tileset: _Tileset, on_close: Callable, on_save_requested: Callable,
+                 on_tile_selected: Callable) -> None:
         self._on_close_callback = on_close
         self._on_save_requested = on_save_requested
         self._on_tile_selected = on_tile_selected
         self._tileset = tileset
-        super().__init__(caption=caption, width=width, height=height)
+        super().__init__(width=width, height=height)
 
     def on_close(self) -> None:
         self._on_close_callback()

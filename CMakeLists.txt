@@ -28,6 +28,8 @@ add_executable(${PROJECT_NAME}
     src/Collision.hpp
     src/Configuration.cpp
     src/Configuration.hpp
+    src/Ellipse.cpp
+    src/Ellipse.hpp
     src/KeyboardState.cpp
     src/KeyboardState.hpp
     src/Level.cpp
@@ -39,6 +41,8 @@ add_executable(${PROJECT_NAME}
     src/Position.hpp
     src/PositionedRectangle.cpp
     src/PositionedRectangle.hpp
+    src/PositionedEllipse.cpp
+    src/PositionedEllipse.hpp
     src/Rectangle.cpp
     src/Rectangle.hpp
     src/Renderer.cpp

@@ -10,11 +10,10 @@ size_t PositionedRectangle::height() const {
 }
 
 bool PositionedRectangle::intersectsWith(PositionedEllipse const& Other) const {
-    // https://math.stackexchange.com/a/76463
-    // FIXME: Will not work when x() < Other.x() (same with y).
-    return Other.radiusY() * Other.radiusY() * (x() - Other.x()) * (x() - Other.x())
-        + Other.radiusX() * Other.radiusX() * (y() - Other.y()) * (y() - Other.y())
-        <= Other.radiusX() * Other.radiusX() * Other.radiusY() * Other.radiusY();
+    return Other.contains(Position{x(), y()})
+        || Other.contains(Position{x() + width(), y()})
+        || Other.contains(Position{x(), y() + height()})
+        || Other.contains(Position{x() + width(), y() + height()});
 }
 
 bool PositionedRectangle::intersectsWith(PositionedRectangle const& Other) const {

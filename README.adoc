@@ -52,11 +52,20 @@ each axis (radiusX, radiusY). As for rectangle collisions, they are associated w
 tiles are 16x16 pixels, the collision of origin (4, 4) and radii (4, 4) makes a tile not walkable on the circle of 8x8
 pixels at its top left.
 
+NOTE: The origin (respectively center) of the rectangle (respectively ellipse) can be outside of the tile. Likewise, the
+size of the rectangle or ellipse can be greather than the one of the tile. Consequently, the rectangle or ellipse can
+overflow the tile. *However*, the portion outside of the tile will be ignored.
+
 A collision is stored as:
 
 . First two bytes: tile index
 . Next byte: collision type (0 for rectangle, 1 for circle)
 . Then on the four next bytes (each on one byte): x, y, width, height
+
+All of those are interpreted as unsigned (i.e. positive) integers.
+
+TIP: Several collisions can be added for a single tile index. Every one of those will be checked to determine whether an
+object collides with the tile.
 
 == Editor
 

@@ -14,6 +14,7 @@ RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt update && apt install --yes \
         clang \
+        clang-format \
         clang-tidy \
         cmake \
         g++ \

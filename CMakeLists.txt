@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.18)
 
 project(FlatKiss)
 
+# Enable clang-tidy for all the targets using the .clang-tidy file.
+set(CMAKE_CXX_CLANG_TIDY clang-tidy)
+
 configure_file(
     src/Main.hpp.in
     src/Main.hpp

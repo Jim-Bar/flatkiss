@@ -1,0 +1,5 @@
+---
+Checks: 'clang-diagnostic-*,clang-analyzer-*,cppcoreguidelines-*'
+AnalyzeTemporaryDtors: false
+FormatStyle: google
+...

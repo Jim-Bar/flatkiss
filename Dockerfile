@@ -13,6 +13,8 @@ COPY --from=0 /usr/local/include/inipp.h /usr/local/include
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt update && apt install --yes \
+        clang \
+        clang-tidy \
         cmake \
         g++ \
         libsdl2-dev \

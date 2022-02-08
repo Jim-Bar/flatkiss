@@ -6,7 +6,7 @@
 
 class PositionedEllipse {
 public:
-    PositionedEllipse(Position const Position, Ellipse const Ellipse); // FIXME: Using references here probably works (copy happens upon initialization).
+    PositionedEllipse(Position const& Position, Ellipse const& Ellipse);
     bool contains(Position const& Position) const;
     Ellipse const& ellipse() const;
     Position const& position() const;

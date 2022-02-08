@@ -12,7 +12,7 @@
  */
 class PositionedRectangle {
 public:
-    PositionedRectangle(Position const Position, Rectangle const Rectangle);
+    PositionedRectangle(Position const& Position, Rectangle const& Rectangle);
     size_t height() const;
     bool intersectsWith(PositionedEllipse const& Other) const; // FIXME: Move to Collider?
     bool intersectsWith(PositionedRectangle const& Other) const;

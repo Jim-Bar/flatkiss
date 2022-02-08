@@ -21,7 +21,7 @@ bool Navigator::collidesWithTiles(PositionedRectangle const& PositionedRectangle
     for (size_t Y(PositionedRectangle.y() / TilesSize); Y <= (PositionedRectangle.y() + PositionedRectangle.height() - 1) / TilesSize; Y++) {
         for (size_t X(PositionedRectangle.x() / TilesSize); X <= (PositionedRectangle.x() + PositionedRectangle.width() - 1) / TilesSize; X++) {
             uint16_t TileIndex(TheLevel.tileIndex(X, Y));
-            if (TheCollider.collides(PositionedRectangle, TileIndex, Position{X * TilesSize, Y * TilesSize})) {
+            if (TheCollider.collide(PositionedRectangle, TileIndex, Position{X * TilesSize, Y * TilesSize})) {
                 return true;
             }
         }

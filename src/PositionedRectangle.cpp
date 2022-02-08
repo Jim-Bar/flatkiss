@@ -1,7 +1,7 @@
 #include "PositionedEllipse.hpp"
 #include "PositionedRectangle.hpp"
 
-PositionedRectangle::PositionedRectangle(Position const Position, Rectangle const Rectangle) : Pos(Position), Rect(Rectangle) {
+PositionedRectangle::PositionedRectangle(Position const& Position, Rectangle const& Rectangle) : Pos(Position), Rect(Rectangle) {
 
 }
 

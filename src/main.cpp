@@ -86,6 +86,7 @@ int main(int argc, char *argv[])
     SDL_Surface* characterSurface = SDL_LoadBMP("assets/character.bmp");
     if (characterSurface == nullptr) {
         cerr << "SDL_LoadBMP Error: " << SDL_GetError() << endl;
+        SDL_DestroyWindow(Window);
         SDL_Quit();
         return EXIT_FAILURE;
     }
@@ -93,6 +94,7 @@ int main(int argc, char *argv[])
     SDL_Texture* character = Renderer.createTextureFromSurface(characterSurface);
     if (character == nullptr) {
         cerr << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << endl;
+        SDL_DestroyWindow(Window);
         SDL_Quit();
         return EXIT_FAILURE;
     }
@@ -103,11 +105,11 @@ int main(int argc, char *argv[])
     KeyboardState keyboard_state;
     AnimationPlayer AnimationPlayer{AnimationLoader::load(Configuration.animationsPath())};
     Collider Collider{CollisionLoader::load(Configuration.collisionsPath())};
-    Navigator Navigator{Collider, *Level, Tileset.tilesSize()}; // FIXME: Reference from a pointer.
+    Navigator Navigator{Collider, *Level, Tileset.tilesSize()};
     size_t x(0), y(0), character_x(0), character_y(0);
     size_t Tick(0);
     while (!quit) {
-        Renderer.render(AnimationPlayer, Level, Tileset, x, y, VIEWPORT_SIZE, Tick++, character, character_x, character_y, CHARACTER_SIZE_PIXELS);
+        Renderer.render(AnimationPlayer, *Level, Tileset, x, y, VIEWPORT_SIZE, Tick++, character, character_x, character_y, CHARACTER_SIZE_PIXELS);
         SDL_Delay(Configuration.engineTickDurationMs());
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
@@ -120,7 +122,6 @@ int main(int argc, char *argv[])
         move(keyboard_state, Navigator, character_x, character_y, x, y, Level, Tileset);
     }
 
-    // FIXME: Do those cleanups in error cases too.
     SDL_DestroyTexture(character);
     SDL_DestroyWindow(Window);
     SDL_Quit();

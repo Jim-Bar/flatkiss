@@ -21,8 +21,7 @@ public:
      * @return SDL_Texture* Resulting texture, owned by the caller, can be nullptr.
      */
     SDL_Texture* createTextureFromSurface(SDL_Surface* Surface) const;
-    // FIXME: Reference instead of pointer to the Level.
-    void render(AnimationPlayer const& AnimationPlayer, std::unique_ptr<Level const>& Level, Tileset const& Tileset,
+    void render(AnimationPlayer const& AnimationPlayer, Level const& Level, Tileset const& Tileset,
                 size_t ViewPortX, size_t ViewPortY, size_t ViewPortSizeInPixels, size_t Tick, SDL_Texture* CharacterTexture,
                 size_t CharacterX, size_t CharacterY, size_t CharacterSizeInPixels) const;
 
@@ -31,7 +30,7 @@ private:
 
     void renderCharacter(size_t ViewPortX, size_t ViewPortY, size_t Tick, SDL_Texture* CharacterTexture,
                          size_t CharacterX, size_t CharacterY, size_t CharacterSizeInPixels) const;
-    void renderLevel(AnimationPlayer const& AnimationPlayer, std::unique_ptr<Level const>& Level,
+    void renderLevel(AnimationPlayer const& AnimationPlayer, Level const& Level,
                      Tileset const& Tileset, size_t ViewPortX, size_t ViewPortY, size_t ViewPortSizeInPixels, size_t Tick) const;
 };
 

@@ -4,7 +4,7 @@
 #define ABS_DIFF(Expr1, Expr2) (Expr1 > Expr2 ? Expr1 - (Expr2) : Expr2 - (Expr1))
 #define SQUARE(Expr) (Expr * Expr)
 
-PositionedEllipse::PositionedEllipse(Position const Position, Ellipse const Ellipse) : Pos(Position), Ell(Ellipse) {
+PositionedEllipse::PositionedEllipse(Position const& Position, Ellipse const& Ellipse) : Pos(Position), Ell(Ellipse) {
 
 }
 

@@ -27,7 +27,7 @@ public:
      * @return true If the tile of given index and position collides with the provided positioned rectangle.
      * @return false If there is no collision.
      */
-    bool collides(PositionedRectangle const& PositionedRect, uint16_t TileIndex, Position const& TilePosition) const;
+    bool collide(PositionedRectangle const& PositionedRect, uint16_t TileIndex, Position const& TilePosition) const;
 
 private:
     std::unordered_map<uint16_t, Collision const> CollisionsPerTileIndex;

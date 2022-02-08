@@ -4,7 +4,7 @@ Collider::Collider(std::unordered_map<uint16_t, Collision const>&& CollisionsPer
     this->CollisionsPerTileIndex.swap(CollisionsPerTileIndex);
 }
 
-bool Collider::collides(PositionedRectangle const& PositionedRect, uint16_t TileIndex, Position const& TilePosition) const {
+bool Collider::collide(PositionedRectangle const& PositionedRect, uint16_t TileIndex, Position const& TilePosition) const {
     if (!CollisionsPerTileIndex.contains(TileIndex)) {
         return false;
     }

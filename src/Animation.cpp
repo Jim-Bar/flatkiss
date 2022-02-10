@@ -2,7 +2,7 @@
 
 #include "Animation.hpp"
 
-Animation::Animation(std::unique_ptr<uint16_t const[]> TileIndices, uint8_t Period, uint8_t Duration) :
+Animation::Animation(std::vector<uint16_t> const& TileIndices, uint8_t Period, uint8_t Duration) :
     TileIndices(std::move(TileIndices)), Period(Period), Duration(Duration) {
 
 }
@@ -27,9 +27,13 @@ std::unordered_map<uint16_t, Animation const> AnimationLoader::load(std::string 
         while (Stream.peek() != std::istream::traits_type::eof()) {
             uint8_t AnimationPeriod{static_cast<uint8_t>(Stream.get())};
             uint8_t AnimationDuration{static_cast<uint8_t>(Stream.get())};
-            auto Animation = std::make_unique<uint16_t[]>(AnimationPeriod);
-            Stream.read(reinterpret_cast<char*>(Animation.get()), AnimationPeriod * 2); // Two bytes per tile.
-            AnimationsPerTileIndex.emplace(std::piecewise_construct, std::forward_as_tuple(Animation[0]), std::forward_as_tuple(std::move(Animation), AnimationPeriod, AnimationDuration));
+            auto Animation{std::vector<uint16_t>(AnimationPeriod, 0)};
+            Stream.read(reinterpret_cast<char*>(Animation.data()),
+                        AnimationPeriod * 2);  // Two bytes per tile.
+            AnimationsPerTileIndex.emplace(
+                std::piecewise_construct, std::forward_as_tuple(Animation[0]),
+                std::forward_as_tuple(std::move(Animation), AnimationPeriod,
+                                      AnimationDuration));
         }
         Stream.close();
     } // FIXME: Raise exception.

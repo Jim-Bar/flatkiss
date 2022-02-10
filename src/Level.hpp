@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 /**
  * @brief Models a level.
@@ -12,14 +13,14 @@
  */
 class Level {
 public:
-    Level(std::unique_ptr<uint16_t const[]> Tiles, size_t WidthInTiles, size_t HeightInTiles);
+    Level(std::vector<uint16_t> const& Tiles, size_t WidthInTiles, size_t HeightInTiles);
     size_t heightInTiles() const;
     uint16_t tileIndex(size_t i, size_t j) const;
     size_t widthInTiles() const;
 
 private:
     size_t const HeightInTiles;
-    std::unique_ptr<uint16_t const[]> const Tiles;
+    std::vector<uint16_t> const Tiles;
     size_t const WidthInTiles;
 };
 

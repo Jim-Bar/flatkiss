@@ -10,9 +10,9 @@ bool KeyboardState::isPressed(SDL_Scancode key) const {
             return isLeftPressed;
         case SDL_SCANCODE_RIGHT:
             return isRightPressed;
+        default:
+            return false; // FIXME: Exception.
     }
-
-    return false; // FIXME: Exception.
 }
 
 void KeyboardState::update(SDL_Scancode Key, bool Pressed) {
@@ -29,5 +29,7 @@ void KeyboardState::update(SDL_Scancode Key, bool Pressed) {
         case SDL_SCANCODE_RIGHT:
             isRightPressed = Pressed;
             return;
+        default:
+            return; // FIXME: Exception.
     }
 }

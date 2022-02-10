@@ -1,9 +1,9 @@
 #ifndef ANIMATION_HPP_INCLUDED
 #define ANIMATION_HPP_INCLUDED
 
-#include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 /**
  * @brief A list of tile indices making up an animated tile.
@@ -13,7 +13,7 @@
  */
 class Animation {
 public:
-    Animation(std::unique_ptr<uint16_t const[]> TileIndices, uint8_t Period, uint8_t Duration);
+    Animation(std::vector<uint16_t> const& TileIndices, uint8_t Period, uint8_t Duration);
     uint8_t getDuration() const;
     uint8_t getPeriod() const;
     uint16_t tileIndexAtStep(uint16_t Step) const;
@@ -21,7 +21,7 @@ public:
 private:
     uint8_t const Duration;
     uint8_t const Period;
-    std::unique_ptr<uint16_t const[]> TileIndices;
+    std::vector<uint16_t> const TileIndices;
 };
 
 /**

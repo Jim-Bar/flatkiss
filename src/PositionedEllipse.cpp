@@ -1,8 +1,13 @@
 #include "PositionedEllipse.hpp"
 
 // Absolute value of the difference between two values (handles unsigned integers).
-#define ABS_DIFF(Expr1, Expr2) (Expr1 > Expr2 ? Expr1 - (Expr2) : Expr2 - (Expr1))
-#define SQUARE(Expr) (Expr * Expr)
+size_t absoluteDifference(size_t Value1, size_t Value2) {
+  return Value1 > Value2 ? Value1 - Value2 : Value2 - Value1;
+}
+
+size_t square(size_t Value) {
+  return Value * Value;
+}
 
 PositionedEllipse::PositionedEllipse(Position const& Position, Ellipse const& Ellipse) : Pos(Position), Ell(Ellipse) {
 
@@ -10,9 +15,9 @@ PositionedEllipse::PositionedEllipse(Position const& Position, Ellipse const& El
 
 bool PositionedEllipse::contains(Position const& Position) const {
     // https://math.stackexchange.com/a/76463
-    return SQUARE(radiusY() * ABS_DIFF(Position.x(), x()))
-        + SQUARE(radiusX() * ABS_DIFF(Position.y(), y()))
-        <= SQUARE(radiusX() * radiusY());
+    return square(radiusY() * absoluteDifference(Position.x(), x())) +
+               square(radiusX() * absoluteDifference(Position.y(), y())) <=
+           square(radiusX() * radiusY());
 }
 
 Ellipse const& PositionedEllipse::ellipse() const {

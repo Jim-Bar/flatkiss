@@ -87,6 +87,7 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 . Check whether `containerUser` and/or `remoteUser` is/are required in `.devcontainer.json`
 . Decide what to do with variable names (type and variable name collisions really is annoying)
+. Use `using std::` consistently
 . Check whether the built binary can run on a system without libsdl2
 . Improve the README: building in docker, development environment, required dependencies for running out of docker, ...
 . Navigation to slide along obstacles when possible

@@ -6,8 +6,9 @@ using std::make_unique;
 using std::move;
 using std::string;
 using std::unique_ptr;
+using std::vector;
 
-Level::Level(unique_ptr<uint16_t const[]> Tiles, size_t WidthInTiles, size_t HeightInTiles) : Tiles(move(Tiles)), WidthInTiles(WidthInTiles), HeightInTiles(HeightInTiles) {
+Level::Level(vector<uint16_t> const& Tiles, size_t WidthInTiles, size_t HeightInTiles) : Tiles(move(Tiles)), WidthInTiles(WidthInTiles), HeightInTiles(HeightInTiles) {
 
 }
 
@@ -25,11 +26,11 @@ size_t Level::widthInTiles() const {
 
 unique_ptr<Level const> LevelLoader::load(string const& Path, size_t WidthInTiles, size_t HeightInTiles) {
     size_t const SizeInBytes{WidthInTiles * HeightInTiles * 2}; // Two byte per tile.
-    auto Tiles{make_unique<uint16_t[]>(SizeInBytes)};
+    auto Tiles{vector<uint16_t>(SizeInBytes, 0)};
     std::ifstream Stream;
     Stream.open(Path, std::ios::in | std::ios::binary);
     if (Stream.is_open()) {
-        Stream.read(reinterpret_cast<char*>(Tiles.get()), SizeInBytes);
+        Stream.read(reinterpret_cast<char*>(Tiles.data()), SizeInBytes);
         Stream.close();
     } // FIXME: fail.
 

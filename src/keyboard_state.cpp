@@ -15,19 +15,19 @@ bool KeyboardState::isPressed(SDL_Scancode key) const {
   }
 }
 
-void KeyboardState::update(SDL_Scancode Key, bool Pressed) {
-  switch (Key) {
+void KeyboardState::update(SDL_Scancode key, bool pressed) {
+  switch (key) {
     case SDL_SCANCODE_UP:
-      isUpPressed = Pressed;
+      isUpPressed = pressed;
       return;
     case SDL_SCANCODE_DOWN:
-      isDownPressed = Pressed;
+      isDownPressed = pressed;
       return;
     case SDL_SCANCODE_LEFT:
-      isLeftPressed = Pressed;
+      isLeftPressed = pressed;
       return;
     case SDL_SCANCODE_RIGHT:
-      isRightPressed = Pressed;
+      isRightPressed = pressed;
       return;
     default:
       return;  // FIXME: Exception.

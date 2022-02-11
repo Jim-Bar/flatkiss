@@ -1,18 +1,18 @@
 #include "animation_player.hpp"
 
 AnimationPlayer::AnimationPlayer(
-    std::unordered_map<uint16_t, Animation const>&& AnimationsPerTileIndex) {
-  this->AnimationsPerTileIndex.swap(AnimationsPerTileIndex);
+    std::unordered_map<uint16_t, Animation const>&& animations_per_tile_index) {
+  this->animations_per_tile_index_.swap(animations_per_tile_index);
 }
 
-uint16_t AnimationPlayer::animatedTileIndexFor(uint16_t TileIndex,
-                                               size_t Tick) const {
-  if (!AnimationsPerTileIndex.contains(TileIndex)) {
-    return TileIndex;
+uint16_t AnimationPlayer::animatedTileIndexFor(uint16_t tile_index,
+                                               size_t tick) const {
+  if (!animations_per_tile_index_.contains(tile_index)) {
+    return tile_index;
   }
 
-  Animation const& animation{AnimationsPerTileIndex.at(TileIndex)};
+  Animation const& animation{animations_per_tile_index_.at(tile_index)};
   return animation.tileIndexAtStep(
-      (Tick % (animation.getPeriod() * animation.getDuration())) /
+      (tick % (animation.getPeriod() * animation.getDuration())) /
       animation.getDuration());
 }

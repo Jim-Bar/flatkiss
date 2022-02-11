@@ -11,13 +11,13 @@
  */
 class Vector {
  public:
-  Vector(int64_t Dx, int64_t Dy);
+  Vector(int64_t dx, int64_t dy);
   int64_t dx() const;
   int64_t dy() const;
 
  private:
-  int64_t const Dx;
-  int64_t const Dy;
+  int64_t const dx_;
+  int64_t const dy_;
 };
 
 #endif

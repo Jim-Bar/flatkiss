@@ -2,50 +2,50 @@
 
 #include "positioned_ellipse.hpp"
 
-PositionedRectangle::PositionedRectangle(Position const& Position,
-                                         Rectangle const& Rectangle)
-    : Pos(Position), Rect(Rectangle) {}
+PositionedRectangle::PositionedRectangle(Position const& position,
+                                         Rectangle const& rectangle)
+    : position_(position), rectangle_(rectangle) {}
 
-size_t PositionedRectangle::height() const { return Rect.height(); }
+size_t PositionedRectangle::height() const { return rectangle_.height(); }
 
-bool PositionedRectangle::intersectsWith(PositionedEllipse const& Other) const {
-  return Other.contains(Position{x(), y()}) ||
-         Other.contains(Position{x() + width(), y()}) ||
-         Other.contains(Position{x(), y() + height()}) ||
-         Other.contains(Position{x() + width(), y() + height()});
+bool PositionedRectangle::intersectsWith(PositionedEllipse const& other) const {
+  return other.contains(Position{x(), y()}) ||
+         other.contains(Position{x() + width(), y()}) ||
+         other.contains(Position{x(), y() + height()}) ||
+         other.contains(Position{x() + width(), y() + height()});
 }
 
 bool PositionedRectangle::intersectsWith(
-    PositionedRectangle const& Other) const {
-  if (x() + width() <= Other.x()) {
+    PositionedRectangle const& other) const {
+  if (x() + width() <= other.x()) {
     return false;
   }
 
-  if (x() > Other.x() + Other.width()) {
+  if (x() > other.x() + other.width()) {
     return false;
   }
 
-  if (y() + height() <= Other.y()) {
+  if (y() + height() <= other.y()) {
     return false;
   }
 
-  if (y() > Other.y() + Other.height()) {
+  if (y() > other.y() + other.height()) {
     return false;
   }
 
   return true;
 }
 
-PositionedRectangle PositionedRectangle::operator+(Vector const& Vector) const {
-  return PositionedRectangle{position() + Vector, rectangle()};
+PositionedRectangle PositionedRectangle::operator+(Vector const& vector) const {
+  return PositionedRectangle{position() + vector, rectangle()};
 }
 
-Position const& PositionedRectangle::position() const { return Pos; }
+Position const& PositionedRectangle::position() const { return position_; }
 
-Rectangle const& PositionedRectangle::rectangle() const { return Rect; }
+Rectangle const& PositionedRectangle::rectangle() const { return rectangle_; }
 
-size_t PositionedRectangle::width() const { return Rect.width(); }
+size_t PositionedRectangle::width() const { return rectangle_.width(); }
 
-size_t PositionedRectangle::x() const { return Pos.x(); }
+size_t PositionedRectangle::x() const { return position_.x(); }
 
-size_t PositionedRectangle::y() const { return Pos.y(); }
+size_t PositionedRectangle::y() const { return position_.y(); }

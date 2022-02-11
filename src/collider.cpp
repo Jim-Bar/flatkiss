@@ -1,17 +1,18 @@
 #include "collider.hpp"
 
 Collider::Collider(
-    std::unordered_map<uint16_t, Collision const>&& CollisionsPerTileIndex) {
-  this->CollisionsPerTileIndex.swap(CollisionsPerTileIndex);
+    std::unordered_map<uint16_t, Collision const>&& collisions_per_tile_index) {
+  this->collisions_per_tile_index_.swap(collisions_per_tile_index);
 }
 
-bool Collider::collide(PositionedRectangle const& PositionedRect,
-                       uint16_t TileIndex, Position const& TilePosition) const {
-  if (!CollisionsPerTileIndex.contains(TileIndex)) {
+bool Collider::collide(PositionedRectangle const& positioned_rectangle,
+                       uint16_t tile_index,
+                       Position const& tile_position) const {
+  if (!collisions_per_tile_index_.contains(tile_index)) {
     return false;
   }
 
-  Collision const& Collision{CollisionsPerTileIndex.at(TileIndex)};
+  Collision const& collision{collisions_per_tile_index_.at(tile_index)};
 
-  return Collision.collidesWith(PositionedRect, TilePosition);
+  return collision.collidesWith(positioned_rectangle, tile_position);
 }

@@ -11,7 +11,7 @@
  */
 class Configuration {
  public:
-  Configuration(std::string const& FilePath);
+  Configuration(std::string const& file_path);
   std::string const& animationsPath() const;
   std::string const& collisionsPath() const;
   size_t engineTickDurationMs() const;
@@ -27,19 +27,19 @@ class Configuration {
   size_t tilesetWidthInTiles() const;
 
  private:
-  std::string AnimationsPath{};
-  std::string CollisionsPath{};
-  size_t EngineTickDurationMs{0};
-  size_t LevelHeightInTiles{0};
-  std::string LevelPath{};
-  size_t LevelWidthInTiles{0};
-  size_t TilesetGap{0};
-  size_t TilesetHeightInTiles{0};
-  size_t TilesetLeftOffset{0};
-  std::string TilesetPath{};
-  size_t TilesetTilesSize{0};
-  size_t TilesetTopOffset{0};
-  size_t TilesetWidthInTiles{0};
+  std::string animations_path_{};
+  std::string collisions_path_{};
+  size_t engine_tick_duration_ms_{0};
+  size_t level_height_in_tiles_{0};
+  std::string level_path_{};
+  size_t level_width_in_tiles_{0};
+  size_t tileset_gap_{0};
+  size_t tileset_height_in_tiles_{0};
+  size_t tileset_left_offset_{0};
+  std::string tileset_path_{};
+  size_t tileset_tiles_size_{0};
+  size_t tileset_top_offset_{0};
+  size_t tileset_width_in_tiles_{0};
 };
 
 #endif

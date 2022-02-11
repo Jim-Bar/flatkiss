@@ -2,36 +2,36 @@
 
 #include <algorithm>
 
-Navigator::Navigator(Collider const& Collider, Level const& Level,
-                     size_t const TilesSize)
-    : TheCollider(Collider), TheLevel(Level), TilesSize(TilesSize) {}
+Navigator::Navigator(Collider const& collider, Level const& level,
+                     size_t const tiles_size)
+    : collider_(collider), level_(level), tiles_size_(tiles_size) {}
 
-size_t Navigator::clampToBounds(size_t ObjectPosition, size_t ObjectSize,
-                                int64_t DeltaValue, size_t UpperBound) const {
+size_t Navigator::clampToBounds(size_t object_position, size_t object_size,
+                                int64_t delta_value, size_t upper_bound) const {
   // Here care is taken to deal with unsigned integers and substractions.
-  if (DeltaValue < 0 && ObjectPosition < -DeltaValue) {
+  if (delta_value < 0 && object_position < -delta_value) {
     return 0;
-  } else if (DeltaValue > 0 &&
-             ObjectPosition + ObjectSize + DeltaValue >= UpperBound) {
-    return UpperBound - ObjectSize;
+  } else if (delta_value > 0 &&
+             object_position + object_size + delta_value >= upper_bound) {
+    return upper_bound - object_size;
   } else {
-    return ObjectPosition + DeltaValue;
+    return object_position + delta_value;
   }
 }
 
 bool Navigator::collidesWithTiles(
-    PositionedRectangle const& PositionedRectangle) const {
-  for (size_t Y(PositionedRectangle.y() / TilesSize);
-       Y <=
-       (PositionedRectangle.y() + PositionedRectangle.height() - 1) / TilesSize;
-       Y++) {
-    for (size_t X(PositionedRectangle.x() / TilesSize);
-         X <= (PositionedRectangle.x() + PositionedRectangle.width() - 1) /
-                  TilesSize;
-         X++) {
-      uint16_t TileIndex(TheLevel.tileIndex(X, Y));
-      if (TheCollider.collide(PositionedRectangle, TileIndex,
-                              Position{X * TilesSize, Y * TilesSize})) {
+    PositionedRectangle const& positioned_rectangle) const {
+  for (size_t y(positioned_rectangle.y() / tiles_size_);
+       y <= (positioned_rectangle.y() + positioned_rectangle.height() - 1) /
+                tiles_size_;
+       y++) {
+    for (size_t x(positioned_rectangle.x() / tiles_size_);
+         x <= (positioned_rectangle.x() + positioned_rectangle.width() - 1) /
+                  tiles_size_;
+         x++) {
+      uint16_t TileIndex(level_.tileIndex(x, y));
+      if (collider_.collide(positioned_rectangle, TileIndex,
+                            Position{x * tiles_size_, y * tiles_size_})) {
         return true;
       }
     }
@@ -41,8 +41,8 @@ bool Navigator::collidesWithTiles(
 }
 
 Position Navigator::findNearestPositionToDestination(
-    PositionedRectangle const& SourcePositionedRectangle,
-    Position const& Destination) const {
+    PositionedRectangle const& source_positioned_rectangle,
+    Position const& destination) const {
   /* Decompose the displacement in steps. Each step is a point. Because the
    * components of the displacement can be different, first find the greatest of
    * the two. This is the number of steps. Then move step by step (point by
@@ -51,85 +51,86 @@ Position Navigator::findNearestPositionToDestination(
    * not collide. Note that this implementation find the nearest position on the
    * line between the source and the destination. It will not return the actual
    * nearest position when it is outside of that line. */
-  Vector Displacement{Destination - SourcePositionedRectangle.position()};
+  Vector displacement{destination - source_positioned_rectangle.position()};
   int64_t MaxDisplacement{
-      std::max(std::abs(Displacement.dx()), std::abs(Displacement.dy()))};
-  for (int64_t Step{1}; Step <= MaxDisplacement; Step++) {
-    Vector PartialDisplacement{(Step * Displacement.dx()) / MaxDisplacement,
-                               (Step * Displacement.dy()) / MaxDisplacement};
-    if (collidesWithTiles(SourcePositionedRectangle + PartialDisplacement)) {
+      std::max(std::abs(displacement.dx()), std::abs(displacement.dy()))};
+  for (int64_t step{1}; step <= MaxDisplacement; step++) {
+    Vector partial_displacement{(step * displacement.dx()) / MaxDisplacement,
+                                (step * displacement.dy()) / MaxDisplacement};
+    if (collidesWithTiles(source_positioned_rectangle + partial_displacement)) {
       /* Return the last step for which the position does not collide (for the
        * first step this is the original position). */
-      return Position{SourcePositionedRectangle.x() +
-                          ((Step - 1) * Displacement.dx()) / MaxDisplacement,
-                      SourcePositionedRectangle.y() +
-                          ((Step - 1) * Displacement.dy()) / MaxDisplacement};
+      return Position{source_positioned_rectangle.x() +
+                          ((step - 1) * displacement.dx()) / MaxDisplacement,
+                      source_positioned_rectangle.y() +
+                          ((step - 1) * displacement.dy()) / MaxDisplacement};
     }
   }
 
   /* FIXME: Raise an exception (this must only be called when the destination
    * cannot be reached). */
-  return Destination;
+  return destination;
 }
 
-Position Navigator::moveBy(PositionedRectangle const& SourcePositionedRectangle,
-                           Vector const& DesiredDisplacement) const {
+Position Navigator::moveBy(
+    PositionedRectangle const& source_positioned_rectangle,
+    Vector const& desired_displacement) const {
   /* First collide with the bounds of the level. Compute the resulting
    * (potential) destination. */
-  Position Destination{
-      clampToBounds(SourcePositionedRectangle.x(),
-                    SourcePositionedRectangle.width(), DesiredDisplacement.dx(),
-                    TheLevel.widthInTiles() * TilesSize),
+  Position destination{
       clampToBounds(
-          SourcePositionedRectangle.y(), SourcePositionedRectangle.height(),
-          DesiredDisplacement.dy(), TheLevel.heightInTiles() * TilesSize)};
+          source_positioned_rectangle.x(), source_positioned_rectangle.width(),
+          desired_displacement.dx(), level_.widthInTiles() * tiles_size_),
+      clampToBounds(
+          source_positioned_rectangle.y(), source_positioned_rectangle.height(),
+          desired_displacement.dy(), level_.heightInTiles() * tiles_size_)};
 
   /* Secondly, if the destination is the same as the current position, nothing
    * to do. */
-  if (SourcePositionedRectangle.position() == Destination) {
-    return SourcePositionedRectangle.position();
+  if (source_positioned_rectangle.position() == destination) {
+    return source_positioned_rectangle.position();
   }
 
   /* Otherwise if there is a collision with a tile, make sure to stick to the
    * tile. */
   if (collidesWithTiles(PositionedRectangle{
-          Destination, SourcePositionedRectangle.rectangle()})) {
-    Position NearestPosition{findNearestPositionToDestination(
-        SourcePositionedRectangle, Destination)};
-    if (SourcePositionedRectangle.position() != NearestPosition) {
-      return NearestPosition;
+          destination, source_positioned_rectangle.rectangle()})) {
+    Position nearest_position{findNearestPositionToDestination(
+        source_positioned_rectangle, destination)};
+    if (source_positioned_rectangle.position() != nearest_position) {
+      return nearest_position;
     }
 
     // Maybe it is possible to slide against the obstacle along the X axis.
-    Position DestinationX{Destination.x(), SourcePositionedRectangle.y()};
+    Position destination_x{destination.x(), source_positioned_rectangle.y()};
     if (collidesWithTiles(PositionedRectangle{
-            DestinationX, SourcePositionedRectangle.rectangle()})) {
-      Position NearestPositionX{findNearestPositionToDestination(
-          SourcePositionedRectangle, DestinationX)};
-      if (SourcePositionedRectangle.position() != NearestPositionX) {
-        return NearestPositionX;
+            destination_x, source_positioned_rectangle.rectangle()})) {
+      Position nearest_position_x{findNearestPositionToDestination(
+          source_positioned_rectangle, destination_x)};
+      if (source_positioned_rectangle.position() != nearest_position_x) {
+        return nearest_position_x;
       }
     } else {
-      return DestinationX;
+      return destination_x;
     }
 
     // Or along the Y axis.
-    Position DestinationY{SourcePositionedRectangle.x(), Destination.y()};
+    Position destination_y{source_positioned_rectangle.x(), destination.y()};
     if (collidesWithTiles(PositionedRectangle{
-            DestinationY, SourcePositionedRectangle.rectangle()})) {
-      Position NearestPositionY{findNearestPositionToDestination(
-          SourcePositionedRectangle, DestinationY)};
-      if (SourcePositionedRectangle.position() != NearestPositionY) {
-        return NearestPositionY;
+            destination_y, source_positioned_rectangle.rectangle()})) {
+      Position nearest_position_y{findNearestPositionToDestination(
+          source_positioned_rectangle, destination_y)};
+      if (source_positioned_rectangle.position() != nearest_position_y) {
+        return nearest_position_y;
       }
     } else {
-      return DestinationY;
+      return destination_y;
     }
 
     // It is not possible to get to a nearer position.
-    return SourcePositionedRectangle.position();
+    return source_positioned_rectangle.position();
   }
 
   // But if there is not collision, just go to the final destination.
-  return Destination;
+  return destination;
 }

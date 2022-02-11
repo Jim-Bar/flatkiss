@@ -4,36 +4,37 @@
 
 using std::string;
 
-Tileset::Tileset(string const& FilePath, size_t TilesSize, size_t WidthInTiles,
-                 size_t HeightInTiles, size_t LeftOffset, size_t TopOffset,
-                 size_t Gap, Renderer const& Renderer)
-    : TilesSize(TilesSize),
-      WidthInTiles(WidthInTiles),
-      HeightInTiles(HeightInTiles),
-      LeftOffset(LeftOffset),
-      TopOffset(TopOffset),
-      Gap(Gap),
-      Texture(Tileset::loadTexture(FilePath, Renderer)) {}
+Tileset::Tileset(string const& file_path, size_t tiles_size,
+                 size_t width_in_tiles, size_t height_in_tiles,
+                 size_t left_offset, size_t top_offset, size_t gap,
+                 Renderer const& renderer)
+    : tiles_size_(tiles_size),
+      width_in_tiles_(width_in_tiles),
+      height_in_tiles_(height_in_tiles),
+      left_offset_(left_offset),
+      top_offset_(top_offset),
+      gap_(gap),
+      texture_(Tileset::loadTexture(file_path, renderer)) {}
 
-Tileset::~Tileset() { SDL_DestroyTexture(Texture); }
+Tileset::~Tileset() { SDL_DestroyTexture(texture_); }
 
-size_t const Tileset::gap() const { return Gap; }
+size_t const Tileset::gap() const { return gap_; }
 
-size_t const Tileset::heightInTiles() const { return HeightInTiles; }
+size_t const Tileset::heightInTiles() const { return height_in_tiles_; }
 
-size_t const Tileset::leftOffset() const { return LeftOffset; }
+size_t const Tileset::leftOffset() const { return left_offset_; }
 
-SDL_Texture* Tileset::loadTexture(std::string const& FilePath,
-                                  Renderer const& Renderer) {
-  SDL_Surface* Surface = SDL_LoadBMP(FilePath.c_str());
-  SDL_Texture* Texture = nullptr;
-  if (Surface != nullptr) {
-    Texture = Renderer.createTextureFromSurface(
-        Surface);  // TODO: Check nullity / raise exception.
-    SDL_FreeSurface(Surface);
+SDL_Texture* Tileset::loadTexture(std::string const& file_path,
+                                  Renderer const& renderer) {
+  SDL_Surface* surface = SDL_LoadBMP(file_path.c_str());
+  SDL_Texture* texture = nullptr;
+  if (surface != nullptr) {
+    texture = renderer.createTextureFromSurface(
+        surface);  // TODO: Check nullity / raise exception.
+    SDL_FreeSurface(surface);
   }  // TODO: Raise exception.
 
-  return Texture;
+  return texture;
 }
 
 SDL_Rect Tileset::rectForTileIndex(size_t tile_index) const {
@@ -49,10 +50,10 @@ SDL_Rect Tileset::rectForTileIndex(size_t tile_index) const {
   return source_rect;
 }
 
-SDL_Texture* Tileset::texture() const { return Texture; }
+SDL_Texture* Tileset::texture() const { return texture_; }
 
-size_t const Tileset::tilesSize() const { return TilesSize; }
+size_t const Tileset::tilesSize() const { return tiles_size_; }
 
-size_t const Tileset::topOffset() const { return TopOffset; }
+size_t const Tileset::topOffset() const { return top_offset_; }
 
-size_t const Tileset::widthInTiles() const { return WidthInTiles; }
+size_t const Tileset::widthInTiles() const { return width_in_tiles_; }

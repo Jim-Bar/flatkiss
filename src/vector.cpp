@@ -1,7 +1,7 @@
 #include "vector.hpp"
 
-Vector::Vector(int64_t Dx, int64_t Dy) : Dx(Dx), Dy(Dy) {}
+Vector::Vector(int64_t dx, int64_t dy) : dx_(dx), dy_(dy) {}
 
-int64_t Vector::dx() const { return Dx; }
+int64_t Vector::dx() const { return dx_; }
 
-int64_t Vector::dy() const { return Dy; }
+int64_t Vector::dy() const { return dy_; }

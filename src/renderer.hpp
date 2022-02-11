@@ -12,31 +12,32 @@
  */
 class Renderer {
  public:
-  Renderer(SDL_Window* SDLWindow);
+  Renderer(SDL_Window* sdl_window);
   ~Renderer();
   /**
    * @brief Create a SDL texture that will be rendered using this renderer.
    *
-   * @param Surface SDL Surface to create the texture from.
+   * @param surface SDL Surface to create the texture from.
    * @return SDL_Texture* Resulting texture, owned by the caller, can be
    * nullptr.
    */
-  SDL_Texture* createTextureFromSurface(SDL_Surface* Surface) const;
-  void render(AnimationPlayer const& AnimationPlayer, Level const& Level,
-              Tileset const& Tileset, size_t ViewPortX, size_t ViewPortY,
-              size_t ViewPortSizeInPixels, size_t Tick,
-              SDL_Texture* CharacterTexture, size_t CharacterX,
-              size_t CharacterY, size_t CharacterSizeInPixels) const;
+  SDL_Texture* createTextureFromSurface(SDL_Surface* surface) const;
+  void render(AnimationPlayer const& animation_player, Level const& level,
+              Tileset const& tileset, size_t viewport_x, size_t viewport_y,
+              size_t viewport_size_in_pixels, size_t tick,
+              SDL_Texture* character_texture, size_t character_x,
+              size_t character_y, size_t character_size_in_pixels) const;
 
  private:
-  SDL_Renderer* const SDLRenderer;
+  SDL_Renderer* const sdl_renderer_;
 
-  void renderCharacter(size_t ViewPortX, size_t ViewPortY, size_t Tick,
-                       SDL_Texture* CharacterTexture, size_t CharacterX,
-                       size_t CharacterY, size_t CharacterSizeInPixels) const;
-  void renderLevel(AnimationPlayer const& AnimationPlayer, Level const& Level,
-                   Tileset const& Tileset, size_t ViewPortX, size_t ViewPortY,
-                   size_t ViewPortSizeInPixels, size_t Tick) const;
+  void renderCharacter(size_t viewport_x, size_t viewport_y, size_t tick,
+                       SDL_Texture* character_texture, size_t character_x,
+                       size_t character_y,
+                       size_t character_size_in_pixels) const;
+  void renderLevel(AnimationPlayer const& animation_player, Level const& level,
+                   Tileset const& tileset, size_t viewport_x, size_t viewport_y,
+                   size_t viewport_size_in_pixels, size_t tick) const;
 };
 
 #endif

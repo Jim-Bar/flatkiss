@@ -24,45 +24,45 @@ size_t const CHARACTER_SIZE_PIXELS(16);
 size_t const SPEED_IN_PIXELS(2);
 size_t const VIEWPORT_SIZE(160);
 
-void move(KeyboardState const& keyboard_state, Navigator const& Navigator,
+void move(KeyboardState const& keyboard_state, Navigator const& navigator,
           size_t& x, size_t& y, size_t& viewport_x, size_t& viewport_y,
-          std::unique_ptr<Level const>& Level, Tileset const& Tileset) {
-  int64_t Dx{0};
-  int64_t Dy{0};
+          std::unique_ptr<Level const>& level, Tileset const& tileset) {
+  int64_t dx{0};
+  int64_t dy{0};
   if (keyboard_state.isPressed(SDL_SCANCODE_UP)) {
-    Dy -= SPEED_IN_PIXELS;
+    dy -= SPEED_IN_PIXELS;
   }
   if (keyboard_state.isPressed(SDL_SCANCODE_DOWN)) {
-    Dy += SPEED_IN_PIXELS;
+    dy += SPEED_IN_PIXELS;
   }
   if (keyboard_state.isPressed(SDL_SCANCODE_LEFT)) {
-    Dx -= SPEED_IN_PIXELS;
+    dx -= SPEED_IN_PIXELS;
   }
   if (keyboard_state.isPressed(SDL_SCANCODE_RIGHT)) {
-    Dx += SPEED_IN_PIXELS;
+    dx += SPEED_IN_PIXELS;
   }
 
-  Position NewPosition{Navigator.moveBy(
+  Position new_position{navigator.moveBy(
       PositionedRectangle{Position{x, y}, Rectangle{CHARACTER_SIZE_PIXELS,
                                                     CHARACTER_SIZE_PIXELS}},
-      Vector{Dx, Dy})};
+      Vector{dx, dy})};
 
-  x = NewPosition.x();
-  y = NewPosition.y();
+  x = new_position.x();
+  y = new_position.y();
 
   if (y < VIEWPORT_SIZE / 2 - CHARACTER_SIZE_PIXELS / 2) {
     viewport_y = 0;
-  } else if (y > Level->heightInTiles() * Tileset.tilesSize() -
+  } else if (y > level->heightInTiles() * tileset.tilesSize() -
                      VIEWPORT_SIZE / 2 - CHARACTER_SIZE_PIXELS / 2) {
-    viewport_y = Level->heightInTiles() * Tileset.tilesSize() - VIEWPORT_SIZE;
+    viewport_y = level->heightInTiles() * tileset.tilesSize() - VIEWPORT_SIZE;
   } else {
     viewport_y = y - VIEWPORT_SIZE / 2 + CHARACTER_SIZE_PIXELS / 2;
   }
   if (x < VIEWPORT_SIZE / 2 - CHARACTER_SIZE_PIXELS / 2) {
     viewport_x = 0;
-  } else if (x > Level->widthInTiles() * Tileset.tilesSize() -
+  } else if (x > level->widthInTiles() * tileset.tilesSize() -
                      VIEWPORT_SIZE / 2 - CHARACTER_SIZE_PIXELS / 2) {
-    viewport_x = Level->widthInTiles() * Tileset.tilesSize() - VIEWPORT_SIZE;
+    viewport_x = level->widthInTiles() * tileset.tilesSize() - VIEWPORT_SIZE;
   } else {
     viewport_x = x - VIEWPORT_SIZE / 2 + CHARACTER_SIZE_PIXELS / 2;
   }
@@ -73,63 +73,63 @@ int main(int argc, char* argv[]) {
   using std::cout;
   using std::endl;
 
-  Configuration Configuration{"configuration.ini"};
-  std::unique_ptr<Level const> Level{LevelLoader::load(
-      Configuration.levelPath(), Configuration.levelWidthInTiles(),
-      Configuration.levelHeightInTiles())};
+  Configuration configuration{"configuration.ini"};
+  std::unique_ptr<Level const> level{LevelLoader::load(
+      configuration.levelPath(), configuration.levelWidthInTiles(),
+      configuration.levelHeightInTiles())};
 
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
     cerr << "SDL_Init Error: " << SDL_GetError() << endl;
     return EXIT_FAILURE;
   }
 
-  SDL_Window* Window = SDL_CreateWindow(PROJECT_NAME, SDL_WINDOWPOS_UNDEFINED,
+  SDL_Window* window = SDL_CreateWindow(PROJECT_NAME, SDL_WINDOWPOS_UNDEFINED,
                                         SDL_WINDOWPOS_UNDEFINED, VIEWPORT_SIZE,
                                         VIEWPORT_SIZE, SDL_WINDOW_SHOWN);
-  if (Window == nullptr) {
+  if (window == nullptr) {
     cerr << "SDL_CreateWindow Error: " << SDL_GetError() << endl;
     return EXIT_FAILURE;
   }
 
-  Renderer Renderer{Window};
+  Renderer renderer{window};
 
-  Tileset const Tileset{
-      Configuration.tilesetPath(),         Configuration.tilesetTilesSize(),
-      Configuration.tilesetWidthInTiles(), Configuration.tilesetHeightInTiles(),
-      Configuration.tilesetLeftOffset(),   Configuration.tilesetTopOffset(),
-      Configuration.tilesetGap(),          Renderer};
+  Tileset const tileset{
+      configuration.tilesetPath(),         configuration.tilesetTilesSize(),
+      configuration.tilesetWidthInTiles(), configuration.tilesetHeightInTiles(),
+      configuration.tilesetLeftOffset(),   configuration.tilesetTopOffset(),
+      configuration.tilesetGap(),          renderer};
 
-  SDL_Surface* characterSurface = SDL_LoadBMP("assets/character.bmp");
-  if (characterSurface == nullptr) {
+  SDL_Surface* character_surface = SDL_LoadBMP("assets/character.bmp");
+  if (character_surface == nullptr) {
     cerr << "SDL_LoadBMP Error: " << SDL_GetError() << endl;
-    SDL_DestroyWindow(Window);
+    SDL_DestroyWindow(window);
     SDL_Quit();
     return EXIT_FAILURE;
   }
 
-  SDL_Texture* character = Renderer.createTextureFromSurface(characterSurface);
+  SDL_Texture* character = renderer.createTextureFromSurface(character_surface);
   if (character == nullptr) {
     cerr << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << endl;
-    SDL_DestroyWindow(Window);
+    SDL_DestroyWindow(window);
     SDL_Quit();
     return EXIT_FAILURE;
   }
-  SDL_FreeSurface(characterSurface);
+  SDL_FreeSurface(character_surface);
 
   bool quit = false;
   SDL_Event event;
   KeyboardState keyboard_state;
-  AnimationPlayer AnimationPlayer{
-      AnimationLoader::load(Configuration.animationsPath())};
-  Collider Collider{CollisionLoader::load(Configuration.collisionsPath())};
-  Navigator Navigator{Collider, *Level, Tileset.tilesSize()};
+  AnimationPlayer animation_player{
+      AnimationLoader::load(configuration.animationsPath())};
+  Collider collider{CollisionLoader::load(configuration.collisionsPath())};
+  Navigator navigator{collider, *level, tileset.tilesSize()};
   size_t x(0), y(0), character_x(0), character_y(0);
-  size_t Tick(0);
+  size_t tick(0);
   while (!quit) {
-    Renderer.render(AnimationPlayer, *Level, Tileset, x, y, VIEWPORT_SIZE,
-                    Tick++, character, character_x, character_y,
+    renderer.render(animation_player, *level, tileset, x, y, VIEWPORT_SIZE,
+                    tick++, character, character_x, character_y,
                     CHARACTER_SIZE_PIXELS);
-    SDL_Delay(Configuration.engineTickDurationMs());
+    SDL_Delay(configuration.engineTickDurationMs());
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
         std::cout << "Program quit after " << event.quit.timestamp << " ticks"
@@ -140,12 +140,12 @@ int main(int argc, char* argv[]) {
                               event.key.state == SDL_PRESSED ? true : false);
       }
     }
-    move(keyboard_state, Navigator, character_x, character_y, x, y, Level,
-         Tileset);
+    move(keyboard_state, navigator, character_x, character_y, x, y, level,
+         tileset);
   }
 
   SDL_DestroyTexture(character);
-  SDL_DestroyWindow(Window);
+  SDL_DestroyWindow(window);
   SDL_Quit();
 
   return EXIT_SUCCESS;

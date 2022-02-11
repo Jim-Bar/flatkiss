@@ -13,23 +13,23 @@
  */
 class Level {
  public:
-  Level(std::vector<uint16_t> const& Tiles, size_t WidthInTiles,
-        size_t HeightInTiles);
+  Level(std::vector<uint16_t> const& tiles, size_t width_in_tiles,
+        size_t height_in_tiles);
   size_t heightInTiles() const;
   uint16_t tileIndex(size_t i, size_t j) const;
   size_t widthInTiles() const;
 
  private:
-  size_t const HeightInTiles;
-  std::vector<uint16_t> const Tiles;
-  size_t const WidthInTiles;
+  size_t const height_in_tiles_;
+  std::vector<uint16_t> const tiles_;
+  size_t const width_in_tiles_;
 };
 
 class LevelLoader {
  public:
-  static std::unique_ptr<Level const> load(std::string const& Path,
-                                           size_t WidthInTiles,
-                                           size_t HeightInTiles);
+  static std::unique_ptr<Level const> load(std::string const& path,
+                                           size_t width_in_tiles,
+                                           size_t height_in_tiles);
 };
 
 #endif

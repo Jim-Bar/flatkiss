@@ -12,19 +12,19 @@
  */
 class PositionedRectangle {
  public:
-  PositionedRectangle(Position const& Position, Rectangle const& Rectangle);
+  PositionedRectangle(Position const& position, Rectangle const& rectangle);
   size_t height() const;
   bool intersectsWith(
-      PositionedEllipse const& Other) const;  // FIXME: Move to Collider?
-  bool intersectsWith(PositionedRectangle const& Other) const;
+      PositionedEllipse const& other) const;  // FIXME: Move to Collider?
+  bool intersectsWith(PositionedRectangle const& other) const;
   /**
    * @brief Returns a new positioned rectangle moved by the provided
    * displacement.
    *
-   * @param Vector The displacement to apply.
+   * @param vector The displacement to apply.
    * @return PositionedRectangle A new positioned rectangle moved by the vector.
    */
-  PositionedRectangle operator+(Vector const& Vector) const;
+  PositionedRectangle operator+(Vector const& vector) const;
   Position const& position() const;
   Rectangle const& rectangle() const;
   size_t width() const;
@@ -32,10 +32,8 @@ class PositionedRectangle {
   size_t y() const;
 
  private:
-  /* Using abreviations because G++ will not let that compile if using the same
-   * name as the type. */
-  Position const Pos;
-  Rectangle const Rect;
+  Position const position_;
+  Rectangle const rectangle_;
 };
 
 #endif

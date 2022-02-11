@@ -18,9 +18,9 @@ class Renderer;
  */
 class Tileset {
  public:
-  Tileset(std::string const& FilePath, size_t TilesSize, size_t WidthInTiles,
-          size_t HeightInTiles, size_t LeftOffset, size_t TopOffset, size_t Gap,
-          Renderer const& Renderer);
+  Tileset(std::string const& file_path, size_t tiles_size,
+          size_t width_in_tiles, size_t height_in_tiles, size_t left_offset,
+          size_t top_offset, size_t gap, Renderer const& renderer);
   ~Tileset();
   size_t const gap() const;
   size_t const heightInTiles() const;
@@ -32,25 +32,26 @@ class Tileset {
   size_t const widthInTiles() const;
 
  private:
-  size_t const Gap;
-  size_t const HeightInTiles;
-  size_t const LeftOffset;
-  SDL_Texture* const Texture;
+  size_t const gap_;
+  size_t const height_in_tiles_;
+  size_t const left_offset_;
+  SDL_Texture* const texture_;
   /* FIXME: Probably that does not belong to the tileset (but to the model
    * instead).*/
-  size_t const TilesSize;
-  size_t const TopOffset;
-  size_t const WidthInTiles;
+  size_t const tiles_size_;
+  size_t const top_offset_;
+  size_t const width_in_tiles_;
 
   /**
    * @brief For creating the texture of the tileset in the initializer list.
    *
-   * @param FilePath Path to the tileset picture.
-   * @param Renderer Pointer to the renderer for creating the texture.
-   * @return Newly created texture, the caller must handle its destruction.
+   * @param file_path Path to the tileset picture.
+   * @param renderer Pointer to the renderer for creating the texture.
+   * @return SDL_Texture* Newly created texture, the caller must handle its
+   * destruction.
    */
-  static SDL_Texture* loadTexture(std::string const& FilePath,
-                                  Renderer const& Renderer);
+  static SDL_Texture* loadTexture(std::string const& file_path,
+                                  Renderer const& renderer);
 };
 
 #endif

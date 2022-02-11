@@ -14,16 +14,16 @@
  */
 class Animation {
  public:
-  Animation(std::vector<uint16_t> const& TileIndices, uint8_t Period,
+  Animation(std::vector<uint16_t> const& tile_indices, uint8_t period,
             uint8_t Duration);
   uint8_t getDuration() const;
   uint8_t getPeriod() const;
   uint16_t tileIndexAtStep(uint16_t Step) const;
 
  private:
-  uint8_t const Duration;
-  uint8_t const Period;
-  std::vector<uint16_t> const TileIndices;
+  uint8_t const duration_;
+  uint8_t const period_;
+  std::vector<uint16_t> const tile_indices_;
 };
 
 /**
@@ -32,7 +32,7 @@ class Animation {
 class AnimationLoader {
  public:
   static std::unordered_map<uint16_t, Animation const> load(
-      std::string const& FilePath);
+      std::string const& file_path);
 };
 
 #endif

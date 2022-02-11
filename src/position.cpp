@@ -4,7 +4,7 @@
 #include "positioned_rectangle.hpp"
 #include "rectangle.hpp"
 
-Position::Position(size_t X, size_t Y) : X(X), Y(Y) {}
+Position::Position(size_t X, size_t Y) : x_(X), y_(Y) {}
 
 bool Position::operator!=(Position const& Position) const {
   return !(*this == Position);
@@ -47,6 +47,6 @@ int64_t Position::substractSizes(size_t Size1, size_t Size2) const {
   }
 }
 
-size_t Position::x() const { return X; }
+size_t Position::x() const { return x_; }
 
-size_t Position::y() const { return Y; }
+size_t Position::y() const { return y_; }

@@ -5,13 +5,13 @@
 
 class Ellipse {
  public:
-  Ellipse(size_t RadiusX, size_t RadiusY);
+  Ellipse(size_t radius_x, size_t radius_y);
   size_t radiusX() const;
   size_t radiusY() const;
 
  private:
-  size_t const RadiusX;
-  size_t const RadiusY;
+  size_t const radius_x_;
+  size_t const radius_y_;
 };
 
 #endif

@@ -10,13 +10,13 @@
  */
 class Rectangle {
  public:
-  Rectangle(size_t Width, size_t Height);
+  Rectangle(size_t width, size_t height);
   size_t height() const;
   size_t width() const;
 
  private:
-  size_t const Height;
-  size_t const Width;
+  size_t const height_;
+  size_t const width_;
 };
 
 #endif

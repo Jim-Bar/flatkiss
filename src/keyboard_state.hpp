@@ -11,8 +11,8 @@
  */
 class KeyboardState {
  public:
-  bool isPressed(SDL_Scancode Key) const;
-  void update(SDL_Scancode Key, bool Pressed);
+  bool isPressed(SDL_Scancode key) const;
+  void update(SDL_Scancode key, bool pressed);
 
  private:
   bool isDownPressed{false};

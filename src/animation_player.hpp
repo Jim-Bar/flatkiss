@@ -20,15 +20,15 @@ class AnimationPlayer {
    * When this constructor returns, the passed map is empty because its values
    * have been transferred to the player.
    *
-   * @param AnimationsPerTileIndex Map of tile indices to their respective
+   * @param animations_per_tile_index Map of tile indices to their respective
    * animations.
    */
-  AnimationPlayer(
-      std::unordered_map<uint16_t, Animation const>&& AnimationsPerTileIndex);
-  uint16_t animatedTileIndexFor(uint16_t TileIndex, size_t Tick) const;
+  AnimationPlayer(std::unordered_map<uint16_t, Animation const>&&
+                      animations_per_tile_index);
+  uint16_t animatedTileIndexFor(uint16_t tile_index, size_t tick) const;
 
  private:
-  std::unordered_map<uint16_t, Animation const> AnimationsPerTileIndex;
+  std::unordered_map<uint16_t, Animation const> animations_per_tile_index_;
 };
 
 #endif

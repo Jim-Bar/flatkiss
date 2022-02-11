@@ -2,15 +2,15 @@
 
 /* Absolute value of the difference between two values (handles unsigned
  * integers). */
-size_t absoluteDifference(size_t Value1, size_t Value2) {
-  return Value1 > Value2 ? Value1 - Value2 : Value2 - Value1;
+size_t absoluteDifference(size_t value_1, size_t value_2) {
+  return value_1 > value_2 ? value_1 - value_2 : value_2 - value_1;
 }
 
-size_t square(size_t Value) { return Value * Value; }
+size_t square(size_t value) { return value * value; }
 
-PositionedEllipse::PositionedEllipse(Position const& Position,
-                                     Ellipse const& Ellipse)
-    : Pos(Position), Ell(Ellipse) {}
+PositionedEllipse::PositionedEllipse(Position const& position,
+                                     Ellipse const& ellipse)
+    : position_(position), ellipse_(ellipse) {}
 
 bool PositionedEllipse::contains(Position const& Position) const {
   // https://math.stackexchange.com/a/76463
@@ -19,14 +19,14 @@ bool PositionedEllipse::contains(Position const& Position) const {
          square(radiusX() * radiusY());
 }
 
-Ellipse const& PositionedEllipse::ellipse() const { return Ell; }
+Ellipse const& PositionedEllipse::ellipse() const { return ellipse_; }
 
-Position const& PositionedEllipse::position() const { return Pos; }
+Position const& PositionedEllipse::position() const { return position_; }
 
-size_t PositionedEllipse::radiusX() const { return Ell.radiusX(); }
+size_t PositionedEllipse::radiusX() const { return ellipse_.radiusX(); }
 
-size_t PositionedEllipse::radiusY() const { return Ell.radiusY(); }
+size_t PositionedEllipse::radiusY() const { return ellipse_.radiusY(); }
 
-size_t PositionedEllipse::x() const { return Pos.x(); }
+size_t PositionedEllipse::x() const { return position_.x(); }
 
-size_t PositionedEllipse::y() const { return Pos.y(); }
+size_t PositionedEllipse::y() const { return position_.y(); }

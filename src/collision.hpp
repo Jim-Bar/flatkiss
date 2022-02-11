@@ -13,20 +13,20 @@
  */
 class Collision {
  public:
-  Collision(std::vector<PositionedEllipse> const PositionedEllipses,
-            std::vector<PositionedRectangle> const PositionedRectangles);
-  bool collidesWith(PositionedRectangle const& PositionedRectangle,
-                    Position const WhenAtPosition) const;
+  Collision(std::vector<PositionedEllipse> const positioned_ellipses,
+            std::vector<PositionedRectangle> const positioned_rectangles);
+  bool collidesWith(PositionedRectangle const& positioned_rectangle,
+                    Position const when_at_position) const;
 
  private:
-  std::vector<PositionedEllipse> const PositionedEllipses;
-  std::vector<PositionedRectangle> const PositionedRectangles;
+  std::vector<PositionedEllipse> const positioned_ellipses_;
+  std::vector<PositionedRectangle> const positioned_rectangles_;
 };
 
 class CollisionLoader {
  public:
   static std::unordered_map<uint16_t, Collision const> load(
-      std::string const& FilePath);
+      std::string const& file_path);
 };
 
 #endif

@@ -9,21 +9,21 @@ using std::set;
 using std::unordered_map;
 using std::vector;
 
-Collision::Collision(std::vector<PositionedEllipse> const PositionedEllipses,
-                     vector<PositionedRectangle> const PositionedRectangles)
-    : PositionedEllipses(move(PositionedEllipses)),
-      PositionedRectangles(move(PositionedRectangles)) {}
+Collision::Collision(std::vector<PositionedEllipse> const positioned_ellipses,
+                     vector<PositionedRectangle> const positioned_rectangles)
+    : positioned_ellipses_(move(positioned_ellipses)),
+      positioned_rectangles_(move(positioned_rectangles)) {}
 
-bool Collision::collidesWith(PositionedRectangle const& PositionedRect,
-                             Position const WhenAtPosition) const {
-  for (auto PositionedEllipse : PositionedEllipses) {
-    if (PositionedRect.intersectsWith(WhenAtPosition + PositionedEllipse)) {
+bool Collision::collidesWith(PositionedRectangle const& positioned_rectangle,
+                             Position const when_at_position) const {
+  for (auto ellipse : positioned_ellipses_) {
+    if (positioned_rectangle.intersectsWith(when_at_position + ellipse)) {
       return true;
     }
   }
 
-  for (auto PositionedRectangle : PositionedRectangles) {
-    if (PositionedRect.intersectsWith(WhenAtPosition + PositionedRectangle)) {
+  for (auto rectangle : positioned_rectangles_) {
+    if (positioned_rectangle.intersectsWith(when_at_position + rectangle)) {
       return true;
     }
   }
@@ -32,56 +32,57 @@ bool Collision::collidesWith(PositionedRectangle const& PositionedRect,
 }
 
 unordered_map<uint16_t, Collision const> CollisionLoader::load(
-    std::string const& FilePath) {
+    std::string const& file_path) {
   // First read all the positioned rectangles for all the tile indices.
-  std::ifstream Stream;
-  set<uint16_t> AllTilesIndices;
-  unordered_map<uint16_t, vector<PositionedEllipse>> EllipsesPerTileIndex;
-  unordered_map<uint16_t, vector<PositionedRectangle>> RectanglesPerTileIndex;
-  Stream.open(FilePath, std::ios::in | std::ios::binary);
-  if (Stream.is_open()) {
-    while (Stream.peek() != std::istream::traits_type::eof()) {
-      uint16_t TileIndex{0};
+  std::ifstream stream;
+  set<uint16_t> all_tiles_indices;
+  unordered_map<uint16_t, vector<PositionedEllipse>> ellipses_per_tile_index;
+  unordered_map<uint16_t, vector<PositionedRectangle>>
+      rectangles_per_tile_index;
+  stream.open(file_path, std::ios::in | std::ios::binary);
+  if (stream.is_open()) {
+    while (stream.peek() != std::istream::traits_type::eof()) {
+      uint16_t tile_index{0};
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      Stream.read(reinterpret_cast<char*>(&TileIndex),
+      stream.read(reinterpret_cast<char*>(&tile_index),
                   2);  // Two bytes per tile index.
-      AllTilesIndices.insert(TileIndex);
-      uint8_t CollisionType{static_cast<uint8_t>(Stream.get())};
-      Position Position{static_cast<uint8_t>(Stream.get()),
-                        static_cast<uint8_t>(Stream.get())};
-      switch (CollisionType) {
+      all_tiles_indices.insert(tile_index);
+      uint8_t collision_type{static_cast<uint8_t>(stream.get())};
+      Position position{static_cast<uint8_t>(stream.get()),
+                        static_cast<uint8_t>(stream.get())};
+      switch (collision_type) {
         case 0:  // The collision is a positioned rectangle.
-          if (!RectanglesPerTileIndex.contains(TileIndex)) {
-            RectanglesPerTileIndex.emplace(TileIndex,
-                                           vector<PositionedRectangle>{});
+          if (!rectangles_per_tile_index.contains(tile_index)) {
+            rectangles_per_tile_index.emplace(tile_index,
+                                              vector<PositionedRectangle>{});
           }
-          RectanglesPerTileIndex[TileIndex].emplace_back(
-              Position, Rectangle{static_cast<uint8_t>(Stream.get()),
-                                  static_cast<uint8_t>(Stream.get())});
+          rectangles_per_tile_index[tile_index].emplace_back(
+              position, Rectangle{static_cast<uint8_t>(stream.get()),
+                                  static_cast<uint8_t>(stream.get())});
           break;
         case 1:  // The collision is a positioned ellipse.
-          if (!EllipsesPerTileIndex.contains(TileIndex)) {
-            EllipsesPerTileIndex.emplace(TileIndex,
-                                         vector<PositionedEllipse>{});
+          if (!ellipses_per_tile_index.contains(tile_index)) {
+            ellipses_per_tile_index.emplace(tile_index,
+                                            vector<PositionedEllipse>{});
           }
-          EllipsesPerTileIndex[TileIndex].emplace_back(
-              Position, Ellipse{static_cast<uint8_t>(Stream.get()),
-                                static_cast<uint8_t>(Stream.get())});
+          ellipses_per_tile_index[tile_index].emplace_back(
+              position, Ellipse{static_cast<uint8_t>(stream.get()),
+                                static_cast<uint8_t>(stream.get())});
           break;
       }
     }
-    Stream.close();
+    stream.close();
   }  // FIXME: Raise exception.
 
   /* Secondly, once all the positioned rectangles / ellipses are known, the
    * collisions can be built. */
-  unordered_map<uint16_t, Collision const> CollisionsPerTileIndex;
-  for (auto TileIndex : AllTilesIndices) {
-    CollisionsPerTileIndex.emplace(
-        std::piecewise_construct, std::forward_as_tuple(TileIndex),
-        std::forward_as_tuple(move(EllipsesPerTileIndex[TileIndex]),
-                              move(RectanglesPerTileIndex[TileIndex])));
+  unordered_map<uint16_t, Collision const> collisions_per_tile_index;
+  for (auto tile_index : all_tiles_indices) {
+    collisions_per_tile_index.emplace(
+        std::piecewise_construct, std::forward_as_tuple(tile_index),
+        std::forward_as_tuple(move(ellipses_per_tile_index[tile_index]),
+                              move(rectangles_per_tile_index[tile_index])));
   }
 
-  return CollisionsPerTileIndex;
+  return collisions_per_tile_index;
 }

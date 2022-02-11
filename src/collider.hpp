@@ -3,7 +3,7 @@
 
 #include <unordered_map>
 
-#include "Collision.hpp"
+#include "collision.hpp"
 
 /**
  * @brief Collides objects with tile indices.

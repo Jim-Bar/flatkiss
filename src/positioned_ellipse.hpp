@@ -1,8 +1,8 @@
 #ifndef POSITIONED_ELLIPSE_HPP_INCLUDED
 #define POSITIONED_ELLIPSE_HPP_INCLUDED
 
-#include "Ellipse.hpp"
-#include "Position.hpp"
+#include "ellipse.hpp"
+#include "position.hpp"
 
 class PositionedEllipse {
  public:

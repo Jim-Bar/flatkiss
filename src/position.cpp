@@ -1,8 +1,8 @@
-#include "Position.hpp"
+#include "position.hpp"
 
-#include "PositionedEllipse.hpp"
-#include "PositionedRectangle.hpp"
-#include "Rectangle.hpp"
+#include "positioned_ellipse.hpp"
+#include "positioned_rectangle.hpp"
+#include "rectangle.hpp"
 
 Position::Position(size_t X, size_t Y) : X(X), Y(Y) {}
 

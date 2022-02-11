@@ -1,6 +1,6 @@
-#include "Tileset.hpp"
+#include "tileset.hpp"
 
-#include "Renderer.hpp"
+#include "renderer.hpp"
 
 using std::string;
 

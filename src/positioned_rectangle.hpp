@@ -1,9 +1,9 @@
 #ifndef POSITIONED_RECTANGLE_HPP_INCLUDED
 #define POSITIONED_RECTANGLE_HPP_INCLUDED
 
-#include "Position.hpp"
-#include "Rectangle.hpp"
-#include "Vector.hpp"
+#include "position.hpp"
+#include "rectangle.hpp"
+#include "vector.hpp"
 
 /**
  * @brief A rectangle with a position.

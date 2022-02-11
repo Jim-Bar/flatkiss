@@ -3,9 +3,9 @@
 
 #include <SDL2/SDL.h>
 
-#include "AnimationPlayer.hpp"
-#include "Level.hpp"
-#include "Tileset.hpp"
+#include "animation_player.hpp"
+#include "level.hpp"
+#include "tileset.hpp"
 
 /**
  * @brief Renders the whole scene.

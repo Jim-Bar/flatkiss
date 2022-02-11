@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <unordered_map>
 
-#include "Animation.hpp"
+#include "animation.hpp"
 
 /**
  * @brief Maps tile indices to their animated counterparts.

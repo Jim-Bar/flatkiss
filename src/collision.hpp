@@ -5,8 +5,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "PositionedEllipse.hpp"
-#include "PositionedRectangle.hpp"
+#include "positioned_ellipse.hpp"
+#include "positioned_rectangle.hpp"
 
 /**
  * @brief An area made up of several rectangles and which cannot be crossed.

@@ -3,7 +3,7 @@
 
 #include <cstddef>
 
-#include "Vector.hpp"
+#include "vector.hpp"
 
 // Forward declaration to break the cycle Position / PositionedEllipse;
 class PositionedEllipse;

@@ -1,4 +1,4 @@
-#include "Rectangle.hpp"
+#include "rectangle.hpp"
 
 Rectangle::Rectangle(size_t Width, size_t Height)
     : Width(Width), Height(Height) {}

@@ -1,4 +1,4 @@
-#include "Renderer.hpp"
+#include "renderer.hpp"
 
 Renderer::Renderer(SDL_Window* SDLWindow)
     : SDLRenderer(SDL_CreateRenderer(

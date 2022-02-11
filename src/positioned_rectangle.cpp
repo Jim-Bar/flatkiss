@@ -1,6 +1,6 @@
-#include "PositionedRectangle.hpp"
+#include "positioned_rectangle.hpp"
 
-#include "PositionedEllipse.hpp"
+#include "positioned_ellipse.hpp"
 
 PositionedRectangle::PositionedRectangle(Position const& Position,
                                          Rectangle const& Rectangle)

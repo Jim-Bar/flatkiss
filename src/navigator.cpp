@@ -1,4 +1,4 @@
-#include "Navigator.hpp"
+#include "navigator.hpp"
 
 #include <algorithm>
 

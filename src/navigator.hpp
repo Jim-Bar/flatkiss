@@ -1,10 +1,10 @@
 #ifndef NAVIGATOR_HPP_INCLUDED
 #define NAVIGATOR_HPP_INCLUDED
 
-#include "Collider.hpp"
-#include "Level.hpp"
-#include "PositionedRectangle.hpp"
-#include "Vector.hpp"
+#include "collider.hpp"
+#include "level.hpp"
+#include "positioned_rectangle.hpp"
+#include "vector.hpp"
 
 /**
  * @brief Move a positioned rectangle to the closest desired location.

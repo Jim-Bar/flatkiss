@@ -1,4 +1,4 @@
-#include "Collider.hpp"
+#include "collider.hpp"
 
 Collider::Collider(
     std::unordered_map<uint16_t, Collision const>&& CollisionsPerTileIndex) {

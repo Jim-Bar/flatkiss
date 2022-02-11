@@ -1,4 +1,4 @@
-#include "Ellipse.hpp"
+#include "ellipse.hpp"
 
 Ellipse::Ellipse(size_t RadiusX, size_t RadiusY)
     : RadiusX(RadiusX), RadiusY(RadiusY) {}

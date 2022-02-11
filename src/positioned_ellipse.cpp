@@ -1,4 +1,4 @@
-#include "PositionedEllipse.hpp"
+#include "positioned_ellipse.hpp"
 
 /* Absolute value of the difference between two values (handles unsigned
  * integers). */

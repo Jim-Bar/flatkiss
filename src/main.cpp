@@ -1,4 +1,4 @@
-#include "Main.hpp"
+#include "main.hpp"
 
 #include <SDL2/SDL.h>
 
@@ -9,16 +9,16 @@
 #include <string>
 #include <unordered_map>
 
-#include "AnimationPlayer.hpp"
-#include "Collider.hpp"
-#include "Configuration.hpp"
-#include "KeyboardState.hpp"
-#include "Level.hpp"
-#include "Navigator.hpp"
-#include "PositionedRectangle.hpp"
-#include "Renderer.hpp"
-#include "Tileset.hpp"
-#include "Vector.hpp"
+#include "animation_player.hpp"
+#include "collider.hpp"
+#include "configuration.hpp"
+#include "keyboard_state.hpp"
+#include "level.hpp"
+#include "navigator.hpp"
+#include "positioned_rectangle.hpp"
+#include "renderer.hpp"
+#include "tileset.hpp"
+#include "vector.hpp"
 
 size_t const CHARACTER_SIZE_PIXELS(16);
 size_t const SPEED_IN_PIXELS(2);

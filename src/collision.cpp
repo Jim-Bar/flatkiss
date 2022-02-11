@@ -1,4 +1,4 @@
-#include "Collision.hpp"
+#include "collision.hpp"
 
 #include <fstream>
 #include <set>

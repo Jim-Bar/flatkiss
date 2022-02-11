@@ -1,4 +1,4 @@
-#include "KeyboardState.hpp"
+#include "keyboard_state.hpp"
 
 bool KeyboardState::isPressed(SDL_Scancode key) const {
   switch (key) {

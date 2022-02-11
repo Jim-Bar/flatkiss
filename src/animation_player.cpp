@@ -1,4 +1,4 @@
-#include "AnimationPlayer.hpp"
+#include "animation_player.hpp"
 
 AnimationPlayer::AnimationPlayer(
     std::unordered_map<uint16_t, Animation const>&& AnimationsPerTileIndex) {

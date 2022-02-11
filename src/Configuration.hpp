@@ -27,19 +27,19 @@ public:
     size_t tilesetWidthInTiles() const;
 
 private:
-    std::string AnimationsPath;
-    std::string CollisionsPath;
-    size_t EngineTickDurationMs;
-    size_t LevelHeightInTiles;
-    std::string LevelPath;
-    size_t LevelWidthInTiles;
-    size_t TilesetGap;
-    size_t TilesetHeightInTiles;
-    size_t TilesetLeftOffset;
-    std::string TilesetPath;
-    size_t TilesetTilesSize;
-    size_t TilesetTopOffset;
-    size_t TilesetWidthInTiles;
+    std::string AnimationsPath{};
+    std::string CollisionsPath{};
+    size_t EngineTickDurationMs{0};
+    size_t LevelHeightInTiles{0};
+    std::string LevelPath{};
+    size_t LevelWidthInTiles{0};
+    size_t TilesetGap{0};
+    size_t TilesetHeightInTiles{0};
+    size_t TilesetLeftOffset{0};
+    std::string TilesetPath{};
+    size_t TilesetTilesSize{0};
+    size_t TilesetTopOffset{0};
+    size_t TilesetWidthInTiles{0};
 };
 
 #endif

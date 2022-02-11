@@ -30,9 +30,10 @@ unique_ptr<Level const> LevelLoader::load(string const& Path, size_t WidthInTile
     std::ifstream Stream;
     Stream.open(Path, std::ios::in | std::ios::binary);
     if (Stream.is_open()) {
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
         Stream.read(reinterpret_cast<char*>(Tiles.data()), SizeInBytes);
         Stream.close();
-    } // FIXME: fail.
+    }  // FIXME: fail.
 
     return make_unique<Level const>(move(Tiles), WidthInTiles, HeightInTiles);
 }

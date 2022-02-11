@@ -25,10 +25,10 @@ void Renderer::render(AnimationPlayer const& AnimationPlayer, Level const& Level
 
 void Renderer::renderCharacter(size_t ViewPortX, size_t ViewPortY, size_t Tick, SDL_Texture* CharacterTexture, size_t CharacterX, size_t CharacterY, size_t CharacterSizeInPixels) const {
     SDL_Rect DestRect;
-    DestRect.x = CharacterX - ViewPortX;
-    DestRect.y = CharacterY - ViewPortY;
-    DestRect.w = CharacterSizeInPixels;
-    DestRect.h = CharacterSizeInPixels;
+    DestRect.x = static_cast<int>(CharacterX - ViewPortX);
+    DestRect.y = static_cast<int>(CharacterY - ViewPortY);
+    DestRect.w = static_cast<int>(CharacterSizeInPixels);
+    DestRect.h = static_cast<int>(CharacterSizeInPixels);
 
     SDL_RenderCopy(SDLRenderer, CharacterTexture, nullptr, &DestRect);
 }
@@ -41,10 +41,10 @@ void Renderer::renderLevel(AnimationPlayer const& AnimationPlayer, Level const& 
 
             SDL_Rect SourceRect{Tileset.rectForTileIndex(TileIndex)};
             SDL_Rect DestRect;
-            DestRect.w = Tileset.tilesSize();
-            DestRect.h = Tileset.tilesSize();
-            DestRect.x = X * Tileset.tilesSize() - ViewPortX;
-            DestRect.y = Y * Tileset.tilesSize() - ViewPortY;
+            DestRect.w = static_cast<int>(Tileset.tilesSize());
+            DestRect.h = static_cast<int>(Tileset.tilesSize());
+            DestRect.x = static_cast<int>(X * Tileset.tilesSize() - ViewPortX);
+            DestRect.y = static_cast<int>(Y * Tileset.tilesSize() - ViewPortY);
 
             SDL_RenderCopy(SDLRenderer, Tileset.texture(), &SourceRect, &DestRect);
         }

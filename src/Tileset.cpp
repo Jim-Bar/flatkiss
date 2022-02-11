@@ -37,11 +37,11 @@ SDL_Texture* Tileset::loadTexture(std::string const& FilePath, Renderer const& R
 
 SDL_Rect Tileset::rectForTileIndex(size_t tile_index) const {
     SDL_Rect source_rect;
-    source_rect.w = tilesSize();
-    source_rect.h = tilesSize();
+    source_rect.w = static_cast<int>(tilesSize());
+    source_rect.h = static_cast<int>(tilesSize());
 
-    source_rect.x = (tile_index % widthInTiles()) * (source_rect.w + gap()) + leftOffset();
-    source_rect.y = (tile_index / widthInTiles()) * (source_rect.h + gap()) + topOffset();
+    source_rect.x = static_cast<int>((tile_index % widthInTiles()) * (source_rect.w + gap()) + leftOffset());
+    source_rect.y = static_cast<int>((tile_index / widthInTiles()) * (source_rect.h + gap()) + topOffset());
 
     return source_rect;
 }

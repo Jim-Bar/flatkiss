@@ -27,7 +27,11 @@ std::unordered_map<uint16_t, Animation const> AnimationLoader::load(std::string 
         while (Stream.peek() != std::istream::traits_type::eof()) {
             uint8_t AnimationPeriod{static_cast<uint8_t>(Stream.get())};
             uint8_t AnimationDuration{static_cast<uint8_t>(Stream.get())};
+            /* The vector containing animations is created and space is reserved for
+             * containing all of them at the same time. Then the stream is read
+             * directly into the vector. */
             auto Animation{std::vector<uint16_t>(AnimationPeriod, 0)};
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
             Stream.read(reinterpret_cast<char*>(Animation.data()),
                         AnimationPeriod * 2);  // Two bytes per tile.
             AnimationsPerTileIndex.emplace(

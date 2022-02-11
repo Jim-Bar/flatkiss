@@ -39,6 +39,7 @@ unordered_map<uint16_t, Collision const> CollisionLoader::load(std::string const
     if (Stream.is_open()) {
         while (Stream.peek() != std::istream::traits_type::eof()) {
             uint16_t TileIndex{0};
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
             Stream.read(reinterpret_cast<char*>(&TileIndex), 2); // Two bytes per tile index.
             AllTilesIndices.insert(TileIndex);
             uint8_t CollisionType{static_cast<uint8_t>(Stream.get())};

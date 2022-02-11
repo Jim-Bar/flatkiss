@@ -62,6 +62,7 @@ void move(KeyboardState const& keyboard_state, Navigator const& Navigator, size_
 int main(int argc, char *argv[])
 {
     using std::cerr;
+    using std::cout;
     using std::endl;
 
     Configuration Configuration{"configuration.ini"};
@@ -113,8 +114,9 @@ int main(int argc, char *argv[])
         SDL_Delay(Configuration.engineTickDurationMs());
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
-                SDL_Log("Program quit after %i ticks", event.quit.timestamp);
-                quit = true;
+              std::cout << "Program quit after " << event.quit.timestamp
+                        << " ticks" << std::endl;
+              quit = true;
             } else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
                 keyboard_state.update(event.key.keysym.scancode, event.key.state == SDL_PRESSED ? true : false);
             }

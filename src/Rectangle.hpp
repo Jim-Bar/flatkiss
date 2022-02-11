@@ -9,14 +9,14 @@
  * There is no position associated with a rectangle.
  */
 class Rectangle {
-public:
-    Rectangle(size_t Width, size_t Height);
-    size_t height() const;
-    size_t width() const;
+ public:
+  Rectangle(size_t Width, size_t Height);
+  size_t height() const;
+  size_t width() const;
 
-private:
-    size_t const Height;
-    size_t const Width;
+ private:
+  size_t const Height;
+  size_t const Width;
 };
 
 #endif

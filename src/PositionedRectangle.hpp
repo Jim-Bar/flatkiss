@@ -11,28 +11,31 @@
  * Provides useful routines such as intersection helpers.
  */
 class PositionedRectangle {
-public:
-    PositionedRectangle(Position const& Position, Rectangle const& Rectangle);
-    size_t height() const;
-    bool intersectsWith(PositionedEllipse const& Other) const; // FIXME: Move to Collider?
-    bool intersectsWith(PositionedRectangle const& Other) const;
-    /**
-     * @brief Returns a new positioned rectangle moved by the provided displacement.
-     *
-     * @param Vector The displacement to apply.
-     * @return PositionedRectangle A new positioned rectangle moved by the vector.
-     */
-    PositionedRectangle operator+(Vector const& Vector) const;
-    Position const& position() const;
-    Rectangle const& rectangle() const;
-    size_t width() const;
-    size_t x() const;
-    size_t y() const;
+ public:
+  PositionedRectangle(Position const& Position, Rectangle const& Rectangle);
+  size_t height() const;
+  bool intersectsWith(
+      PositionedEllipse const& Other) const;  // FIXME: Move to Collider?
+  bool intersectsWith(PositionedRectangle const& Other) const;
+  /**
+   * @brief Returns a new positioned rectangle moved by the provided
+   * displacement.
+   *
+   * @param Vector The displacement to apply.
+   * @return PositionedRectangle A new positioned rectangle moved by the vector.
+   */
+  PositionedRectangle operator+(Vector const& Vector) const;
+  Position const& position() const;
+  Rectangle const& rectangle() const;
+  size_t width() const;
+  size_t x() const;
+  size_t y() const;
 
-private:
-    // Using abreviations because G++ will not let that compile if using the same name as the type.
-    Position const Pos;
-    Rectangle const Rect;
+ private:
+  /* Using abreviations because G++ will not let that compile if using the same
+   * name as the type. */
+  Position const Pos;
+  Rectangle const Rect;
 };
 
 #endif

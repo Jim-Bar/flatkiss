@@ -31,8 +31,8 @@ bool Navigator::collidesWithTiles(
          x <= (positioned_rectangle.x() + positioned_rectangle.width() - 1) /
                   tiles_size_;
          x++) {
-      uint16_t TileIndex(level_.tileIndex(x, y));
-      if (collider_.collide(positioned_rectangle, TileIndex,
+      uint16_t tile_index(level_.tileIndex(x, y));
+      if (collider_.collide(positioned_rectangle, tile_index,
                             Position{x * tiles_size_, y * tiles_size_})) {
         return true;
       }
@@ -54,18 +54,18 @@ Position Navigator::findNearestPositionToDestination(
    * line between the source and the destination. It will not return the actual
    * nearest position when it is outside of that line. */
   Vector displacement{destination - source_positioned_rectangle.position()};
-  int64_t MaxDisplacement{
+  int64_t max_displacement{
       std::max(std::abs(displacement.dx()), std::abs(displacement.dy()))};
-  for (int64_t step{1}; step <= MaxDisplacement; step++) {
-    Vector partial_displacement{(step * displacement.dx()) / MaxDisplacement,
-                                (step * displacement.dy()) / MaxDisplacement};
+  for (int64_t step{1}; step <= max_displacement; step++) {
+    Vector partial_displacement{(step * displacement.dx()) / max_displacement,
+                                (step * displacement.dy()) / max_displacement};
     if (collidesWithTiles(source_positioned_rectangle + partial_displacement)) {
       /* Return the last step for which the position does not collide (for the
        * first step this is the original position). */
       return Position{source_positioned_rectangle.x() +
-                          ((step - 1) * displacement.dx()) / MaxDisplacement,
+                          ((step - 1) * displacement.dx()) / max_displacement,
                       source_positioned_rectangle.y() +
-                          ((step - 1) * displacement.dy()) / MaxDisplacement};
+                          ((step - 1) * displacement.dy()) / max_displacement};
     }
   }
 

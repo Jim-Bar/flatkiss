@@ -20,9 +20,9 @@
 #include "tileset.hpp"
 #include "vector.hpp"
 
-size_t const CHARACTER_SIZE_PIXELS(16);
-size_t const SPEED_IN_PIXELS(2);
-size_t const VIEWPORT_SIZE(160);
+size_t const kCharacterSizePixels(16);
+size_t const kSpeedInPixels(2);
+size_t const kViewportSize(160);
 
 void move(KeyboardState const& keyboard_state, Navigator const& navigator,
           size_t& x, size_t& y, size_t& viewport_x, size_t& viewport_y,
@@ -30,41 +30,41 @@ void move(KeyboardState const& keyboard_state, Navigator const& navigator,
   int64_t dx{0};
   int64_t dy{0};
   if (keyboard_state.isPressed(SDL_SCANCODE_UP)) {
-    dy -= SPEED_IN_PIXELS;
+    dy -= kSpeedInPixels;
   }
   if (keyboard_state.isPressed(SDL_SCANCODE_DOWN)) {
-    dy += SPEED_IN_PIXELS;
+    dy += kSpeedInPixels;
   }
   if (keyboard_state.isPressed(SDL_SCANCODE_LEFT)) {
-    dx -= SPEED_IN_PIXELS;
+    dx -= kSpeedInPixels;
   }
   if (keyboard_state.isPressed(SDL_SCANCODE_RIGHT)) {
-    dx += SPEED_IN_PIXELS;
+    dx += kSpeedInPixels;
   }
 
   Position new_position{navigator.moveBy(
-      PositionedRectangle{Position{x, y}, Rectangle{CHARACTER_SIZE_PIXELS,
-                                                    CHARACTER_SIZE_PIXELS}},
+      PositionedRectangle{Position{x, y}, Rectangle{kCharacterSizePixels,
+                                                    kCharacterSizePixels}},
       Vector{dx, dy})};
 
   x = new_position.x();
   y = new_position.y();
 
-  if (y < VIEWPORT_SIZE / 2 - CHARACTER_SIZE_PIXELS / 2) {
+  if (y < kViewportSize / 2 - kCharacterSizePixels / 2) {
     viewport_y = 0;
   } else if (y > level->heightInTiles() * tileset.tilesSize() -
-                     VIEWPORT_SIZE / 2 - CHARACTER_SIZE_PIXELS / 2) {
-    viewport_y = level->heightInTiles() * tileset.tilesSize() - VIEWPORT_SIZE;
+                     kViewportSize / 2 - kCharacterSizePixels / 2) {
+    viewport_y = level->heightInTiles() * tileset.tilesSize() - kViewportSize;
   } else {
-    viewport_y = y - VIEWPORT_SIZE / 2 + CHARACTER_SIZE_PIXELS / 2;
+    viewport_y = y - kViewportSize / 2 + kCharacterSizePixels / 2;
   }
-  if (x < VIEWPORT_SIZE / 2 - CHARACTER_SIZE_PIXELS / 2) {
+  if (x < kViewportSize / 2 - kCharacterSizePixels / 2) {
     viewport_x = 0;
   } else if (x > level->widthInTiles() * tileset.tilesSize() -
-                     VIEWPORT_SIZE / 2 - CHARACTER_SIZE_PIXELS / 2) {
-    viewport_x = level->widthInTiles() * tileset.tilesSize() - VIEWPORT_SIZE;
+                     kViewportSize / 2 - kCharacterSizePixels / 2) {
+    viewport_x = level->widthInTiles() * tileset.tilesSize() - kViewportSize;
   } else {
-    viewport_x = x - VIEWPORT_SIZE / 2 + CHARACTER_SIZE_PIXELS / 2;
+    viewport_x = x - kViewportSize / 2 + kCharacterSizePixels / 2;
   }
 }
 
@@ -84,8 +84,8 @@ int main(int argc, char* argv[]) {
   }
 
   SDL_Window* window = SDL_CreateWindow(PROJECT_NAME, SDL_WINDOWPOS_UNDEFINED,
-                                        SDL_WINDOWPOS_UNDEFINED, VIEWPORT_SIZE,
-                                        VIEWPORT_SIZE, SDL_WINDOW_SHOWN);
+                                        SDL_WINDOWPOS_UNDEFINED, kViewportSize,
+                                        kViewportSize, SDL_WINDOW_SHOWN);
   if (window == nullptr) {
     cerr << "SDL_CreateWindow Error: " << SDL_GetError() << endl;
     return EXIT_FAILURE;
@@ -129,11 +129,11 @@ int main(int argc, char* argv[]) {
   size_t character_y{0};
   size_t tick(0);
   while (!quit) {
-    renderer.render(animation_player, *level, tileset, x, y, VIEWPORT_SIZE,
+    renderer.render(animation_player, *level, tileset, x, y, kViewportSize,
                     tick++, character, character_x, character_y,
-                    CHARACTER_SIZE_PIXELS);
+                    kCharacterSizePixels);
     SDL_Delay(configuration.engineTickDurationMs());
-    while (SDL_PollEvent(&event) != 0) {
+    while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
         std::cout << "Program quit after " << event.quit.timestamp << " ticks"
                   << std::endl;

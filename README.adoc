@@ -1,5 +1,6 @@
 = FlatKiss
 :1: https://en.wikipedia.org/wiki/KISS_principle
+:2: https://google.github.io/styleguide/cppguide.html
 
 FlatKiss is a 2D tile based game engine.
 
@@ -67,6 +68,22 @@ All of those are interpreted as unsigned (i.e. positive) integers.
 TIP: Several collisions can be added for a single tile index. Every one of those will be checked to determine whether an
 object collides with the tile.
 
+== Quality
+
+=== Coding style
+
+All the C++ code follows {2}[Google's {cpp} Style Guide], with two exceptions:
+
+. Functions and methods are `camelBack` to avoid collisions with types
+. Implementation source files have the `cpp` suffix, and header files have the `hpp` suffix
+
+Stick to the style as much as possible for the rest. The tool `clang-format` is available in the Docker container (and
+Visual Studio Code will use it), and reads its configuration from link:.clang-format[`.clang-format`]. Likewise,
+`clang-tidy` is also available, reads its configuration from link:.clang-tidy[`.clang-tidy`], and will check (among
+other things) the naming of identifiers.
+
+TIP: For quickly reformatting the code in Visual Studio Code, use `Ctrl+Shift+I`.
+
 == Editor
 
 === How to use
@@ -85,6 +102,8 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
+. Warning bug with readability-identifier-naming: https://stackoverflow.com/q/68475958
+. readability-identifier-naming.MethodCase
 . Have `clang-tidy` check identifiers names
 . Document the style used (Google)
 . Check whether `containerUser` and/or `remoteUser` is/are required in `.devcontainer.json`

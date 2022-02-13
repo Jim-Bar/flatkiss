@@ -22,14 +22,14 @@ class Tileset {
           size_t width_in_tiles, size_t height_in_tiles, size_t left_offset,
           size_t top_offset, size_t gap, Renderer const& renderer);
   ~Tileset();
-  size_t const gap() const;
-  size_t const heightInTiles() const;
-  size_t const leftOffset() const;
+  size_t gap() const;
+  size_t heightInTiles() const;
+  size_t leftOffset() const;
   SDL_Rect rectForTileIndex(size_t tile_index) const;
   SDL_Texture* texture() const;
-  size_t const tilesSize() const;
-  size_t const topOffset() const;
-  size_t const widthInTiles() const;
+  size_t tilesSize() const;
+  size_t topOffset() const;
+  size_t widthInTiles() const;
 
  private:
   size_t const gap_;

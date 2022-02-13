@@ -123,21 +123,24 @@ int main(int argc, char* argv[]) {
       AnimationLoader::load(configuration.animationsPath())};
   Collider collider{CollisionLoader::load(configuration.collisionsPath())};
   Navigator navigator{collider, *level, tileset.tilesSize()};
-  size_t x(0), y(0), character_x(0), character_y(0);
+  size_t x{0};
+  size_t y{0};
+  size_t character_x{0};
+  size_t character_y{0};
   size_t tick(0);
   while (!quit) {
     renderer.render(animation_player, *level, tileset, x, y, VIEWPORT_SIZE,
                     tick++, character, character_x, character_y,
                     CHARACTER_SIZE_PIXELS);
     SDL_Delay(configuration.engineTickDurationMs());
-    while (SDL_PollEvent(&event)) {
+    while (SDL_PollEvent(&event) != 0) {
       if (event.type == SDL_QUIT) {
         std::cout << "Program quit after " << event.quit.timestamp << " ticks"
                   << std::endl;
         quit = true;
       } else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
         keyboard_state.update(event.key.keysym.scancode,
-                              event.key.state == SDL_PRESSED ? true : false);
+                              event.key.state == SDL_PRESSED);
       }
     }
     move(keyboard_state, navigator, character_x, character_y, x, y, level,

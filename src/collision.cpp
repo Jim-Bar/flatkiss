@@ -1,5 +1,6 @@
 #include "collision.hpp"
 
+#include <algorithm>
 #include <fstream>
 #include <set>
 #include <vector>
@@ -15,20 +16,18 @@ Collision::Collision(std::vector<PositionedEllipse> const positioned_ellipses,
       positioned_rectangles_(move(positioned_rectangles)) {}
 
 bool Collision::collidesWith(PositionedRectangle const& positioned_rectangle,
-                             Position const when_at_position) const {
+                             Position const& when_at_position) const {
   for (auto ellipse : positioned_ellipses_) {
     if (positioned_rectangle.intersectsWith(when_at_position + ellipse)) {
       return true;
     }
   }
 
-  for (auto rectangle : positioned_rectangles_) {
-    if (positioned_rectangle.intersectsWith(when_at_position + rectangle)) {
-      return true;
-    }
-  }
-
-  return false;
+  return std::ranges::any_of(
+      positioned_rectangles_, [&](PositionedRectangle const& rectangle) {
+        return positioned_rectangle.intersectsWith(when_at_position +
+                                                   rectangle);
+      });
 }
 
 unordered_map<uint16_t, Collision const> CollisionLoader::load(

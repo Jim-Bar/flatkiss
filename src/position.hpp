@@ -19,38 +19,36 @@ class PositionedRectangle;
 class Position {
  public:
   Position(size_t x, size_t y);
-  bool operator!=(Position const& position) const;
-  Position operator+(Position const& other_position) const;
+  bool operator!=(Position const& other) const;
+  Position operator+(Position const& other) const;
   /**
    * @brief Returns a new positioned ellipse moved by the position.
    * The position here can be considered as a vector, or a distance.
    *
-   * @param positioned_ellipse The positioned ellipse that will be moved.
+   * @param ellipse The positioned ellipse that will be moved.
    * @return PositionedEllipse A new positioned ellipse moved by the current
    * position.
    */
-  PositionedEllipse operator+(
-      PositionedEllipse const& positioned_ellipse) const;
+  PositionedEllipse operator+(PositionedEllipse const& ellipse) const;
   /**
    * @brief Returns a new positioned rectangle moved by the position.
    * The position here can be considered as a vector, or a distance.
    *
-   * @param positioned_rectangle The positioned rectangle that will be moved.
+   * @param rectangle The positioned rectangle that will be moved.
    * @return PositionedRectangle A new positioned rectangle moved by the current
    * position.
    */
-  PositionedRectangle operator+(
-      PositionedRectangle const& positioned_rectangle) const;
+  PositionedRectangle operator+(PositionedRectangle const& rectangle) const;
   Position operator+(Vector const& vector) const;
   /**
    * @brief Returns a new delta between the two positions.
    *
-   * @param Position The other position that will be substracted from the
+   * @param other The other position that will be substracted from the
    * current position.
    * @return Vector A new vector from the other position to the current one.
    */
-  Vector operator-(Position const& position) const;
-  bool operator==(Position const& position) const;
+  Vector operator-(Position const& other) const;
+  bool operator==(Position const& other) const;
   size_t x() const;
   size_t y() const;
 
@@ -58,7 +56,7 @@ class Position {
   size_t const x_;
   size_t const y_;
 
-  int64_t substractSizes(size_t size_1, size_t size_2) const;
+  static int64_t substractSizes(size_t size_1, size_t size_2);
 };
 
 #endif

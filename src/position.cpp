@@ -6,45 +6,43 @@
 
 Position::Position(size_t X, size_t Y) : x_(X), y_(Y) {}
 
-bool Position::operator!=(Position const& Position) const {
-  return !(*this == Position);
+bool Position::operator!=(Position const& other) const {
+  return !(*this == other);
 }
 
-Position Position::operator+(Position const& OtherPosition) const {
-  return Position{x() + OtherPosition.x(), y() + OtherPosition.y()};
+Position Position::operator+(Position const& other) const {
+  return Position{x() + other.x(), y() + other.y()};
 }
 
-PositionedEllipse Position::operator+(
-    PositionedEllipse const& PositionedEll) const {
-  return PositionedEllipse{*this + PositionedEll.position(),
-                           PositionedEll.ellipse()};
+PositionedEllipse Position::operator+(PositionedEllipse const& ellipse) const {
+  return PositionedEllipse{*this + ellipse.position(), ellipse.ellipse()};
 }
 
 PositionedRectangle Position::operator+(
-    PositionedRectangle const& PositionedRect) const {
-  return PositionedRectangle{*this + PositionedRect.position(),
-                             PositionedRect.rectangle()};
+    PositionedRectangle const& rectangle) const {
+  return PositionedRectangle{*this + rectangle.position(),
+                             rectangle.rectangle()};
 }
 
-Position Position::operator+(Vector const& Vector) const {
-  return Position{x() + Vector.dx(), y() + Vector.dy()};
+Position Position::operator+(Vector const& vector) const {
+  return Position{x() + vector.dx(), y() + vector.dy()};
 }
 
-Vector Position::operator-(Position const& Position) const {
-  return Vector{substractSizes(x(), Position.x()),
-                substractSizes(y(), Position.y())};
+Vector Position::operator-(Position const& other) const {
+  return Vector{substractSizes(x(), other.x()),
+                substractSizes(y(), other.y())};
 }
 
-bool Position::operator==(Position const& Position) const {
-  return x() == Position.x() && y() == Position.y();
+bool Position::operator==(Position const& other) const {
+  return x() == other.x() && y() == other.y();
 }
 
-int64_t Position::substractSizes(size_t Size1, size_t Size2) const {
-  if (Size1 >= Size2) {
-    return Size1 - Size2;
-  } else {
-    return -static_cast<int64_t>(Size2 - Size1);
+int64_t Position::substractSizes(size_t size_1, size_t size_2) {
+  if (size_1 >= size_2) {
+    return size_1 - size_2;
   }
+
+  return -static_cast<int64_t>(size_2 - size_1);
 }
 
 size_t Position::x() const { return x_; }

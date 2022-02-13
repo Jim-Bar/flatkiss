@@ -18,11 +18,11 @@ Tileset::Tileset(string const& file_path, size_t tiles_size,
 
 Tileset::~Tileset() { SDL_DestroyTexture(texture_); }
 
-size_t const Tileset::gap() const { return gap_; }
+size_t Tileset::gap() const { return gap_; }
 
-size_t const Tileset::heightInTiles() const { return height_in_tiles_; }
+size_t Tileset::heightInTiles() const { return height_in_tiles_; }
 
-size_t const Tileset::leftOffset() const { return left_offset_; }
+size_t Tileset::leftOffset() const { return left_offset_; }
 
 SDL_Texture* Tileset::loadTexture(std::string const& file_path,
                                   Renderer const& renderer) {
@@ -52,8 +52,8 @@ SDL_Rect Tileset::rectForTileIndex(size_t tile_index) const {
 
 SDL_Texture* Tileset::texture() const { return texture_; }
 
-size_t const Tileset::tilesSize() const { return tiles_size_; }
+size_t Tileset::tilesSize() const { return tiles_size_; }
 
-size_t const Tileset::topOffset() const { return top_offset_; }
+size_t Tileset::topOffset() const { return top_offset_; }
 
-size_t const Tileset::widthInTiles() const { return width_in_tiles_; }
+size_t Tileset::widthInTiles() const { return width_in_tiles_; }

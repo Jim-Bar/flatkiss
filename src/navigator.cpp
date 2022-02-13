@@ -3,20 +3,22 @@
 #include <algorithm>
 
 Navigator::Navigator(Collider const& collider, Level const& level,
-                     size_t const tiles_size)
+                     size_t tiles_size)
     : collider_(collider), level_(level), tiles_size_(tiles_size) {}
 
 size_t Navigator::clampToBounds(size_t object_position, size_t object_size,
-                                int64_t delta_value, size_t upper_bound) const {
+                                int64_t delta_value, size_t upper_bound) {
   // Here care is taken to deal with unsigned integers and substractions.
   if (delta_value < 0 && object_position < -delta_value) {
     return 0;
-  } else if (delta_value > 0 &&
-             object_position + object_size + delta_value >= upper_bound) {
-    return upper_bound - object_size;
-  } else {
-    return object_position + delta_value;
   }
+
+  if (delta_value > 0 &&
+      object_position + object_size + delta_value >= upper_bound) {
+    return upper_bound - object_size;
+  }
+
+  return object_position + delta_value;
 }
 
 bool Navigator::collidesWithTiles(

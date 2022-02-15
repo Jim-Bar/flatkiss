@@ -13,6 +13,10 @@
 class Renderer {
  public:
   Renderer(SDL_Window* sdl_window);
+  Renderer(Renderer const& other) = delete;
+  Renderer(Renderer&& other) = delete;
+  Renderer& operator=(Renderer const& other) = delete;
+  Renderer& operator=(Renderer&& other) = delete;
   ~Renderer();
   /**
    * @brief Create a SDL texture that will be rendered using this renderer.

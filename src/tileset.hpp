@@ -21,6 +21,10 @@ class Tileset {
   Tileset(std::string const& file_path, size_t tiles_size,
           size_t width_in_tiles, size_t height_in_tiles, size_t left_offset,
           size_t top_offset, size_t gap, Renderer const& renderer);
+  Tileset(Tileset const& other) = delete;
+  Tileset(Tileset&& other) = delete;
+  Tileset& operator=(Tileset const& other) = delete;
+  Tileset& operator=(Tileset&& other) = delete;
   ~Tileset();
   size_t gap() const;
   size_t heightInTiles() const;

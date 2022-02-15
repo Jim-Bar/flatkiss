@@ -74,9 +74,9 @@ int main(int argc, char* argv[]) {
   using std::endl;
 
   Configuration configuration{"configuration.ini"};
-  std::unique_ptr<Level const> level{LevelLoader::load(
+  std::unique_ptr<Level const> level{std::move(LevelLoader::load(
       configuration.levelPath(), configuration.levelWidthInTiles(),
-      configuration.levelHeightInTiles())};
+      configuration.levelHeightInTiles()))};
 
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
     cerr << "SDL_Init Error: " << SDL_GetError() << endl;

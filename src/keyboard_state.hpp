@@ -15,10 +15,10 @@ class KeyboardState {
   void update(SDL_Scancode key, bool pressed);
 
  private:
-  bool isDownPressed{false};
-  bool isLeftPressed{false};
-  bool isRightPressed{false};
-  bool isUpPressed{false};
+  bool is_down_pressed_{false};
+  bool is_left_pressed_{false};
+  bool is_right_pressed_{false};
+  bool is_up_pressed_{false};
 };
 
 #endif

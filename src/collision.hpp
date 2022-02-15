@@ -13,8 +13,8 @@
  */
 class Collision {
  public:
-  Collision(std::vector<PositionedEllipse> const positioned_ellipses,
-            std::vector<PositionedRectangle> const positioned_rectangles);
+  Collision(std::vector<PositionedEllipse> positioned_ellipses,
+            std::vector<PositionedRectangle> positioned_rectangles);
   bool collidesWith(PositionedRectangle const& positioned_rectangle,
                     Position const& when_at_position) const;
 

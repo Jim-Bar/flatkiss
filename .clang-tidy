@@ -5,7 +5,9 @@ FormatStyle: google
 
 # Copied from:
 # https://github.com/googleapis/google-cloud-cpp/blob/98fb6c96d88254f2b7f523f9a3d032f62da224a8/.clang-tidy
+# With the addition of MethodCase which was absent.
 CheckOptions:
+  - { key: readability-identifier-naming.MethodCase,             value: camelBack }
   - { key: readability-identifier-naming.NamespaceCase,          value: lower_case }
   - { key: readability-identifier-naming.ClassCase,              value: CamelCase  }
   - { key: readability-identifier-naming.StructCase,             value: CamelCase  }

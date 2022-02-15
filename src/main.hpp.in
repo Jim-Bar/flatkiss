@@ -1,6 +1,7 @@
 #ifndef MAIN_HPP_INCLUDED
 #define MAIN_HPP_INCLUDED
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define PROJECT_NAME "@PROJECT_NAME@"
 
 #endif

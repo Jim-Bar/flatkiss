@@ -10,8 +10,8 @@ using std::set;
 using std::unordered_map;
 using std::vector;
 
-Collision::Collision(std::vector<PositionedEllipse> const positioned_ellipses,
-                     vector<PositionedRectangle> const positioned_rectangles)
+Collision::Collision(std::vector<PositionedEllipse> positioned_ellipses,
+                     vector<PositionedRectangle> positioned_rectangles)
     : positioned_ellipses_(move(positioned_ellipses)),
       positioned_rectangles_(move(positioned_rectangles)) {}
 

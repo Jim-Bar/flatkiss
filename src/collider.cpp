@@ -1,7 +1,9 @@
 #include "collider.hpp"
 
+using std::unordered_map;
+
 Collider::Collider(
-    std::unordered_map<uint16_t, Collision const>&& collisions_per_tile_index) {
+    unordered_map<uint16_t, Collision const>&& collisions_per_tile_index) {
   this->collisions_per_tile_index_.swap(collisions_per_tile_index);
 }
 

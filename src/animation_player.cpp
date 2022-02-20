@@ -1,7 +1,9 @@
 #include "animation_player.hpp"
 
+using std::unordered_map;
+
 AnimationPlayer::AnimationPlayer(
-    std::unordered_map<uint16_t, Animation const>&& animations_per_tile_index) {
+    unordered_map<uint16_t, Animation const>&& animations_per_tile_index) {
   this->animations_per_tile_index_.swap(animations_per_tile_index);
 }
 

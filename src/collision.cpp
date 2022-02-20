@@ -5,12 +5,19 @@
 #include <set>
 #include <vector>
 
+using std::forward_as_tuple;
+using std::ifstream;
+using std::ios;
+using std::istream;
 using std::move;
+using std::piecewise_construct;
 using std::set;
+using std::string;
 using std::unordered_map;
 using std::vector;
+using std::ranges::any_of;
 
-Collision::Collision(std::vector<PositionedEllipse> positioned_ellipses,
+Collision::Collision(vector<PositionedEllipse> positioned_ellipses,
                      vector<PositionedRectangle> positioned_rectangles)
     : positioned_ellipses_(move(positioned_ellipses)),
       positioned_rectangles_(move(positioned_rectangles)) {}
@@ -23,24 +30,24 @@ bool Collision::collidesWith(PositionedRectangle const& positioned_rectangle,
     }
   }
 
-  return std::ranges::any_of(
-      positioned_rectangles_, [&](PositionedRectangle const& rectangle) {
-        return positioned_rectangle.intersectsWith(when_at_position +
-                                                   rectangle);
-      });
+  return any_of(positioned_rectangles_,
+                [&](PositionedRectangle const& rectangle) {
+                  return positioned_rectangle.intersectsWith(when_at_position +
+                                                             rectangle);
+                });
 }
 
 unordered_map<uint16_t, Collision const> CollisionLoader::load(
-    std::string const& file_path) {
+    string const& file_path) {
   // First read all the positioned rectangles for all the tile indices.
-  std::ifstream stream;
+  ifstream stream;
   set<uint16_t> all_tiles_indices;
   unordered_map<uint16_t, vector<PositionedEllipse>> ellipses_per_tile_index;
   unordered_map<uint16_t, vector<PositionedRectangle>>
       rectangles_per_tile_index;
-  stream.open(file_path, std::ios::in | std::ios::binary);
+  stream.open(file_path, ios::in | ios::binary);
   if (stream.is_open()) {
-    while (stream.peek() != std::istream::traits_type::eof()) {
+    while (stream.peek() != istream::traits_type::eof()) {
       uint16_t tile_index{0};
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&tile_index),
@@ -78,9 +85,9 @@ unordered_map<uint16_t, Collision const> CollisionLoader::load(
   unordered_map<uint16_t, Collision const> collisions_per_tile_index;
   for (auto tile_index : all_tiles_indices) {
     collisions_per_tile_index.emplace(
-        std::piecewise_construct, std::forward_as_tuple(tile_index),
-        std::forward_as_tuple(move(ellipses_per_tile_index[tile_index]),
-                              move(rectangles_per_tile_index[tile_index])));
+        piecewise_construct, forward_as_tuple(tile_index),
+        forward_as_tuple(move(ellipses_per_tile_index[tile_index]),
+                         move(rectangles_per_tile_index[tile_index])));
   }
 
   return collisions_per_tile_index;

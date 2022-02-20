@@ -20,13 +20,19 @@
 #include "tileset.hpp"
 #include "vector.hpp"
 
+using std::cerr;
+using std::cout;
+using std::endl;
+using std::move;
+using std::unique_ptr;
+
 size_t const kCharacterSizePixels(16);
 size_t const kSpeedInPixels(2);
 size_t const kViewportSize(160);
 
 void move(KeyboardState const& keyboard_state, Navigator const& navigator,
           size_t& x, size_t& y, size_t& viewport_x, size_t& viewport_y,
-          std::unique_ptr<Level const>& level, size_t tilesSize) {
+          unique_ptr<Level const>& level, size_t tilesSize) {
   int64_t dx{0};
   int64_t dy{0};
   if (keyboard_state.isPressed(SDL_SCANCODE_UP)) {
@@ -69,12 +75,8 @@ void move(KeyboardState const& keyboard_state, Navigator const& navigator,
 }
 
 int main(int argc, char* argv[]) {
-  using std::cerr;
-  using std::cout;
-  using std::endl;
-
   Configuration configuration{"configuration.ini"};
-  std::unique_ptr<Level const> level{std::move(LevelLoader::load(
+  unique_ptr<Level const> level{move(LevelLoader::load(
       configuration.levelPath(), configuration.levelWidthInTiles(),
       configuration.levelHeightInTiles()))};
 
@@ -135,8 +137,8 @@ int main(int argc, char* argv[]) {
     SDL_Delay(configuration.engineTickDurationMs());
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
-        std::cout << "Program quit after " << event.quit.timestamp << " ticks"
-                  << std::endl;
+        cout << "Program quit after " << event.quit.timestamp << " ticks"
+             << endl;
         quit = true;
       } else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
         keyboard_state.update(event.key.keysym.scancode,

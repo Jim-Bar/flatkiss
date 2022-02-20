@@ -24,7 +24,7 @@ size_t Tileset::heightInTiles() const { return height_in_tiles_; }
 
 size_t Tileset::leftOffset() const { return left_offset_; }
 
-SDL_Texture* Tileset::loadTexture(std::string const& file_path,
+SDL_Texture* Tileset::loadTexture(string const& file_path,
                                   Renderer const& renderer) {
   SDL_Surface* surface = SDL_LoadBMP(file_path.c_str());
   SDL_Texture* texture = nullptr;

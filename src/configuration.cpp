@@ -4,9 +4,12 @@
 
 #include <fstream>
 
-Configuration::Configuration(std::string const& file_path) {
+using std::ifstream;
+using std::string;
+
+Configuration::Configuration(string const& file_path) {
   inipp::Ini<char> ini;
-  std::ifstream configuration_input_stream(file_path);
+  ifstream configuration_input_stream(file_path);
   ini.parse(configuration_input_stream);
 
   /* The values are retrieved at construction time to fail early if something is
@@ -32,13 +35,9 @@ Configuration::Configuration(std::string const& file_path) {
                    tileset_width_in_tiles_);
 }
 
-std::string const& Configuration::animationsPath() const {
-  return animations_path_;
-}
+string const& Configuration::animationsPath() const { return animations_path_; }
 
-std::string const& Configuration::collisionsPath() const {
-  return collisions_path_;
-}
+string const& Configuration::collisionsPath() const { return collisions_path_; }
 
 size_t Configuration::engineTickDurationMs() const {
   return engine_tick_duration_ms_;
@@ -48,7 +47,7 @@ size_t Configuration::levelHeightInTiles() const {
   return level_height_in_tiles_;
 }
 
-std::string const& Configuration::levelPath() const { return level_path_; }
+string const& Configuration::levelPath() const { return level_path_; }
 
 size_t Configuration::levelWidthInTiles() const {
   return level_width_in_tiles_;
@@ -61,7 +60,8 @@ size_t Configuration::tilesetHeightInTiles() const {
 }
 
 size_t Configuration::tilesetLeftOffset() const { return tileset_left_offset_; }
-std::string const& Configuration::tilesetPath() const { return tileset_path_; }
+
+string const& Configuration::tilesetPath() const { return tileset_path_; }
 
 size_t Configuration::tilesetTilesSize() const { return tileset_tiles_size_; }
 

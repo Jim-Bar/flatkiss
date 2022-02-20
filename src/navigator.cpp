@@ -2,6 +2,9 @@
 
 #include <algorithm>
 
+using std::abs;
+using std::max;
+
 Navigator::Navigator(Collider const& collider, Level const& level,
                      size_t tiles_size)
     : collider_(collider), level_(level), tiles_size_(tiles_size) {}
@@ -54,8 +57,7 @@ Position Navigator::findNearestPositionToDestination(
    * line between the source and the destination. It will not return the actual
    * nearest position when it is outside of that line. */
   Vector displacement{destination - source_positioned_rectangle.position()};
-  int64_t max_displacement{
-      std::max(std::abs(displacement.dx()), std::abs(displacement.dy()))};
+  int64_t max_displacement{max(abs(displacement.dx()), abs(displacement.dy()))};
   for (int64_t step{1}; step <= max_displacement; step++) {
     Vector partial_displacement{(step * displacement.dx()) / max_displacement,
                                 (step * displacement.dy()) / max_displacement};

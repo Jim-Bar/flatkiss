@@ -104,7 +104,6 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 . Warning bug with readability-identifier-naming: https://stackoverflow.com/q/68475958 (upgrade clang-tidy?)
 . Check whether `containerUser` and/or `remoteUser` is/are required in `.devcontainer.json`
-. Use `using std::` consistently
 . Check whether the built binary can run on a system without libsdl2
 . Improve the README: building in docker, development environment, required dependencies for running out of docker, ...
 . Replace "pixel" by "point" in the code that does not deal with graphics

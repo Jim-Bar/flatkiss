@@ -2,6 +2,8 @@
 
 #include <fstream>
 
+using std::ifstream;
+using std::ios;
 using std::make_unique;
 using std::move;
 using std::string;
@@ -28,8 +30,8 @@ unique_ptr<Level const> LevelLoader::load(string const& path,
   // Two byte per tile.
   size_t const size_in_bytes{width_in_tiles * height_in_tiles * 2};
   auto tiles{vector<uint16_t>(size_in_bytes, 0)};
-  std::ifstream stream;
-  stream.open(path, std::ios::in | std::ios::binary);
+  ifstream stream;
+  stream.open(path, ios::in | ios::binary);
   if (stream.is_open()) {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     stream.read(reinterpret_cast<char*>(tiles.data()), size_in_bytes);

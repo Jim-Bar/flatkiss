@@ -40,8 +40,6 @@ class Tileset {
   size_t const height_in_tiles_;
   size_t const left_offset_;
   SDL_Texture* const texture_;
-  /* FIXME: Probably that does not belong to the tileset (but to the model
-   * instead).*/
   size_t const tiles_size_;
   size_t const top_offset_;
   size_t const width_in_tiles_;

@@ -26,7 +26,7 @@ size_t const kViewportSize(160);
 
 void move(KeyboardState const& keyboard_state, Navigator const& navigator,
           size_t& x, size_t& y, size_t& viewport_x, size_t& viewport_y,
-          std::unique_ptr<Level const>& level, Tileset const& tileset) {
+          std::unique_ptr<Level const>& level, size_t tilesSize) {
   int64_t dx{0};
   int64_t dy{0};
   if (keyboard_state.isPressed(SDL_SCANCODE_UP)) {
@@ -52,17 +52,17 @@ void move(KeyboardState const& keyboard_state, Navigator const& navigator,
 
   if (y < kViewportSize / 2 - kCharacterSizePixels / 2) {
     viewport_y = 0;
-  } else if (y > level->heightInTiles() * tileset.tilesSize() -
-                     kViewportSize / 2 - kCharacterSizePixels / 2) {
-    viewport_y = level->heightInTiles() * tileset.tilesSize() - kViewportSize;
+  } else if (y > level->heightInTiles() * tilesSize - kViewportSize / 2 -
+                     kCharacterSizePixels / 2) {
+    viewport_y = level->heightInTiles() * tilesSize - kViewportSize;
   } else {
     viewport_y = y - kViewportSize / 2 + kCharacterSizePixels / 2;
   }
   if (x < kViewportSize / 2 - kCharacterSizePixels / 2) {
     viewport_x = 0;
-  } else if (x > level->widthInTiles() * tileset.tilesSize() -
-                     kViewportSize / 2 - kCharacterSizePixels / 2) {
-    viewport_x = level->widthInTiles() * tileset.tilesSize() - kViewportSize;
+  } else if (x > level->widthInTiles() * tilesSize - kViewportSize / 2 -
+                     kCharacterSizePixels / 2) {
+    viewport_x = level->widthInTiles() * tilesSize - kViewportSize;
   } else {
     viewport_x = x - kViewportSize / 2 + kCharacterSizePixels / 2;
   }
@@ -144,7 +144,7 @@ int main(int argc, char* argv[]) {
       }
     }
     move(keyboard_state, navigator, character_x, character_y, x, y, level,
-         tileset);
+         tileset.tilesSize());
   }
 
   SDL_DestroyTexture(character);

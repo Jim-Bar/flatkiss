@@ -5,10 +5,10 @@
 
     // Set *default* container specific settings.json values on container create.
     "settings": {
-        "C_Cpp.codeAnalysis.clangTidy.enabled": true
+        "C_Cpp.codeAnalysis.clangTidy.enabled": true,
         "editor.formatOnPaste": true,
         "editor.formatOnSave": true,
-        "editor.formatOnSaveMode": "file"
+        "editor.formatOnSaveMode": "file",
         "editor.formatOnType": true,
     },
 

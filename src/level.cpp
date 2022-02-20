@@ -6,6 +6,7 @@ using std::ifstream;
 using std::ios;
 using std::make_unique;
 using std::move;
+using std::streamsize;
 using std::string;
 using std::unique_ptr;
 using std::vector;
@@ -34,7 +35,8 @@ unique_ptr<Level const> LevelLoader::load(string const& path,
   stream.open(path, ios::in | ios::binary);
   if (stream.is_open()) {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-    stream.read(reinterpret_cast<char*>(tiles.data()), size_in_bytes);
+    stream.read(reinterpret_cast<char*>(tiles.data()),
+                static_cast<streamsize>(size_in_bytes));
     stream.close();
   }  // FIXME: fail.
 

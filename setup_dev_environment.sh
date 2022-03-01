@@ -22,4 +22,4 @@ wget --output-document tileset.png "https://www.spriters-resource.com/resources/
 wget --output-document character.gif "https://emoji.ameba.jp/img/user/te/tentoumushi0615/4594134.gif"
 cd ..
 
-DOCKER_BUILDKIT=1 docker build -t flat-kiss .
+docker build -t flat-kiss .

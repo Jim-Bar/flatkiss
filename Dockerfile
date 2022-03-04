@@ -2,15 +2,20 @@
 FROM debian:bullseye-slim
 
 ADD https://ftp.gnu.org/gnu/make/make-4.3.tar.gz /make.tar.gz
-WORKDIR /make
+WORKDIR /make-build
 
-# The configuration steps yields an error return code but does not prevent from build afterwards, so using `||`.
+# The configuration steps yields an error without `--disable-dependency-tracking`.
+# Make requires itself to build and install. So using `build.sh` which produces a minimal `make` that can then be used
+# to build and install the definitive `make` under `/make`. That can be later copied to a location like `/usr/local/`.
 RUN \
     apt update && apt install --yes \
         gcc \
-    && tar -xzf /make.tar.gz --directory=/make --strip-components=1 \
-    && ./configure || true \
-    && ./build.sh
+    && tar -xzf /make.tar.gz --directory=/make-build --strip-components=1 \
+    && mkdir /make \
+    && ./configure --disable-dependency-tracking --prefix=/make \
+    && ./build.sh \
+    && ./make \
+    && ./make install
 
 # CMake: https://cmake.org/download
 FROM debian:bullseye-slim
@@ -31,7 +36,7 @@ RUN chmod 644 /usr/local/include/inipp.h
 # Final image
 FROM debian:bullseye-slim
 
-COPY --from=0 /make/make /usr/local/bin/
+COPY --from=0 /make /usr/local/
 # Please note that as per the Dockerfile reference, when the `src` argument is a directory:
 # "The directory itself is not copied, just its contents."
 # See: https://docs.docker.com/engine/reference/builder/#copy

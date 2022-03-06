@@ -33,8 +33,29 @@ ADD https://raw.githubusercontent.com/mcmtroffaes/inipp/46248e4e93a2e63f9a1d0d8d
 # Note that `ADD` has `--chmod` in BuildKit.
 RUN chmod 644 /usr/local/include/inipp.h
 
+# Clang: https://apt.llvm.org
+FROM debian:bullseye-slim AS stage-clang
+
+RUN \
+    apt update \
+    && apt install --yes \
+        gnupg \
+        wget \
+    && wget --output-document=- https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
+    && echo "deb http://apt.llvm.org/bullseye llvm-toolchain-bullseye-13 main" > /etc/apt/sources.list.d/llvm.list \
+    && echo "deb-src http://apt.llvm.org/bullseye llvm-toolchain-bullseye-13 main" >> /etc/apt/sources.list.d/llvm.list \
+    && apt update \
+    && apt install --yes \
+        clang-13 \
+        clang-format-13 \
+        clang-tidy-13 \
+    && apt autoremove --purge --yes \
+        gnupg \
+        wget \
+    && rm -rf /var/lib/apt/lists/*
+
 # Final image
-FROM debian:bullseye-slim
+FROM stage-clang
 
 COPY --from=0 /make /usr/local/
 # Please note that as per the Dockerfile reference, when the `src` argument is a directory:
@@ -47,9 +68,6 @@ COPY --from=2 /usr/local/include/inipp.h /usr/local/include/
 
 RUN \
     apt update && apt install --yes \
-        clang \
-        clang-format \
-        clang-tidy \
         g++ \
         libsdl2-dev \
     && rm -rf /var/lib/apt/lists/* \

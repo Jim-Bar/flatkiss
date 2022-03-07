@@ -49,6 +49,10 @@ RUN \
         clang-13 \
         clang-format-13 \
         clang-tidy-13 \
+    && update-alternatives --install /usr/bin/clang clang /usr/bin/clang-13 60 \
+        --slave /usr/bin/clang++ clang++ /usr/bin/clang++-13 \
+        --slave /usr/bin/clang-format clang-format /usr/bin/clang-format-13 \
+        --slave /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-13 \
     && apt autoremove --purge --yes \
         gnupg \
         wget \

@@ -39,7 +39,7 @@ bool Position::operator==(Position const& other) const {
 
 int64_t Position::substractSizes(size_t size_1, size_t size_2) {
   if (size_1 >= size_2) {
-    return size_1 - size_2;
+    return static_cast<int64_t>(size_1 - size_2);
   }
 
   return -static_cast<int64_t>(size_2 - size_1);

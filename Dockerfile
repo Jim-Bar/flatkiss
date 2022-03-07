@@ -1,5 +1,5 @@
 # Make: https://www.gnu.org/software/make
-FROM debian:bullseye-slim
+FROM debian:bullseye-slim AS stage-make
 
 ADD https://ftp.gnu.org/gnu/make/make-4.3.tar.gz /make.tar.gz
 WORKDIR /make-build
@@ -18,7 +18,7 @@ RUN \
     && ./make install
 
 # CMake: https://cmake.org/download
-FROM debian:bullseye-slim
+FROM debian:bullseye-slim AS stage-cmake
 
 ADD https://github.com/Kitware/CMake/releases/download/v3.22.2/cmake-3.22.2-linux-x86_64.tar.gz /cmake.tar.gz
 
@@ -27,7 +27,7 @@ RUN \
     && tar -xzf /cmake.tar.gz --directory=/cmake --strip-components=1
 
 # IniPP: https://github.com/mcmtroffaes/inipp
-FROM debian:bullseye-slim
+FROM debian:bullseye-slim as stage-inipp
 
 ADD https://raw.githubusercontent.com/mcmtroffaes/inipp/46248e4e93a2e63f9a1d0d8d9ad40bd6b3725df5/inipp/inipp.h /usr/local/include/
 # Note that `ADD` has `--chmod` in BuildKit.
@@ -58,21 +58,32 @@ RUN \
         wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Final image
-FROM stage-clang
+# GCC: https://stackoverflow.com/a/61591646
+FROM stage-clang AS stage-compilers
 
-COPY --from=0 /make /usr/local/
+RUN \
+    echo "deb http://deb.debian.org/debian testing main" > /etc/apt/sources.list.d/testing.list \
+    && apt update \
+    && echo "Package: *\nPin: release a=stable\nPin-Priority: 700\n\nPackage: *\nPin: release a=testing\nPin-Priority: 650" > /etc/apt/preferences.d/pin \
+    && apt install --target-release testing --yes \
+        g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Final image
+FROM stage-compilers
+
+COPY --from=stage-make /make /usr/local/
 # Please note that as per the Dockerfile reference, when the `src` argument is a directory:
 # "The directory itself is not copied, just its contents."
 # See: https://docs.docker.com/engine/reference/builder/#copy
 # Note that this `COPY` does not work with BuildKit.
 # See: https://github.com/docker/for-linux/issues/1363
-COPY --from=1 /cmake /usr/local/
-COPY --from=2 /usr/local/include/inipp.h /usr/local/include/
+COPY --from=stage-cmake /cmake /usr/local/
+COPY --from=stage-inipp /usr/local/include/inipp.h /usr/local/include/
 
 RUN \
-    apt update && apt install --yes \
-        g++ \
+    apt update \
+    && apt install --target-release testing --yes \
         libsdl2-dev \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --create-home user

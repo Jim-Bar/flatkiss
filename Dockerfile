@@ -33,6 +33,23 @@ ADD https://raw.githubusercontent.com/mcmtroffaes/inipp/46248e4e93a2e63f9a1d0d8d
 # Note that `ADD` has `--chmod` in BuildKit.
 RUN chmod 644 /usr/local/include/inipp.h
 
+# SDL: https://wiki.libsdl.org/Installation
+FROM debian:bullseye-slim AS stage-sdl
+
+ADD https://github.com/libsdl-org/SDL/releases/download/release-2.0.20/SDL2-2.0.20.tar.gz /SDL.tar.gz
+WORKDIR /sdl-build
+
+RUN \
+    apt update \
+    && apt install --yes \
+        gcc \
+        make \
+    && tar -xzf /SDL.tar.gz --directory=/sdl-build --strip-components=1 \
+    && mkdir /sdl \
+    && ./configure --prefix=/sdl \
+    && make \
+    && make install
+
 # Clang: https://apt.llvm.org
 FROM debian:bullseye-slim AS stage-clang
 
@@ -78,10 +95,7 @@ COPY --from=stage-make /make /usr/local/
 # See: https://github.com/docker/for-linux/issues/1363
 COPY --from=stage-cmake /cmake /usr/local/
 COPY --from=stage-inipp /usr/local/include/inipp.h /usr/local/include/
+COPY --from=stage-sdl /sdl /usr/local/
 
 RUN \
-    apt update \
-    && apt install --yes \
-        libsdl2-dev \
-    && rm -rf /var/lib/apt/lists/* \
-    && useradd --create-home user
+    useradd --create-home user

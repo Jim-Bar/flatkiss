@@ -62,10 +62,8 @@ RUN \
 FROM stage-clang AS stage-compilers
 
 RUN \
-    echo "deb http://deb.debian.org/debian testing main" > /etc/apt/sources.list.d/testing.list \
-    && apt update \
-    && echo "Package: *\nPin: release a=stable\nPin-Priority: 700\n\nPackage: *\nPin: release a=testing\nPin-Priority: 650" > /etc/apt/preferences.d/pin \
-    && apt install --target-release testing --yes \
+    apt update \
+    && apt install --yes \
         g++ \
     && rm -rf /var/lib/apt/lists/*
 
@@ -83,7 +81,7 @@ COPY --from=stage-inipp /usr/local/include/inipp.h /usr/local/include/
 
 RUN \
     apt update \
-    && apt install --target-release testing --yes \
+    && apt install --yes \
         libsdl2-dev \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --create-home user

@@ -15,6 +15,4 @@
     "extensions": [
         "ms-vscode.cpptools-extension-pack"
     ],
-
-    "remoteUser": "user"
 }

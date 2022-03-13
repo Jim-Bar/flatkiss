@@ -14,8 +14,8 @@
 #include "configuration.hpp"
 #include "keyboard_state.hpp"
 #include "level.hpp"
+#include "movable_positioned_rectangle.hpp"
 #include "navigator.hpp"
-#include "positioned_rectangle.hpp"
 #include "renderer.hpp"
 #include "tileset.hpp"
 #include "vector.hpp"
@@ -31,7 +31,7 @@ size_t const kSpeedInPixels(2);
 size_t const kViewportSize(160);
 
 void move(KeyboardState const& keyboard_state, Navigator const& navigator,
-          size_t& x, size_t& y, size_t& viewport_x, size_t& viewport_y,
+          size_t& x, size_t& y, MovablePositionedRectangle& viewport,
           unique_ptr<Level const>& level, size_t tilesSize) {
   int64_t dx{0};
   int64_t dy{0};
@@ -56,21 +56,27 @@ void move(KeyboardState const& keyboard_state, Navigator const& navigator,
   x = new_position.x();
   y = new_position.y();
 
-  if (y < kViewportSize / 2 - kCharacterSizePixels / 2) {
-    viewport_y = 0;
-  } else if (y > level->heightInTiles() * tilesSize - kViewportSize / 2 -
+  if (y < viewport.rectangle().height() / 2 - kCharacterSizePixels / 2) {
+    viewport.setY(0);
+  } else if (y > level->heightInTiles() * tilesSize -
+                     viewport.rectangle().height() / 2 -
                      kCharacterSizePixels / 2) {
-    viewport_y = level->heightInTiles() * tilesSize - kViewportSize;
+    viewport.setY(level->heightInTiles() * tilesSize -
+                  viewport.rectangle().height());
   } else {
-    viewport_y = y - kViewportSize / 2 + kCharacterSizePixels / 2;
+    viewport.setY(y - viewport.rectangle().height() / 2 +
+                  kCharacterSizePixels / 2);
   }
-  if (x < kViewportSize / 2 - kCharacterSizePixels / 2) {
-    viewport_x = 0;
-  } else if (x > level->widthInTiles() * tilesSize - kViewportSize / 2 -
+  if (x < viewport.rectangle().width() / 2 - kCharacterSizePixels / 2) {
+    viewport.setX(0);
+  } else if (x > level->widthInTiles() * tilesSize -
+                     viewport.rectangle().width() / 2 -
                      kCharacterSizePixels / 2) {
-    viewport_x = level->widthInTiles() * tilesSize - kViewportSize;
+    viewport.setX(level->widthInTiles() * tilesSize -
+                  viewport.rectangle().width());
   } else {
-    viewport_x = x - kViewportSize / 2 + kCharacterSizePixels / 2;
+    viewport.setX(x - viewport.rectangle().width() / 2 +
+                  kCharacterSizePixels / 2);
   }
 }
 
@@ -85,9 +91,12 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  SDL_Window* window = SDL_CreateWindow(PROJECT_NAME, SDL_WINDOWPOS_UNDEFINED,
-                                        SDL_WINDOWPOS_UNDEFINED, kViewportSize,
-                                        kViewportSize, SDL_WINDOW_SHOWN);
+  MovablePositionedRectangle viewport{Position{0, 0},
+                                      Rectangle{kViewportSize, kViewportSize}};
+  SDL_Window* window = SDL_CreateWindow(
+      PROJECT_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+      static_cast<int>(viewport.rectangle().width()),
+      static_cast<int>(viewport.rectangle().height()), SDL_WINDOW_SHOWN);
   if (window == nullptr) {
     cerr << "SDL_CreateWindow Error: " << SDL_GetError() << endl;
     return EXIT_FAILURE;
@@ -125,15 +134,12 @@ int main(int argc, char* argv[]) {
       AnimationLoader::load(configuration.animationsPath())};
   Collider collider{CollisionLoader::load(configuration.collisionsPath())};
   Navigator navigator{collider, *level, tileset.tilesSize()};
-  size_t x{0};
-  size_t y{0};
   size_t character_x{0};
   size_t character_y{0};
   size_t tick(0);
   while (!quit) {
-    renderer.render(animation_player, *level, tileset, x, y, kViewportSize,
-                    tick++, character, character_x, character_y,
-                    kCharacterSizePixels);
+    renderer.render(animation_player, *level, tileset, viewport, tick++,
+                    character, character_x, character_y, kCharacterSizePixels);
     SDL_Delay(configuration.engineTickDurationMs());
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
@@ -145,7 +151,7 @@ int main(int argc, char* argv[]) {
                               event.key.state == SDL_PRESSED);
       }
     }
-    move(keyboard_state, navigator, character_x, character_y, x, y, level,
+    move(keyboard_state, navigator, character_x, character_y, viewport, level,
          tileset.tilesSize());
   }
 

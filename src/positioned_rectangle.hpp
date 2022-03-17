@@ -1,7 +1,7 @@
 #ifndef POSITIONED_RECTANGLE_HPP_INCLUDED
 #define POSITIONED_RECTANGLE_HPP_INCLUDED
 
-#include "position.hpp"
+#include "movable_position.hpp"
 #include "rectangle.hpp"
 #include "vector.hpp"
 
@@ -13,6 +13,10 @@
 class PositionedRectangle {
  public:
   PositionedRectangle(Position const& position, Rectangle const& rectangle);
+  PositionedRectangle(PositionedRectangle const& other);
+  PositionedRectangle(PositionedRectangle&& other);
+  PositionedRectangle& operator=(PositionedRectangle const& other) = delete;
+  PositionedRectangle& operator=(PositionedRectangle&& other) = delete;
   size_t height() const;
   bool intersectsWith(
       PositionedEllipse const& other) const;  // FIXME: Move to Collider?
@@ -31,8 +35,10 @@ class PositionedRectangle {
   size_t x() const;
   size_t y() const;
 
+ protected:
+  MovablePosition position_;
+
  private:
-  Position const position_;
   Rectangle const rectangle_;
 };
 

@@ -1,10 +1,18 @@
 #include "position.hpp"
 
+#include <utility>
+
 #include "positioned_ellipse.hpp"
 #include "positioned_rectangle.hpp"
 #include "rectangle.hpp"
 
+using std::move;
+
 Position::Position(size_t X, size_t Y) : x_(X), y_(Y) {}
+
+Position::Position(Position const& other) : x_(other.x()), y_(other.y()) {}
+
+Position::Position(Position&& other) : x_(move(other.x_)), y_(move(other.y_)) {}
 
 bool Position::operator!=(Position const& other) const {
   return !(*this == other);
@@ -29,8 +37,7 @@ Position Position::operator+(Vector const& vector) const {
 }
 
 Vector Position::operator-(Position const& other) const {
-  return Vector{substractSizes(x(), other.x()),
-                substractSizes(y(), other.y())};
+  return Vector{substractSizes(x(), other.x()), substractSizes(y(), other.y())};
 }
 
 bool Position::operator==(Position const& other) const {

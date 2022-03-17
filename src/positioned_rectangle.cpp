@@ -1,10 +1,20 @@
 #include "positioned_rectangle.hpp"
 
+#include <utility>
+
 #include "positioned_ellipse.hpp"
+
+using std::move;
 
 PositionedRectangle::PositionedRectangle(Position const& position,
                                          Rectangle const& rectangle)
     : position_(position), rectangle_(rectangle) {}
+
+PositionedRectangle::PositionedRectangle(PositionedRectangle const& other)
+    : position_(other.position()), rectangle_(other.rectangle()) {}
+
+PositionedRectangle::PositionedRectangle(PositionedRectangle&& other)
+    : position_(move(other.position_)), rectangle_(move(other.rectangle_)) {}
 
 size_t PositionedRectangle::height() const { return rectangle_.height(); }
 

@@ -19,6 +19,10 @@ class PositionedRectangle;
 class Position {
  public:
   Position(size_t x, size_t y);
+  Position(Position const& other);
+  Position(Position&& other);
+  Position& operator=(Position const& other) = delete;
+  Position& operator=(Position&& other) = delete;
   bool operator!=(Position const& other) const;
   Position operator+(Position const& other) const;
   /**
@@ -52,10 +56,11 @@ class Position {
   size_t x() const;
   size_t y() const;
 
- private:
-  size_t const x_;
-  size_t const y_;
+ protected:
+  size_t x_;
+  size_t y_;
 
+ private:
   static int64_t substractSizes(size_t size_1, size_t size_2);
 };
 

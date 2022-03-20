@@ -14,6 +14,14 @@ Position::Position(Position const& other) : x_(other.x()), y_(other.y()) {}
 
 Position::Position(Position&& other) : x_(move(other.x_)), y_(move(other.y_)) {}
 
+Position::~Position() {}
+
+Position& Position::operator=(Position&& other) {
+  x_ = move(other.x_);
+  y_ = move(other.y_);
+  return *this;
+}
+
 bool Position::operator!=(Position const& other) const {
   return !(*this == other);
 }
@@ -54,4 +62,8 @@ int64_t Position::substractSizes(size_t size_1, size_t size_2) {
 
 size_t Position::x() const { return x_; }
 
+void Position::x(size_t newX) { x_ = newX; }
+
 size_t Position::y() const { return y_; }
+
+void Position::y(size_t newY) { y_ = newY; }

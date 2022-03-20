@@ -7,6 +7,11 @@
 class PositionedEllipse {
  public:
   PositionedEllipse(Position const& position, Ellipse const& ellipse);
+  PositionedEllipse(PositionedEllipse const& other);
+  PositionedEllipse(PositionedEllipse&& other);
+  ~PositionedEllipse();
+  PositionedEllipse& operator=(PositionedEllipse const& other) = delete;
+  PositionedEllipse& operator=(PositionedEllipse&& other) = delete;
   bool contains(Position const& position) const;
   Ellipse const& ellipse() const;
   Position const& position() const;

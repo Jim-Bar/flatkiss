@@ -1,7 +1,7 @@
 #ifndef POSITIONED_RECTANGLE_HPP_INCLUDED
 #define POSITIONED_RECTANGLE_HPP_INCLUDED
 
-#include "movable_position.hpp"
+#include "position.hpp"
 #include "rectangle.hpp"
 #include "vector.hpp"
 
@@ -15,6 +15,7 @@ class PositionedRectangle {
   PositionedRectangle(Position const& position, Rectangle const& rectangle);
   PositionedRectangle(PositionedRectangle const& other);
   PositionedRectangle(PositionedRectangle&& other);
+  ~PositionedRectangle();
   PositionedRectangle& operator=(PositionedRectangle const& other) = delete;
   PositionedRectangle& operator=(PositionedRectangle&& other) = delete;
   size_t height() const;
@@ -33,12 +34,12 @@ class PositionedRectangle {
   Rectangle const& rectangle() const;
   size_t width() const;
   size_t x() const;
+  void x(size_t newX);
   size_t y() const;
-
- protected:
-  MovablePosition position_;
+  void y(size_t newY);
 
  private:
+  Position position_;
   Rectangle const rectangle_;
 };
 

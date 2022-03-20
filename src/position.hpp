@@ -21,8 +21,9 @@ class Position {
   Position(size_t x, size_t y);
   Position(Position const& other);
   Position(Position&& other);
+  ~Position();
   Position& operator=(Position const& other) = delete;
-  Position& operator=(Position&& other) = delete;
+  Position& operator=(Position&& other);
   bool operator!=(Position const& other) const;
   Position operator+(Position const& other) const;
   /**
@@ -54,13 +55,14 @@ class Position {
   Vector operator-(Position const& other) const;
   bool operator==(Position const& other) const;
   size_t x() const;
+  void x(size_t newX);
   size_t y() const;
+  void y(size_t newY);
 
- protected:
+ private:
   size_t x_;
   size_t y_;
 
- private:
   static int64_t substractSizes(size_t size_1, size_t size_2);
 };
 

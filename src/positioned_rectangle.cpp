@@ -13,8 +13,11 @@ PositionedRectangle::PositionedRectangle(Position const& position,
 PositionedRectangle::PositionedRectangle(PositionedRectangle const& other)
     : position_(other.position()), rectangle_(other.rectangle()) {}
 
-PositionedRectangle::PositionedRectangle(PositionedRectangle&& other)
+PositionedRectangle::PositionedRectangle::PositionedRectangle(
+    PositionedRectangle&& other)
     : position_(move(other.position_)), rectangle_(move(other.rectangle_)) {}
+
+PositionedRectangle::~PositionedRectangle() {}
 
 size_t PositionedRectangle::height() const { return rectangle_.height(); }
 
@@ -58,4 +61,8 @@ size_t PositionedRectangle::width() const { return rectangle_.width(); }
 
 size_t PositionedRectangle::x() const { return position_.x(); }
 
+void PositionedRectangle::x(size_t newX) { position_.x(newX); }
+
 size_t PositionedRectangle::y() const { return position_.y(); }
+
+void PositionedRectangle::y(size_t newY) { position_.y(newY); }

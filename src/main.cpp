@@ -14,8 +14,8 @@
 #include "configuration.hpp"
 #include "keyboard_state.hpp"
 #include "level.hpp"
-#include "movable_positioned_rectangle.hpp"
 #include "navigator.hpp"
+#include "positioned_rectangle.hpp"
 #include "renderer.hpp"
 #include "tileset.hpp"
 #include "vector.hpp"
@@ -31,7 +31,7 @@ size_t const kSpeedInPixels(2);
 size_t const kViewportSize(160);
 
 void move(KeyboardState const& keyboard_state, Navigator const& navigator,
-          size_t& x, size_t& y, MovablePositionedRectangle& viewport,
+          size_t& x, size_t& y, PositionedRectangle& viewport,
           unique_ptr<Level const>& level, size_t tilesSize) {
   int64_t dx{0};
   int64_t dy{0};
@@ -57,25 +57,25 @@ void move(KeyboardState const& keyboard_state, Navigator const& navigator,
   y = new_position.y();
 
   if (y < viewport.rectangle().height() / 2 - kCharacterSizePixels / 2) {
-    viewport.setY(0);
+    viewport.y(0);
   } else if (y > level->heightInTiles() * tilesSize -
                      viewport.rectangle().height() / 2 -
                      kCharacterSizePixels / 2) {
-    viewport.setY(level->heightInTiles() * tilesSize -
+    viewport.y(level->heightInTiles() * tilesSize -
                   viewport.rectangle().height());
   } else {
-    viewport.setY(y - viewport.rectangle().height() / 2 +
+    viewport.y(y - viewport.rectangle().height() / 2 +
                   kCharacterSizePixels / 2);
   }
   if (x < viewport.rectangle().width() / 2 - kCharacterSizePixels / 2) {
-    viewport.setX(0);
+    viewport.x(0);
   } else if (x > level->widthInTiles() * tilesSize -
                      viewport.rectangle().width() / 2 -
                      kCharacterSizePixels / 2) {
-    viewport.setX(level->widthInTiles() * tilesSize -
+    viewport.x(level->widthInTiles() * tilesSize -
                   viewport.rectangle().width());
   } else {
-    viewport.setX(x - viewport.rectangle().width() / 2 +
+    viewport.x(x - viewport.rectangle().width() / 2 +
                   kCharacterSizePixels / 2);
   }
 }
@@ -91,8 +91,8 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  MovablePositionedRectangle viewport{Position{0, 0},
-                                      Rectangle{kViewportSize, kViewportSize}};
+  PositionedRectangle viewport{Position{0, 0},
+                               Rectangle{kViewportSize, kViewportSize}};
   SDL_Window* window = SDL_CreateWindow(
       PROJECT_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
       static_cast<int>(viewport.rectangle().width()),

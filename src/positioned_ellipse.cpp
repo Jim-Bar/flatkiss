@@ -1,5 +1,9 @@
 #include "positioned_ellipse.hpp"
 
+#include <utility>
+
+using std::move;
+
 /* Absolute value of the difference between two values (handles unsigned
  * integers). */
 size_t absoluteDifference(size_t value_1, size_t value_2) {
@@ -11,6 +15,14 @@ size_t square(size_t value) { return value * value; }
 PositionedEllipse::PositionedEllipse(Position const& position,
                                      Ellipse const& ellipse)
     : position_(position), ellipse_(ellipse) {}
+
+PositionedEllipse::PositionedEllipse(PositionedEllipse const& other)
+    : position_(other.position_), ellipse_(other.ellipse_) {}
+
+PositionedEllipse::PositionedEllipse(PositionedEllipse&& other)
+    : position_(move(other.position_)), ellipse_(move(other.ellipse_)) {}
+
+PositionedEllipse::~PositionedEllipse() {}
 
 bool PositionedEllipse::contains(Position const& Position) const {
   // https://math.stackexchange.com/a/76463

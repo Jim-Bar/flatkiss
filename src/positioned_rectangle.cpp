@@ -22,10 +22,10 @@ PositionedRectangle::~PositionedRectangle() {}
 size_t PositionedRectangle::height() const { return rectangle_.height(); }
 
 bool PositionedRectangle::intersectsWith(PositionedEllipse const& other) const {
-  return other.contains(Position{x(), y()}) ||
-         other.contains(Position{x() + width(), y()}) ||
-         other.contains(Position{x(), y() + height()}) ||
-         other.contains(Position{x() + width(), y() + height()});
+  return other.contains(position()) ||
+         other.contains(position() + Vector{width(), 0}) ||
+         other.contains(position() + Vector(0, height())) ||
+         other.contains(position() + Vector{width(), height()});
 }
 
 bool PositionedRectangle::intersectsWith(

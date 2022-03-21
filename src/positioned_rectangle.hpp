@@ -31,6 +31,7 @@ class PositionedRectangle {
    */
   PositionedRectangle operator+(Vector const& vector) const;
   Position const& position() const;
+  void position(Position&& newPosition);
   Rectangle const& rectangle() const;
   size_t width() const;
   size_t x() const;

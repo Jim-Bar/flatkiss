@@ -18,25 +18,22 @@ SDL_Texture* Renderer::createTextureFromSurface(SDL_Surface* surface) const {
 void Renderer::render(AnimationPlayer const& animation_player,
                       Level const& level, Tileset const& tileset,
                       PositionedRectangle const& viewport, size_t tick,
-                      SDL_Texture* character_texture, size_t character_x,
-                      size_t character_y,
-                      size_t character_size_in_pixels) const {
+                      SDL_Texture* character_texture,
+                      Character const& character) const {
   SDL_RenderClear(sdl_renderer_);
   renderLevel(animation_player, level, tileset, viewport, tick);
-  renderCharacter(viewport, tick, character_texture, character_x, character_y,
-                  character_size_in_pixels);
+  renderCharacter(viewport, tick, character_texture, character);
   SDL_RenderPresent(sdl_renderer_);
 }
 
 void Renderer::renderCharacter(PositionedRectangle const& viewport, size_t tick,
                                SDL_Texture* character_texture,
-                               size_t character_x, size_t character_y,
-                               size_t character_size_in_pixels) const {
+                               Character const& character) const {
   SDL_Rect dest_rect;
-  dest_rect.x = static_cast<int>(character_x - viewport.x());
-  dest_rect.y = static_cast<int>(character_y - viewport.y());
-  dest_rect.w = static_cast<int>(character_size_in_pixels);
-  dest_rect.h = static_cast<int>(character_size_in_pixels);
+  dest_rect.x = static_cast<int>(character.x() - viewport.x());
+  dest_rect.y = static_cast<int>(character.y() - viewport.y());
+  dest_rect.w = static_cast<int>(character.width());
+  dest_rect.h = static_cast<int>(character.height());
 
   SDL_RenderCopy(sdl_renderer_, character_texture, nullptr, &dest_rect);
 }

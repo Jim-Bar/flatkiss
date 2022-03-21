@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 
 #include "animation_player.hpp"
+#include "character.hpp"
 #include "level.hpp"
 #include "positioned_rectangle.hpp"
 #include "tileset.hpp"
@@ -29,16 +30,15 @@ class Renderer {
   SDL_Texture* createTextureFromSurface(SDL_Surface* surface) const;
   void render(AnimationPlayer const& animation_player, Level const& level,
               Tileset const& tileset, PositionedRectangle const& viewport,
-              size_t tick, SDL_Texture* character_texture, size_t character_x,
-              size_t character_y, size_t character_size_in_pixels) const;
+              size_t tick, SDL_Texture* character_texture,
+              Character const& character) const;
 
  private:
   SDL_Renderer* const sdl_renderer_;
 
   void renderCharacter(PositionedRectangle const& viewport, size_t tick,
-                       SDL_Texture* character_texture, size_t character_x,
-                       size_t character_y,
-                       size_t character_size_in_pixels) const;
+                       SDL_Texture* character_texture,
+                       Character const& character) const;
   void renderLevel(AnimationPlayer const& animation_player, Level const& level,
                    Tileset const& tileset, PositionedRectangle const& viewport,
                    size_t tick) const;

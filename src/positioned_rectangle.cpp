@@ -55,7 +55,13 @@ PositionedRectangle PositionedRectangle::operator+(Vector const& vector) const {
 
 Position const& PositionedRectangle::position() const { return position_; }
 
-Rectangle const& PositionedRectangle::rectangle() const { return rectangle_; }
+void PositionedRectangle::position(Position&& newPosition){
+  position_ = move(newPosition);
+}
+
+Rectangle const& PositionedRectangle::rectangle() const {
+  return rectangle_;
+}
 
 size_t PositionedRectangle::width() const { return rectangle_.width(); }
 

@@ -10,6 +10,7 @@
 #include <unordered_map>
 
 #include "animation_player.hpp"
+#include "character.hpp"
 #include "collider.hpp"
 #include "configuration.hpp"
 #include "keyboard_state.hpp"
@@ -30,9 +31,9 @@ size_t const kCharacterSizePixels(16);
 size_t const kSpeedInPixels(2);
 size_t const kViewportSize(160);
 
-void move(KeyboardState const& keyboard_state, Navigator const& navigator,
-          size_t& x, size_t& y, PositionedRectangle& viewport,
-          unique_ptr<Level const>& level, size_t tilesSize) {
+void handleKeyboardEvent(KeyboardState const& keyboard_state,
+                         Character& character, PositionedRectangle& viewport,
+                         unique_ptr<Level const>& level, size_t tilesSize) {
   int64_t dx{0};
   int64_t dy{0};
   if (keyboard_state.isPressed(SDL_SCANCODE_UP)) {
@@ -48,35 +49,31 @@ void move(KeyboardState const& keyboard_state, Navigator const& navigator,
     dx += kSpeedInPixels;
   }
 
-  Position new_position{navigator.moveBy(
-      PositionedRectangle{Position{x, y}, Rectangle{kCharacterSizePixels,
-                                                    kCharacterSizePixels}},
-      Vector{dx, dy})};
+  character.moveBy(Vector{dx, dy});
 
-  x = new_position.x();
-  y = new_position.y();
-
-  if (y < viewport.rectangle().height() / 2 - kCharacterSizePixels / 2) {
+  if (character.y() <
+      viewport.rectangle().height() / 2 - character.height() / 2) {
     viewport.y(0);
-  } else if (y > level->heightInTiles() * tilesSize -
-                     viewport.rectangle().height() / 2 -
-                     kCharacterSizePixels / 2) {
+  } else if (character.y() > level->heightInTiles() * tilesSize -
+                                 viewport.rectangle().height() / 2 -
+                                 character.height() / 2) {
     viewport.y(level->heightInTiles() * tilesSize -
-                  viewport.rectangle().height());
+               viewport.rectangle().height());
   } else {
-    viewport.y(y - viewport.rectangle().height() / 2 +
-                  kCharacterSizePixels / 2);
+    viewport.y(character.y() - viewport.rectangle().height() / 2 +
+               character.height() / 2);
   }
-  if (x < viewport.rectangle().width() / 2 - kCharacterSizePixels / 2) {
+  if (character.x() <
+      viewport.rectangle().width() / 2 - character.width() / 2) {
     viewport.x(0);
-  } else if (x > level->widthInTiles() * tilesSize -
-                     viewport.rectangle().width() / 2 -
-                     kCharacterSizePixels / 2) {
+  } else if (character.x() > level->widthInTiles() * tilesSize -
+                                 viewport.rectangle().width() / 2 -
+                                 character.width() / 2) {
     viewport.x(level->widthInTiles() * tilesSize -
-                  viewport.rectangle().width());
+               viewport.rectangle().width());
   } else {
-    viewport.x(x - viewport.rectangle().width() / 2 +
-                  kCharacterSizePixels / 2);
+    viewport.x(character.x() - viewport.rectangle().width() / 2 +
+               character.width() / 2);
   }
 }
 
@@ -118,8 +115,8 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  SDL_Texture* character = renderer.createTextureFromSurface(character_surface);
-  if (character == nullptr) {
+  SDL_Texture* character_texture = renderer.createTextureFromSurface(character_surface);
+  if (character_texture == nullptr) {
     cerr << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << endl;
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -134,12 +131,12 @@ int main(int argc, char* argv[]) {
       AnimationLoader::load(configuration.animationsPath())};
   Collider collider{CollisionLoader::load(configuration.collisionsPath())};
   Navigator navigator{collider, *level, tileset.tilesSize()};
-  size_t character_x{0};
-  size_t character_y{0};
+  Character character{navigator, Position{0, 0},
+                      Rectangle{kCharacterSizePixels, kCharacterSizePixels}};
   size_t tick(0);
   while (!quit) {
     renderer.render(animation_player, *level, tileset, viewport, tick++,
-                    character, character_x, character_y, kCharacterSizePixels);
+                    character_texture, character);
     SDL_Delay(configuration.engineTickDurationMs());
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
@@ -151,11 +148,11 @@ int main(int argc, char* argv[]) {
                               event.key.state == SDL_PRESSED);
       }
     }
-    move(keyboard_state, navigator, character_x, character_y, viewport, level,
-         tileset.tilesSize());
+    handleKeyboardEvent(keyboard_state, character, viewport, level,
+                        tileset.tilesSize());
   }
 
-  SDL_DestroyTexture(character);
+  SDL_DestroyTexture(character_texture);
   SDL_DestroyWindow(window);
   SDL_Quit();
 

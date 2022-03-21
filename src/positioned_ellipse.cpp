@@ -14,13 +14,13 @@ size_t square(size_t value) { return value * value; }
 
 PositionedEllipse::PositionedEllipse(Position const& position,
                                      Ellipse const& ellipse)
-    : position_(position), ellipse_(ellipse) {}
+    : position_{position}, ellipse_{ellipse} {}
 
 PositionedEllipse::PositionedEllipse(PositionedEllipse const& other)
-    : position_(other.position_), ellipse_(other.ellipse_) {}
+    : position_{other.position_}, ellipse_{other.ellipse_} {}
 
 PositionedEllipse::PositionedEllipse(PositionedEllipse&& other)
-    : position_(move(other.position_)), ellipse_(move(other.ellipse_)) {}
+    : position_{move(other.position_)}, ellipse_{move(other.ellipse_)} {}
 
 PositionedEllipse::~PositionedEllipse() {}
 

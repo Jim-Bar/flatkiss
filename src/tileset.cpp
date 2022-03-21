@@ -8,13 +8,13 @@ Tileset::Tileset(string const& file_path, size_t tiles_size,
                  size_t width_in_tiles, size_t height_in_tiles,
                  size_t left_offset, size_t top_offset, size_t gap,
                  Renderer const& renderer)
-    : tiles_size_(tiles_size),
-      width_in_tiles_(width_in_tiles),
-      height_in_tiles_(height_in_tiles),
-      left_offset_(left_offset),
-      top_offset_(top_offset),
-      gap_(gap),
-      texture_(Tileset::loadTexture(file_path, renderer)) {}
+    : tiles_size_{tiles_size},
+      width_in_tiles_{width_in_tiles},
+      height_in_tiles_{height_in_tiles},
+      left_offset_{left_offset},
+      top_offset_{top_offset},
+      gap_{gap},
+      texture_{Tileset::loadTexture(file_path, renderer)} {}
 
 Tileset::~Tileset() { SDL_DestroyTexture(texture_); }
 

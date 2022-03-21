@@ -1,9 +1,9 @@
 #include "renderer.hpp"
 
 Renderer::Renderer(SDL_Window* sdl_window)
-    : sdl_renderer_(SDL_CreateRenderer(
+    : sdl_renderer_{SDL_CreateRenderer(
           sdl_window, -1,
-          SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)) {
+          SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)} {
   if (sdl_renderer_ == nullptr) {
     // FIXME: Raise an exception.
   }

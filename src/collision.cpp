@@ -19,8 +19,8 @@ using std::ranges::any_of;
 
 Collision::Collision(vector<PositionedEllipse> positioned_ellipses,
                      vector<PositionedRectangle> positioned_rectangles)
-    : positioned_ellipses_(move(positioned_ellipses)),
-      positioned_rectangles_(move(positioned_rectangles)) {}
+    : positioned_ellipses_{move(positioned_ellipses)},
+      positioned_rectangles_{move(positioned_rectangles)} {}
 
 bool Collision::collidesWith(PositionedRectangle const& positioned_rectangle,
                              Position const& when_at_position) const {

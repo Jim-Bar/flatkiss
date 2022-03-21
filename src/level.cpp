@@ -13,9 +13,9 @@ using std::vector;
 
 Level::Level(vector<uint16_t> const& tiles, size_t width_in_tiles,
              size_t height_in_tiles)
-    : tiles_(move(tiles)),
-      width_in_tiles_(width_in_tiles),
-      height_in_tiles_(height_in_tiles) {}
+    : tiles_{move(tiles)},
+      width_in_tiles_{width_in_tiles},
+      height_in_tiles_{height_in_tiles} {}
 
 size_t Level::heightInTiles() const { return height_in_tiles_; }
 

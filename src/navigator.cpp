@@ -7,7 +7,7 @@ using std::max;
 
 Navigator::Navigator(Collider const& collider, Level const& level,
                      size_t tiles_size)
-    : collider_(collider), level_(level), tiles_size_(tiles_size) {}
+    : collider_{collider}, level_{level}, tiles_size_{tiles_size} {}
 
 size_t Navigator::clampToBounds(size_t object_position, size_t object_size,
                                 int64_t delta_value, size_t upper_bound) {

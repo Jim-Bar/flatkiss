@@ -14,7 +14,7 @@ using std::vector;
 
 Animation::Animation(vector<uint16_t> const& tile_indices, uint8_t period,
                      uint8_t duration)
-    : tile_indices_(move(tile_indices)), period_(period), duration_(duration) {}
+    : tile_indices_{move(tile_indices)}, period_{period}, duration_{duration} {}
 
 uint8_t Animation::getDuration() const { return duration_; }
 

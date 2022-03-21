@@ -8,11 +8,11 @@
 
 using std::move;
 
-Position::Position(size_t X, size_t Y) : x_(X), y_(Y) {}
+Position::Position(size_t X, size_t Y) : x_{X}, y_{Y} {}
 
-Position::Position(Position const& other) : x_(other.x()), y_(other.y()) {}
+Position::Position(Position const& other) : x_{other.x()}, y_{other.y()} {}
 
-Position::Position(Position&& other) : x_(move(other.x_)), y_(move(other.y_)) {}
+Position::Position(Position&& other) : x_{move(other.x_)}, y_{move(other.y_)} {}
 
 Position::~Position() {}
 

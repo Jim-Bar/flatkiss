@@ -8,14 +8,14 @@ using std::move;
 
 PositionedRectangle::PositionedRectangle(Position const& position,
                                          Rectangle const& rectangle)
-    : position_(position), rectangle_(rectangle) {}
+    : position_{position}, rectangle_{rectangle} {}
 
 PositionedRectangle::PositionedRectangle(PositionedRectangle const& other)
-    : position_(other.position()), rectangle_(other.rectangle()) {}
+    : position_{other.position()}, rectangle_{other.rectangle()} {}
 
 PositionedRectangle::PositionedRectangle::PositionedRectangle(
     PositionedRectangle&& other)
-    : position_(move(other.position_)), rectangle_(move(other.rectangle_)) {}
+    : position_{move(other.position_)}, rectangle_{move(other.rectangle_)} {}
 
 PositionedRectangle::~PositionedRectangle() {}
 

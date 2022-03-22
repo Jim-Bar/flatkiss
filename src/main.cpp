@@ -115,7 +115,8 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  SDL_Texture* character_texture = renderer.createTextureFromSurface(character_surface);
+  SDL_Texture* character_texture =
+      renderer.createTextureFromSurface(character_surface);
   if (character_texture == nullptr) {
     cerr << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << endl;
     SDL_DestroyWindow(window);

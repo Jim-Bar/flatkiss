@@ -8,7 +8,7 @@ AnimationPlayer::AnimationPlayer(
 }
 
 uint16_t AnimationPlayer::animatedTileIndexFor(uint16_t tile_index,
-                                               size_t tick) const {
+                                               int64_t tick) const {
   if (!animations_per_tile_index_.contains(tile_index)) {
     return tile_index;
   }

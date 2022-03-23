@@ -1,8 +1,8 @@
 #include "rectangle.hpp"
 
-Rectangle::Rectangle(size_t width, size_t height)
+Rectangle::Rectangle(int64_t width, int64_t height)
     : width_{width}, height_{height} {}
 
-size_t Rectangle::height() const { return height_; }
+int64_t Rectangle::height() const { return height_; }
 
-size_t Rectangle::width() const { return width_; }
+int64_t Rectangle::width() const { return width_; }

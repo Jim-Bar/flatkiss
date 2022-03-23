@@ -17,7 +17,7 @@ SDL_Texture* Renderer::createTextureFromSurface(SDL_Surface* surface) const {
 
 void Renderer::render(AnimationPlayer const& animation_player,
                       Level const& level, Tileset const& tileset,
-                      PositionedRectangle const& viewport, size_t tick,
+                      PositionedRectangle const& viewport, int64_t tick,
                       SDL_Texture* character_texture,
                       Character const& character) const {
   SDL_RenderClear(sdl_renderer_);
@@ -26,8 +26,8 @@ void Renderer::render(AnimationPlayer const& animation_player,
   SDL_RenderPresent(sdl_renderer_);
 }
 
-void Renderer::renderCharacter(PositionedRectangle const& viewport, size_t tick,
-                               SDL_Texture* character_texture,
+void Renderer::renderCharacter(PositionedRectangle const& viewport,
+                               int64_t tick, SDL_Texture* character_texture,
                                Character const& character) const {
   SDL_Rect dest_rect;
   dest_rect.x = static_cast<int>(character.x() - viewport.x());
@@ -41,10 +41,10 @@ void Renderer::renderCharacter(PositionedRectangle const& viewport, size_t tick,
 void Renderer::renderLevel(AnimationPlayer const& animation_player,
                            Level const& level, Tileset const& tileset,
                            PositionedRectangle const& viewport,
-                           size_t tick) const {
-  for (size_t y(viewport.y() / tileset.tilesSize());
+                           int64_t tick) const {
+  for (int64_t y(viewport.y() / tileset.tilesSize());
        y <= (viewport.y() + viewport.height()) / tileset.tilesSize(); y++) {
-    for (size_t x(viewport.x() / tileset.tilesSize());
+    for (int64_t x(viewport.x() / tileset.tilesSize());
          x <= (viewport.x() + viewport.width()) / tileset.tilesSize(); x++) {
       uint16_t tile_index(
           animation_player.animatedTileIndexFor(level.tileIndex(x, y), tick));

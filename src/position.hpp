@@ -1,7 +1,7 @@
 #ifndef POSITION_HPP_INCLUDED
 #define POSITION_HPP_INCLUDED
 
-#include <cstddef>
+#include <cstdint>
 
 #include "vector.hpp"
 
@@ -18,7 +18,7 @@ class PositionedRectangle;
  */
 class Position {
  public:
-  Position(size_t x, size_t y);
+  Position(int64_t x, int64_t y);
   Position(Position const& other);
   Position(Position&& other);
   ~Position();
@@ -54,16 +54,14 @@ class Position {
    */
   Vector operator-(Position const& other) const;
   bool operator==(Position const& other) const;
-  size_t x() const;
-  void x(size_t newX);
-  size_t y() const;
-  void y(size_t newY);
+  int64_t x() const;
+  void x(int64_t newX);
+  int64_t y() const;
+  void y(int64_t newY);
 
  private:
-  size_t x_;
-  size_t y_;
-
-  static int64_t substractSizes(size_t size_1, size_t size_2);
+  int64_t x_;
+  int64_t y_;
 };
 
 #endif

@@ -8,7 +8,7 @@
 
 using std::move;
 
-Position::Position(size_t X, size_t Y) : x_{X}, y_{Y} {}
+Position::Position(int64_t X, int64_t Y) : x_{X}, y_{Y} {}
 
 Position::Position(Position const& other) : x_{other.x()}, y_{other.y()} {}
 
@@ -45,25 +45,17 @@ Position Position::operator+(Vector const& vector) const {
 }
 
 Vector Position::operator-(Position const& other) const {
-  return Vector{substractSizes(x(), other.x()), substractSizes(y(), other.y())};
+  return Vector{x() - other.x(), y() - other.y()};
 }
 
 bool Position::operator==(Position const& other) const {
   return x() == other.x() && y() == other.y();
 }
 
-int64_t Position::substractSizes(size_t size_1, size_t size_2) {
-  if (size_1 >= size_2) {
-    return static_cast<int64_t>(size_1 - size_2);
-  }
+int64_t Position::x() const { return x_; }
 
-  return -static_cast<int64_t>(size_2 - size_1);
-}
+void Position::x(int64_t newX) { x_ = newX; }
 
-size_t Position::x() const { return x_; }
+int64_t Position::y() const { return y_; }
 
-void Position::x(size_t newX) { x_ = newX; }
-
-size_t Position::y() const { return y_; }
-
-void Position::y(size_t newY) { y_ = newY; }
+void Position::y(int64_t newY) { y_ = newY; }

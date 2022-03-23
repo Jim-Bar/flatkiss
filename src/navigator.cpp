@@ -6,18 +6,16 @@ using std::abs;
 using std::max;
 
 Navigator::Navigator(Collider const& collider, Level const& level,
-                     size_t tiles_size)
+                     int64_t tiles_size)
     : collider_{collider}, level_{level}, tiles_size_{tiles_size} {}
 
-size_t Navigator::clampToBounds(size_t object_position, size_t object_size,
-                                int64_t delta_value, size_t upper_bound) {
-  // Here care is taken to deal with unsigned integers and substractions.
-  if (delta_value < 0 && object_position < -delta_value) {
+int64_t Navigator::clampToBounds(int64_t object_position, int64_t object_size,
+                                 int64_t delta_value, int64_t upper_bound) {
+  if (object_position + delta_value < 0) {
     return 0;
   }
 
-  if (delta_value > 0 &&
-      object_position + object_size + delta_value >= upper_bound) {
+  if (object_position + object_size + delta_value >= upper_bound) {
     return upper_bound - object_size;
   }
 
@@ -26,11 +24,11 @@ size_t Navigator::clampToBounds(size_t object_position, size_t object_size,
 
 bool Navigator::collidesWithTiles(
     PositionedRectangle const& positioned_rectangle) const {
-  for (size_t y(positioned_rectangle.y() / tiles_size_);
+  for (int64_t y(positioned_rectangle.y() / tiles_size_);
        y <= (positioned_rectangle.y() + positioned_rectangle.height() - 1) /
                 tiles_size_;
        y++) {
-    for (size_t x(positioned_rectangle.x() / tiles_size_);
+    for (int64_t x(positioned_rectangle.x() / tiles_size_);
          x <= (positioned_rectangle.x() + positioned_rectangle.width() - 1) /
                   tiles_size_;
          x++) {

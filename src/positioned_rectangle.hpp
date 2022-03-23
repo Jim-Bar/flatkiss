@@ -18,7 +18,7 @@ class PositionedRectangle {
   ~PositionedRectangle();
   PositionedRectangle& operator=(PositionedRectangle const& other) = delete;
   PositionedRectangle& operator=(PositionedRectangle&& other) = delete;
-  size_t height() const;
+  int64_t height() const;
   bool intersectsWith(
       PositionedEllipse const& other) const;  // FIXME: Move to Collider?
   bool intersectsWith(PositionedRectangle const& other) const;
@@ -33,11 +33,11 @@ class PositionedRectangle {
   Position const& position() const;
   void position(Position&& newPosition);
   Rectangle const& rectangle() const;
-  size_t width() const;
-  size_t x() const;
-  void x(size_t newX);
-  size_t y() const;
-  void y(size_t newY);
+  int64_t width() const;
+  int64_t x() const;
+  void x(int64_t newX);
+  int64_t y() const;
+  void y(int64_t newY);
 
  private:
   Position position_;

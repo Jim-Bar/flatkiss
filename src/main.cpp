@@ -27,13 +27,13 @@ using std::endl;
 using std::move;
 using std::unique_ptr;
 
-size_t const kCharacterSizePixels(16);
-size_t const kSpeedInPixels(2);
-size_t const kViewportSize(160);
+int64_t const kCharacterSizePixels(16);
+int64_t const kSpeedInPixels(2);
+int64_t const kViewportSize(160);
 
 void handleKeyboardEvent(KeyboardState const& keyboard_state,
                          Character& character, PositionedRectangle& viewport,
-                         unique_ptr<Level const>& level, size_t tilesSize) {
+                         unique_ptr<Level const>& level, int64_t tilesSize) {
   int64_t dx{0};
   int64_t dy{0};
   if (keyboard_state.isPressed(SDL_SCANCODE_UP)) {
@@ -134,7 +134,7 @@ int main(int argc, char* argv[]) {
   Navigator navigator{collider, *level, tileset.tilesSize()};
   Character character{navigator, Position{0, 0},
                       Rectangle{kCharacterSizePixels, kCharacterSizePixels}};
-  size_t tick(0);
+  int64_t tick(0);
   while (!quit) {
     renderer.render(animation_player, *level, tileset, viewport, tick++,
                     character_texture, character);

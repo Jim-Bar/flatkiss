@@ -6,7 +6,7 @@ Character::Character(Navigator const& navigator,
     : navigator_{navigator},
       positioned_rectangle_{initialPosition, rectangle} {}
 
-size_t Character::height() const {
+int64_t Character::height() const {
   return positioned_rectangle_.rectangle().height();
 }
 
@@ -23,10 +23,10 @@ Rectangle const& Character::rectangle() const {
   return positioned_rectangle_.rectangle();
 }
 
-size_t Character::width() const {
+int64_t Character::width() const {
   return positioned_rectangle_.rectangle().width();
 }
 
-size_t Character::x() const { return position().x(); }
+int64_t Character::x() const { return position().x(); }
 
-size_t Character::y() const { return position().y(); }
+int64_t Character::y() const { return position().y(); }

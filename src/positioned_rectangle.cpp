@@ -19,7 +19,7 @@ PositionedRectangle::PositionedRectangle::PositionedRectangle(
 
 PositionedRectangle::~PositionedRectangle() {}
 
-size_t PositionedRectangle::height() const { return rectangle_.height(); }
+int64_t PositionedRectangle::height() const { return rectangle_.height(); }
 
 bool PositionedRectangle::intersectsWith(PositionedEllipse const& other) const {
   /* Checking that a rectangle (or even line for that matter) intersects with an
@@ -99,12 +99,12 @@ void PositionedRectangle::position(Position&& newPosition) {
 
 Rectangle const& PositionedRectangle::rectangle() const { return rectangle_; }
 
-size_t PositionedRectangle::width() const { return rectangle_.width(); }
+int64_t PositionedRectangle::width() const { return rectangle_.width(); }
 
-size_t PositionedRectangle::x() const { return position_.x(); }
+int64_t PositionedRectangle::x() const { return position_.x(); }
 
-void PositionedRectangle::x(size_t newX) { position_.x(newX); }
+void PositionedRectangle::x(int64_t newX) { position_.x(newX); }
 
-size_t PositionedRectangle::y() const { return position_.y(); }
+int64_t PositionedRectangle::y() const { return position_.y(); }
 
-void PositionedRectangle::y(size_t newY) { position_.y(newY); }
+void PositionedRectangle::y(int64_t newY) { position_.y(newY); }

@@ -1,7 +1,7 @@
 #ifndef RECTANGLE_HPP_INCLUDED
 #define RECTANGLE_HPP_INCLUDED
 
-#include <cstddef>
+#include <cstdint>
 
 /**
  * @brief A rectangle is just what it is: two dimensions, a width and a height.
@@ -10,13 +10,13 @@
  */
 class Rectangle {
  public:
-  Rectangle(size_t width, size_t height);
-  size_t height() const;
-  size_t width() const;
+  Rectangle(int64_t width, int64_t height);
+  int64_t height() const;
+  int64_t width() const;
 
  private:
-  size_t const height_;
-  size_t const width_;
+  int64_t const height_;
+  int64_t const width_;
 };
 
 #endif

@@ -18,31 +18,31 @@ class Renderer;
  */
 class Tileset {
  public:
-  Tileset(std::string const& file_path, size_t tiles_size,
-          size_t width_in_tiles, size_t height_in_tiles, size_t left_offset,
-          size_t top_offset, size_t gap, Renderer const& renderer);
+  Tileset(std::string const& file_path, int64_t tiles_size,
+          int64_t width_in_tiles, int64_t height_in_tiles, int64_t left_offset,
+          int64_t top_offset, int64_t gap, Renderer const& renderer);
   Tileset(Tileset const& other) = delete;
   Tileset(Tileset&& other) = delete;
   Tileset& operator=(Tileset const& other) = delete;
   Tileset& operator=(Tileset&& other) = delete;
   ~Tileset();
-  size_t gap() const;
-  size_t heightInTiles() const;
-  size_t leftOffset() const;
-  SDL_Rect rectForTileIndex(size_t tile_index) const;
+  int64_t gap() const;
+  int64_t heightInTiles() const;
+  int64_t leftOffset() const;
+  SDL_Rect rectForTileIndex(int64_t tile_index) const;
   SDL_Texture* texture() const;
-  size_t tilesSize() const;
-  size_t topOffset() const;
-  size_t widthInTiles() const;
+  int64_t tilesSize() const;
+  int64_t topOffset() const;
+  int64_t widthInTiles() const;
 
  private:
-  size_t const gap_;
-  size_t const height_in_tiles_;
-  size_t const left_offset_;
+  int64_t const gap_;
+  int64_t const height_in_tiles_;
+  int64_t const left_offset_;
   SDL_Texture* const texture_;
-  size_t const tiles_size_;
-  size_t const top_offset_;
-  size_t const width_in_tiles_;
+  int64_t const tiles_size_;
+  int64_t const top_offset_;
+  int64_t const width_in_tiles_;
 
   /**
    * @brief For creating the texture of the tileset in the initializer list.

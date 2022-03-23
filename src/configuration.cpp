@@ -39,34 +39,36 @@ string const& Configuration::animationsPath() const { return animations_path_; }
 
 string const& Configuration::collisionsPath() const { return collisions_path_; }
 
-size_t Configuration::engineTickDurationMs() const {
+int64_t Configuration::engineTickDurationMs() const {
   return engine_tick_duration_ms_;
 }
 
-size_t Configuration::levelHeightInTiles() const {
+int64_t Configuration::levelHeightInTiles() const {
   return level_height_in_tiles_;
 }
 
 string const& Configuration::levelPath() const { return level_path_; }
 
-size_t Configuration::levelWidthInTiles() const {
+int64_t Configuration::levelWidthInTiles() const {
   return level_width_in_tiles_;
 }
 
-size_t Configuration::tilesetGap() const { return tileset_gap_; }
+int64_t Configuration::tilesetGap() const { return tileset_gap_; }
 
-size_t Configuration::tilesetHeightInTiles() const {
+int64_t Configuration::tilesetHeightInTiles() const {
   return tileset_height_in_tiles_;
 }
 
-size_t Configuration::tilesetLeftOffset() const { return tileset_left_offset_; }
+int64_t Configuration::tilesetLeftOffset() const {
+  return tileset_left_offset_;
+}
 
 string const& Configuration::tilesetPath() const { return tileset_path_; }
 
-size_t Configuration::tilesetTilesSize() const { return tileset_tiles_size_; }
+int64_t Configuration::tilesetTilesSize() const { return tileset_tiles_size_; }
 
-size_t Configuration::tilesetTopOffset() const { return tileset_top_offset_; }
+int64_t Configuration::tilesetTopOffset() const { return tileset_top_offset_; }
 
-size_t Configuration::tilesetWidthInTiles() const {
+int64_t Configuration::tilesetWidthInTiles() const {
   return tileset_width_in_tiles_;
 }

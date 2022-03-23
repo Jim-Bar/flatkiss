@@ -4,9 +4,9 @@
 
 using std::string;
 
-Tileset::Tileset(string const& file_path, size_t tiles_size,
-                 size_t width_in_tiles, size_t height_in_tiles,
-                 size_t left_offset, size_t top_offset, size_t gap,
+Tileset::Tileset(string const& file_path, int64_t tiles_size,
+                 int64_t width_in_tiles, int64_t height_in_tiles,
+                 int64_t left_offset, int64_t top_offset, int64_t gap,
                  Renderer const& renderer)
     : tiles_size_{tiles_size},
       width_in_tiles_{width_in_tiles},
@@ -18,11 +18,11 @@ Tileset::Tileset(string const& file_path, size_t tiles_size,
 
 Tileset::~Tileset() { SDL_DestroyTexture(texture_); }
 
-size_t Tileset::gap() const { return gap_; }
+int64_t Tileset::gap() const { return gap_; }
 
-size_t Tileset::heightInTiles() const { return height_in_tiles_; }
+int64_t Tileset::heightInTiles() const { return height_in_tiles_; }
 
-size_t Tileset::leftOffset() const { return left_offset_; }
+int64_t Tileset::leftOffset() const { return left_offset_; }
 
 SDL_Texture* Tileset::loadTexture(string const& file_path,
                                   Renderer const& renderer) {
@@ -37,7 +37,7 @@ SDL_Texture* Tileset::loadTexture(string const& file_path,
   return texture;
 }
 
-SDL_Rect Tileset::rectForTileIndex(size_t tile_index) const {
+SDL_Rect Tileset::rectForTileIndex(int64_t tile_index) const {
   SDL_Rect source_rect;
   source_rect.w = static_cast<int>(tilesSize());
   source_rect.h = static_cast<int>(tilesSize());
@@ -52,8 +52,8 @@ SDL_Rect Tileset::rectForTileIndex(size_t tile_index) const {
 
 SDL_Texture* Tileset::texture() const { return texture_; }
 
-size_t Tileset::tilesSize() const { return tiles_size_; }
+int64_t Tileset::tilesSize() const { return tiles_size_; }
 
-size_t Tileset::topOffset() const { return top_offset_; }
+int64_t Tileset::topOffset() const { return top_offset_; }
 
-size_t Tileset::widthInTiles() const { return width_in_tiles_; }
+int64_t Tileset::widthInTiles() const { return width_in_tiles_; }

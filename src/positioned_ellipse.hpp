@@ -15,10 +15,10 @@ class PositionedEllipse {
   bool contains(Position const& position) const;
   Ellipse const& ellipse() const;
   Position const& position() const;
-  size_t radiusX() const;
-  size_t radiusY() const;
-  size_t x() const;
-  size_t y() const;
+  int64_t radiusX() const;
+  int64_t radiusY() const;
+  int64_t x() const;
+  int64_t y() const;
 
  private:
   Ellipse const ellipse_;

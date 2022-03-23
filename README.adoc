@@ -63,7 +63,7 @@ A collision is stored as:
 . Next byte: collision type (0 for rectangle, 1 for circle)
 . Then on the four next bytes (each on one byte): x, y, width, height
 
-All of those are interpreted as unsigned (i.e. positive) integers.
+All of those are interpreted as positive integers.
 
 TIP: Several collisions can be added for a single tile index. Every one of those will be checked to determine whether an
 object collides with the tile.

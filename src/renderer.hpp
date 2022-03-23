@@ -30,18 +30,18 @@ class Renderer {
   SDL_Texture* createTextureFromSurface(SDL_Surface* surface) const;
   void render(AnimationPlayer const& animation_player, Level const& level,
               Tileset const& tileset, PositionedRectangle const& viewport,
-              size_t tick, SDL_Texture* character_texture,
+              int64_t tick, SDL_Texture* character_texture,
               Character const& character) const;
 
  private:
   SDL_Renderer* const sdl_renderer_;
 
-  void renderCharacter(PositionedRectangle const& viewport, size_t tick,
+  void renderCharacter(PositionedRectangle const& viewport, int64_t tick,
                        SDL_Texture* character_texture,
                        Character const& character) const;
   void renderLevel(AnimationPlayer const& animation_player, Level const& level,
                    Tileset const& tileset, PositionedRectangle const& viewport,
-                   size_t tick) const;
+                   int64_t tick) const;
 };
 
 #endif

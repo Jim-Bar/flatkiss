@@ -12,7 +12,6 @@
 class Vector {
  public:
   Vector(int64_t dx, int64_t dy);
-  Vector(uint64_t dx, uint64_t dy);
   int64_t dx() const;
   int64_t dy() const;
 

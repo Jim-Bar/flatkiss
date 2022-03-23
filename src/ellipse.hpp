@@ -1,17 +1,17 @@
 #ifndef ELLIPSE_HPP_INCLUDED
 #define ELLIPSE_HPP_INCLUDED
 
-#include <cstddef>
+#include <cstdint>
 
 class Ellipse {
  public:
-  Ellipse(size_t radius_x, size_t radius_y);
-  size_t radiusX() const;
-  size_t radiusY() const;
+  Ellipse(int64_t radius_x, int64_t radius_y);
+  int64_t radiusX() const;
+  int64_t radiusY() const;
 
  private:
-  size_t const radius_x_;
-  size_t const radius_y_;
+  int64_t const radius_x_;
+  int64_t const radius_y_;
 };
 
 #endif

@@ -102,6 +102,7 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
+. Check whether ellipses-shaped collision can have an ellipse whose center is at a negative position
 . Warning bug with readability-identifier-naming: https://stackoverflow.com/q/68475958 (upgrade clang-tidy?)
 . Check whether the built binary can run on a system without libsdl2
 . Improve the README: building in docker, development environment, required dependencies for running out of docker, ...

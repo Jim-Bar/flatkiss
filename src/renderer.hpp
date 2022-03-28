@@ -3,6 +3,8 @@
 
 #include <SDL2/SDL.h>
 
+#include <vector>
+
 #include "animation_player.hpp"
 #include "character.hpp"
 #include "level.hpp"
@@ -31,7 +33,7 @@ class Renderer {
   void render(AnimationPlayer const& animation_player, Level const& level,
               Tileset const& tileset, PositionedRectangle const& viewport,
               int64_t tick, SDL_Texture* character_texture,
-              Character const& character) const;
+              std::vector<Character> const& characters) const;
 
  private:
   SDL_Renderer* const sdl_renderer_;

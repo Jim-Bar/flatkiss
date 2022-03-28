@@ -13,6 +13,7 @@ class Configuration {
  public:
   Configuration(std::string const& file_path);
   std::string const& animationsPath() const;
+  std::string const& charactersPath() const;
   std::string const& collisionsPath() const;
   int64_t engineTickDurationMs() const;
   int64_t levelHeightInTiles() const;
@@ -28,6 +29,7 @@ class Configuration {
 
  private:
   std::string animations_path_{};
+  std::string characters_path_{};
   std::string collisions_path_{};
   int64_t engine_tick_duration_ms_{0};
   int64_t level_height_in_tiles_{0};

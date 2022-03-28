@@ -1,5 +1,7 @@
 #include "renderer.hpp"
 
+using std::vector;
+
 Renderer::Renderer(SDL_Window* sdl_window)
     : sdl_renderer_{SDL_CreateRenderer(
           sdl_window, -1,
@@ -19,10 +21,12 @@ void Renderer::render(AnimationPlayer const& animation_player,
                       Level const& level, Tileset const& tileset,
                       PositionedRectangle const& viewport, int64_t tick,
                       SDL_Texture* character_texture,
-                      Character const& character) const {
+                      vector<Character> const& characters) const {
   SDL_RenderClear(sdl_renderer_);
   renderLevel(animation_player, level, tileset, viewport, tick);
-  renderCharacter(viewport, tick, character_texture, character);
+  for (Character const& character : characters) {
+    renderCharacter(viewport, tick, character_texture, character);
+  }
   SDL_RenderPresent(sdl_renderer_);
 }
 

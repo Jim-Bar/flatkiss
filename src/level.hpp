@@ -25,9 +25,12 @@ class Level {
   int64_t const width_in_tiles_;
 };
 
+/**
+ * @brief Helper class for loading the level from a file.
+ */
 class LevelLoader {
  public:
-  static std::unique_ptr<Level const> load(std::string const& path,
+  static std::unique_ptr<Level const> load(std::string const& file_path,
                                            int64_t width_in_tiles,
                                            int64_t height_in_tiles);
 };

@@ -23,6 +23,9 @@ class Collision {
   std::vector<PositionedRectangle> const positioned_rectangles_;
 };
 
+/**
+ * @brief Helper class for loading the collisions from a file.
+ */
 class CollisionLoader {
  public:
   static std::unordered_map<uint16_t, Collision const> load(

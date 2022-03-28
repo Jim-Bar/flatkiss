@@ -68,6 +68,15 @@ All of those are interpreted as positive integers.
 TIP: Several collisions can be added for a single tile index. Every one of those will be checked to determine whether an
 object collides with the tile.
 
+=== Characters
+
+A character is defined by its initial position, character set, and controller type.
+
+First is the initial position in tiles in the level on the X-axis (eight bytes), then the same for the Y-axis (another
+eight bytes). Then comes the character set, meaning the sprites for that character. For instance, specifying `3` will
+load the file `3.bmp`. This is stored on two bytes. Finally the type of controller handling this character is specified
+on one byte. The controller can mean: keyboard controlled, mouse controlled, AI controlled, etc...
+
 == Quality
 
 === Coding style

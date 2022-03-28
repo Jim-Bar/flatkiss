@@ -8,6 +8,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "animation_player.hpp"
 #include "character.hpp"
@@ -26,6 +27,7 @@ using std::cout;
 using std::endl;
 using std::move;
 using std::unique_ptr;
+using std::vector;
 
 int64_t const kCharacterSizePixels(16);
 int64_t const kSpeedInPixels(2);
@@ -132,12 +134,12 @@ int main(int argc, char* argv[]) {
       AnimationLoader::load(configuration.animationsPath())};
   Collider collider{CollisionLoader::load(configuration.collisionsPath())};
   Navigator navigator{collider, *level, tileset.tilesSize()};
-  Character character{navigator, Position{0, 0},
-                      Rectangle{kCharacterSizePixels, kCharacterSizePixels}};
+  vector<Character> characters{CharacterLoader::load(
+      configuration.charactersPath(), navigator, tileset.tilesSize())};
   int64_t tick(0);
   while (!quit) {
     renderer.render(animation_player, *level, tileset, viewport, tick++,
-                    character_texture, character);
+                    character_texture, characters);
     SDL_Delay(configuration.engineTickDurationMs());
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
@@ -149,8 +151,11 @@ int main(int argc, char* argv[]) {
                               event.key.state == SDL_PRESSED);
       }
     }
-    handleKeyboardEvent(keyboard_state, character, viewport, level,
-                        tileset.tilesSize());
+    // FIXME: Not all characters are keyboard-controlled.
+    for (Character& character : characters) {
+      handleKeyboardEvent(keyboard_state, character, viewport, level,
+                          tileset.tilesSize());
+    }
   }
 
   SDL_DestroyTexture(character_texture);

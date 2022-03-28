@@ -15,6 +15,7 @@ Configuration::Configuration(string const& file_path) {
   /* The values are retrieved at construction time to fail early if something is
    * wrong. */
   inipp::get_value(ini.sections["Animations"], "path", animations_path_);
+  inipp::get_value(ini.sections["Characters"], "path", characters_path_);
   inipp::get_value(ini.sections["Collisions"], "path", collisions_path_);
   inipp::get_value(ini.sections["Engine"], "tick_duration_ms",
                    engine_tick_duration_ms_);
@@ -36,6 +37,8 @@ Configuration::Configuration(string const& file_path) {
 }
 
 string const& Configuration::animationsPath() const { return animations_path_; }
+
+string const& Configuration::charactersPath() const { return characters_path_; }
 
 string const& Configuration::collisionsPath() const { return collisions_path_; }
 

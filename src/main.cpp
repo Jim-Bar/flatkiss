@@ -135,7 +135,8 @@ int main(int argc, char* argv[]) {
   Collider collider{CollisionLoader::load(configuration.collisionsPath())};
   Navigator navigator{collider, *level, tileset.tilesSize()};
   vector<Character> characters{CharacterLoader::load(
-      configuration.charactersPath(), navigator, tileset.tilesSize())};
+      configuration.charactersPath(), configuration.charactersFamiliesPath(),
+      navigator, tileset.tilesSize())};
   int64_t tick(0);
   while (!quit) {
     renderer.render(animation_player, *level, tileset, viewport, tick++,

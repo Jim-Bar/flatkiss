@@ -2,10 +2,13 @@
 
 #include <inipp.h>
 
+#include <filesystem>
 #include <fstream>
 
 using std::ifstream;
 using std::string;
+using std::to_string;
+using std::filesystem::path;
 
 Configuration::Configuration(string const& file_path) {
   inipp::Ini<char> ini;
@@ -15,6 +18,14 @@ Configuration::Configuration(string const& file_path) {
   /* The values are retrieved at construction time to fail early if something is
    * wrong. */
   inipp::get_value(ini.sections["Animations"], "path", animations_path_);
+  inipp::get_value(ini.sections["Characters"], "characterset_files_directory",
+                   characterset_files_directory_);
+  inipp::get_value(ini.sections["Characters"], "characterset_files_prefix",
+                   characterset_files_prefix_);
+  inipp::get_value(ini.sections["Characters"], "characterset_files_suffix",
+                   characterset_files_suffix_);
+  inipp::get_value(ini.sections["Characters"], "families_path",
+                   characters_families_path_);
   inipp::get_value(ini.sections["Characters"], "path", characters_path_);
   inipp::get_value(ini.sections["Collisions"], "path", collisions_path_);
   inipp::get_value(ini.sections["Engine"], "tick_duration_ms",
@@ -38,7 +49,18 @@ Configuration::Configuration(string const& file_path) {
 
 string const& Configuration::animationsPath() const { return animations_path_; }
 
+string const& Configuration::charactersFamiliesPath() const {
+  return characters_families_path_;
+}
+
 string const& Configuration::charactersPath() const { return characters_path_; }
+
+string const& Configuration::charactersetPath(int64_t family) const {
+  return (path{characterset_files_directory_} /
+          path{characterset_files_prefix_ + to_string(0) +
+               characterset_files_suffix_})
+      .string();
+}
 
 string const& Configuration::collisionsPath() const { return collisions_path_; }
 

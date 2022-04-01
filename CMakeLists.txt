@@ -26,6 +26,8 @@ add_executable(${PROJECT_NAME}
     src/animation_player.hpp
     src/character.cpp
     src/character.hpp
+    src/characterset.cpp
+    src/characterset.hpp
     src/collider.cpp
     src/collider.hpp
     src/collision.cpp

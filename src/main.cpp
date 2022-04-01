@@ -12,6 +12,7 @@
 
 #include "animation_player.hpp"
 #include "character.hpp"
+#include "characterset.hpp"
 #include "collider.hpp"
 #include "configuration.hpp"
 #include "keyboard_state.hpp"
@@ -109,23 +110,10 @@ int main(int argc, char* argv[]) {
       configuration.tilesetLeftOffset(),   configuration.tilesetTopOffset(),
       configuration.tilesetGap(),          renderer};
 
-  SDL_Surface* character_surface = SDL_LoadBMP("assets/character.bmp");
-  if (character_surface == nullptr) {
-    cerr << "SDL_LoadBMP Error: " << SDL_GetError() << endl;
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-    return EXIT_FAILURE;
-  }
-
-  SDL_Texture* character_texture =
-      renderer.createTextureFromSurface(character_surface);
-  if (character_texture == nullptr) {
-    cerr << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << endl;
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-    return EXIT_FAILURE;
-  }
-  SDL_FreeSurface(character_surface);
+  vector<Characterset> charactersets{CharactersetLoader::load(
+      configuration.charactersetsPath(),
+      configuration /* FIXME: Should not need to pass configuration */,
+      renderer)};
 
   bool quit = false;
   SDL_Event event;
@@ -135,12 +123,11 @@ int main(int argc, char* argv[]) {
   Collider collider{CollisionLoader::load(configuration.collisionsPath())};
   Navigator navigator{collider, *level, tileset.tilesSize()};
   vector<Character> characters{CharacterLoader::load(
-      configuration.charactersPath(), configuration.charactersFamiliesPath(),
-      navigator, tileset.tilesSize())};
+      configuration.charactersPath(), navigator, tileset.tilesSize())};
   int64_t tick(0);
   while (!quit) {
     renderer.render(animation_player, *level, tileset, viewport, tick++,
-                    character_texture, characters);
+                    charactersets, characters);
     SDL_Delay(configuration.engineTickDurationMs());
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
@@ -159,7 +146,6 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  SDL_DestroyTexture(character_texture);
   SDL_DestroyWindow(window);
   SDL_Quit();
 

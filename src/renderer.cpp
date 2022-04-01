@@ -20,12 +20,14 @@ SDL_Texture* Renderer::createTextureFromSurface(SDL_Surface* surface) const {
 void Renderer::render(AnimationPlayer const& animation_player,
                       Level const& level, Tileset const& tileset,
                       PositionedRectangle const& viewport, int64_t tick,
-                      SDL_Texture* character_texture,
+                      vector<Characterset> const& charactersets,
                       vector<Character> const& characters) const {
   SDL_RenderClear(sdl_renderer_);
   renderLevel(animation_player, level, tileset, viewport, tick);
   for (Character const& character : characters) {
-    renderCharacter(viewport, tick, character_texture, character);
+    renderCharacter(viewport, tick,
+                    charactersets[character.characterset()].texture(),
+                    character);
   }
   SDL_RenderPresent(sdl_renderer_);
 }

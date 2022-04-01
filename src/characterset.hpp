@@ -1,0 +1,74 @@
+#ifndef CHARACTERSET_HPP_INCLUDED
+#define CHARACTERSET_HPP_INCLUDED
+
+#include <SDL2/SDL.h>
+
+#include <string>
+#include <vector>
+
+#include "configuration.hpp"
+
+// FIXME: Required?
+// Forward declaration to break the cycle Characterset / Renderer.
+class Renderer;
+
+// FIXME: Merge with Spriteset?
+/**
+ * @brief Models a characterset.
+ *
+ * A characterset is a picture containing multiple sprites. It provides handy
+ * methods to get information on the characterset and to easily render sprites.
+ *
+ * This class also handles the lifecycle of the texture of the characterset.
+ */
+class Characterset {
+ public:
+  Characterset(std::string const& file_path, int64_t sprites_width,
+               int64_t sprites_height, int64_t width_in_sprites,
+               int64_t height_in_sprites, int64_t left_offset,
+               int64_t top_offset, int64_t gap, Renderer const& renderer);
+  ~Characterset();
+  int64_t gap() const;
+  int64_t heightInSprites() const;
+  int64_t leftOffset() const;
+  SDL_Rect rectForSpriteIndex(int64_t sprite_index) const;
+  int64_t spritesHeight() const;
+  int64_t spritesWidth() const;
+  SDL_Texture* texture() const;
+  int64_t topOffset() const;
+  int64_t widthInSprites() const;
+
+ private:
+  int64_t const gap_;
+  int64_t const height_in_sprites_;
+  int64_t const left_offset_;
+  int64_t const sprites_height_;
+  int64_t const sprites_width_;
+  SDL_Texture* const texture_;
+  int64_t const top_offset_;
+  int64_t const width_in_sprites_;
+
+  /**
+   * @brief For creating the texture of the characterset in the initializer
+   * list.
+   *
+   * @param file_path Path to the characterset picture.
+   * @param renderer Pointer to the renderer for creating the texture.
+   * @return SDL_Texture* Newly created texture, the caller must handle its
+   * destruction.
+   */
+  static SDL_Texture* loadTexture(std::string const& file_path,
+                                  Renderer const& renderer);
+};
+
+/**
+ * @brief Helper class for loading the charactersets from a file.
+ */
+class CharactersetLoader {
+ public:
+  static std::vector<Characterset> load(std::string const& file_path,
+                                        Configuration const& configuration,
+                                        Renderer const& renderer);
+};
+
+#endif

@@ -17,11 +17,11 @@ cd ..
 
 cd assets
 python3 animations_to_bin.py
-python3 characters_families_to_bin.py
+python3 charactersets_to_bin.py
 python3 characters_to_bin.py
 python3 collisions_to_bin.py
 wget --output-document tileset.png "https://www.spriters-resource.com/resources/sheets/9/9445.png?updated=1460953914"
-wget --output-document character_set_0.gif "https://emoji.ameba.jp/img/user/te/tentoumushi0615/4594134.gif"
+wget --output-document characterset_0.gif "https://emoji.ameba.jp/img/user/te/tentoumushi0615/4594134.gif"
 cd ..
 
 docker build -t flat-kiss .

@@ -7,6 +7,7 @@
 
 #include "animation_player.hpp"
 #include "character.hpp"
+#include "characterset.hpp"
 #include "level.hpp"
 #include "positioned_rectangle.hpp"
 #include "tileset.hpp"
@@ -32,7 +33,7 @@ class Renderer {
   SDL_Texture* createTextureFromSurface(SDL_Surface* surface) const;
   void render(AnimationPlayer const& animation_player, Level const& level,
               Tileset const& tileset, PositionedRectangle const& viewport,
-              int64_t tick, SDL_Texture* character_texture,
+              int64_t tick, std::vector<Characterset> const& charactersets,
               std::vector<Character> const& characters) const;
 
  private:

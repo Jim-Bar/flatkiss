@@ -83,6 +83,27 @@ eight bytes). Then comes the character family, stored on two bytes. Finally the 
 character is specified on one byte. The controller can mean: keyboard controlled, mouse controlled, AI controlled,
 etc...
 
+==== WIP
+
+characterset_sprites_width
+characterset_sprites_height
+characterset_width_in_sprites
+characterset_height_in_sprites
+characterset_left_offset
+characterset_top_offset
+characterset_gap
+
+characters_animations
+
+characters_collisions
+
+character_position_x
+character_position_y
+character_characterset
+character_animation
+character_collision
+character_controller
+
 == Quality
 
 === Coding style
@@ -117,6 +138,7 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
+. Use struct when reading files
 . Check whether ellipses-shaped collision can have an ellipse whose center is at a negative position
 . Warning bug with readability-identifier-naming: https://stackoverflow.com/q/68475958 (upgrade clang-tidy?)
 . Check whether the built binary can run on a system without libsdl2

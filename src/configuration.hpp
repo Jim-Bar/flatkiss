@@ -13,9 +13,9 @@ class Configuration {
  public:
   Configuration(std::string const& file_path);
   std::string const& animationsPath() const;
-  std::string const& charactersFamiliesPath() const;
+  std::string const& charactersetsPath() const;
   std::string const& charactersPath() const;
-  std::string const& charactersetPath(int64_t family) const;
+  std::string charactersetPath(int64_t characterset) const;
   std::string const& collisionsPath() const;
   int64_t engineTickDurationMs() const;
   int64_t levelHeightInTiles() const;
@@ -31,7 +31,7 @@ class Configuration {
 
  private:
   std::string animations_path_{};
-  std::string characters_families_path_{};
+  std::string charactersets_path_{};
   std::string characters_path_{};
   std::string characterset_files_directory_{};
   std::string characterset_files_prefix_{};

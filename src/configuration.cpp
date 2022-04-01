@@ -2,13 +2,11 @@
 
 #include <inipp.h>
 
-#include <filesystem>
 #include <fstream>
 
 using std::ifstream;
 using std::string;
 using std::to_string;
-using std::filesystem::path;
 
 Configuration::Configuration(string const& file_path) {
   inipp::Ini<char> ini;
@@ -24,8 +22,8 @@ Configuration::Configuration(string const& file_path) {
                    characterset_files_prefix_);
   inipp::get_value(ini.sections["Characters"], "characterset_files_suffix",
                    characterset_files_suffix_);
-  inipp::get_value(ini.sections["Characters"], "families_path",
-                   characters_families_path_);
+  inipp::get_value(ini.sections["Characters"], "charactersets_path",
+                   charactersets_path_);
   inipp::get_value(ini.sections["Characters"], "path", characters_path_);
   inipp::get_value(ini.sections["Collisions"], "path", collisions_path_);
   inipp::get_value(ini.sections["Engine"], "tick_duration_ms",
@@ -49,17 +47,20 @@ Configuration::Configuration(string const& file_path) {
 
 string const& Configuration::animationsPath() const { return animations_path_; }
 
-string const& Configuration::charactersFamiliesPath() const {
-  return characters_families_path_;
+string const& Configuration::charactersetsPath() const {
+  return charactersets_path_;
 }
 
 string const& Configuration::charactersPath() const { return characters_path_; }
 
-string const& Configuration::charactersetPath(int64_t family) const {
-  return (path{characterset_files_directory_} /
+string Configuration::charactersetPath(int64_t characterset) const {
+  return characterset_files_directory_ + "/" + characterset_files_prefix_ +
+         to_string(characterset) + characterset_files_suffix_;
+  // FIXME: Use std::filesystem::path as below.
+  /*return (path{characterset_files_directory_} /
           path{characterset_files_prefix_ + to_string(0) +
                characterset_files_suffix_})
-      .string();
+      .string();*/
 }
 
 string const& Configuration::collisionsPath() const { return collisions_path_; }

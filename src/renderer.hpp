@@ -40,7 +40,7 @@ class Renderer {
   SDL_Renderer* const sdl_renderer_;
 
   void renderCharacter(PositionedRectangle const& viewport, int64_t tick,
-                       SDL_Texture* character_texture,
+                       Characterset const& characterset,
                        Character const& character) const;
   void renderLevel(AnimationPlayer const& animation_player, Level const& level,
                    Tileset const& tileset, PositionedRectangle const& viewport,

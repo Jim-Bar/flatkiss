@@ -11,11 +11,12 @@ using std::istream;
 using std::string;
 using std::vector;
 
-Characterset::Characterset(string const& file_path, int64_t sprites_width,
-                           int64_t sprites_height, int64_t width_in_sprites,
-                           int64_t height_in_sprites, int64_t left_offset,
-                           int64_t top_offset, int64_t gap,
-                           Renderer const& renderer)
+Characterset::Characterset(
+    string const& file_path, int64_t sprites_width, int64_t sprites_height,
+    int64_t width_in_sprites, int64_t height_in_sprites, int64_t left_offset,
+    int64_t top_offset, int64_t gap, int64_t sprite_move_left_index,
+    int64_t sprite_move_down_index, int64_t sprite_move_right_index,
+    int64_t sprite_move_up_index, Renderer const& renderer)
     : sprites_width_{sprites_width},
       sprites_height_{sprites_height},
       width_in_sprites_{width_in_sprites},
@@ -23,6 +24,9 @@ Characterset::Characterset(string const& file_path, int64_t sprites_width,
       left_offset_{left_offset},
       top_offset_{top_offset},
       gap_{gap},
+      sprites_move_directions_indices_{
+          sprite_move_left_index, sprite_move_down_index,
+          sprite_move_right_index, sprite_move_up_index},
       texture_{Characterset::loadTexture(file_path, renderer)} {}
 
 Characterset::~Characterset() { SDL_DestroyTexture(texture_); }
@@ -44,6 +48,13 @@ SDL_Texture* Characterset::loadTexture(string const& file_path,
   }  // TODO: Raise exception.
 
   return texture;
+}
+
+SDL_Rect Characterset::rectForMoveDirection(
+    MoveDirection const& move_direction) const {
+  // FIXME: Are you sure you want to use enum values as indices?
+  return rectForSpriteIndex(
+      sprites_move_directions_indices_.at(move_direction));
 }
 
 SDL_Rect Characterset::rectForSpriteIndex(int64_t sprite_index) const {
@@ -87,6 +98,10 @@ vector<Characterset> CharactersetLoader::load(
       uint16_t top_offset{0};
       uint16_t left_offset{0};
       uint16_t gap{0};
+      uint16_t move_left_index{0};
+      uint16_t move_down_index{0};
+      uint16_t move_right_index{0};
+      uint16_t move_up_index{0};
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&sprites_width), 1);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -101,10 +116,19 @@ vector<Characterset> CharactersetLoader::load(
       stream.read(reinterpret_cast<char*>(&left_offset), 2);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&gap), 2);
+      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+      stream.read(reinterpret_cast<char*>(&move_left_index), 2);
+      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+      stream.read(reinterpret_cast<char*>(&move_down_index), 2);
+      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+      stream.read(reinterpret_cast<char*>(&move_right_index), 2);
+      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+      stream.read(reinterpret_cast<char*>(&move_up_index), 2);
       charactersets.emplace_back(
           configuration.charactersetPath(characterset_count), sprites_width,
           sprites_height, width_in_sprites, height_in_tiles, left_offset,
-          top_offset, gap, renderer);
+          top_offset, gap, move_left_index, move_down_index, move_right_index,
+          move_up_index, renderer);
       characterset_count++;
     }
     stream.close();

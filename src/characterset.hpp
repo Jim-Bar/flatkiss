@@ -3,12 +3,13 @@
 
 #include <SDL2/SDL.h>
 
+#include <array>
 #include <string>
 #include <vector>
 
 #include "configuration.hpp"
+#include "move_direction.hpp"
 
-// FIXME: Required?
 // Forward declaration to break the cycle Characterset / Renderer.
 class Renderer;
 
@@ -26,11 +27,18 @@ class Characterset {
   Characterset(std::string const& file_path, int64_t sprites_width,
                int64_t sprites_height, int64_t width_in_sprites,
                int64_t height_in_sprites, int64_t left_offset,
-               int64_t top_offset, int64_t gap, Renderer const& renderer);
+               int64_t top_offset, int64_t gap, int64_t sprite_move_left_index,
+               int64_t sprite_move_down_index, int64_t sprite_move_right_index,
+               int64_t sprite_move_up_index, Renderer const& renderer);
+  Characterset(Characterset const& other) = default;
+  Characterset(Characterset&& other) = delete;
+  Characterset& operator=(Characterset const& other) = delete;
+  Characterset& operator=(Characterset&& other) = delete;
   ~Characterset();
   int64_t gap() const;
   int64_t heightInSprites() const;
   int64_t leftOffset() const;
+  SDL_Rect rectForMoveDirection(MoveDirection const& move_direction) const;
   SDL_Rect rectForSpriteIndex(int64_t sprite_index) const;
   int64_t spritesHeight() const;
   int64_t spritesWidth() const;
@@ -44,6 +52,7 @@ class Characterset {
   int64_t const left_offset_;
   int64_t const sprites_height_;
   int64_t const sprites_width_;
+  std::array<int64_t, 4> sprites_move_directions_indices_;
   SDL_Texture* const texture_;
   int64_t const top_offset_;
   int64_t const width_in_sprites_;

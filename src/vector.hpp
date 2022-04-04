@@ -12,8 +12,12 @@
 class Vector {
  public:
   Vector(int64_t dx, int64_t dy);
+  bool operator!=(Vector const& other) const;
+  bool operator==(Vector const& other) const;
   int64_t dx() const;
   int64_t dy() const;
+
+  static Vector const ZERO;
 
  private:
   int64_t const dx_;

@@ -25,23 +25,24 @@ void Renderer::render(AnimationPlayer const& animation_player,
   SDL_RenderClear(sdl_renderer_);
   renderLevel(animation_player, level, tileset, viewport, tick);
   for (Character const& character : characters) {
-    renderCharacter(viewport, tick,
-                    charactersets[character.characterset()].texture(),
-                    character);
+    renderCharacter(viewport, tick, character.characterset(), character);
   }
   SDL_RenderPresent(sdl_renderer_);
 }
 
 void Renderer::renderCharacter(PositionedRectangle const& viewport,
-                               int64_t tick, SDL_Texture* character_texture,
+                               int64_t tick, Characterset const& characterset,
                                Character const& character) const {
+  SDL_Rect source_rect{
+      characterset.rectForMoveDirection(character.movingDirection())};
   SDL_Rect dest_rect;
   dest_rect.x = static_cast<int>(character.x() - viewport.x());
   dest_rect.y = static_cast<int>(character.y() - viewport.y());
   dest_rect.w = static_cast<int>(character.width());
   dest_rect.h = static_cast<int>(character.height());
 
-  SDL_RenderCopy(sdl_renderer_, character_texture, nullptr, &dest_rect);
+  SDL_RenderCopy(sdl_renderer_, characterset.texture(), &source_rect,
+                 &dest_rect);
 }
 
 void Renderer::renderLevel(AnimationPlayer const& animation_player,
@@ -55,17 +56,15 @@ void Renderer::renderLevel(AnimationPlayer const& animation_player,
       uint16_t tile_index(
           animation_player.animatedTileIndexFor(level.tileIndex(x, y), tick));
 
-      SDL_Rect source_rectangle{tileset.rectForTileIndex(tile_index)};
-      SDL_Rect destination_rectangle;
-      destination_rectangle.w = static_cast<int>(tileset.tilesSize());
-      destination_rectangle.h = static_cast<int>(tileset.tilesSize());
-      destination_rectangle.x =
-          static_cast<int>(x * tileset.tilesSize() - viewport.x());
-      destination_rectangle.y =
-          static_cast<int>(y * tileset.tilesSize() - viewport.y());
+      SDL_Rect source_rect{tileset.rectForTileIndex(tile_index)};
+      SDL_Rect dest_rect;
+      dest_rect.w = static_cast<int>(tileset.tilesSize());
+      dest_rect.h = static_cast<int>(tileset.tilesSize());
+      dest_rect.x = static_cast<int>(x * tileset.tilesSize() - viewport.x());
+      dest_rect.y = static_cast<int>(y * tileset.tilesSize() - viewport.y());
 
-      SDL_RenderCopy(sdl_renderer_, tileset.texture(), &source_rectangle,
-                     &destination_rectangle);
+      SDL_RenderCopy(sdl_renderer_, tileset.texture(), &source_rect,
+                     &dest_rect);
     }
   }
 }

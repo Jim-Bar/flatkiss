@@ -92,6 +92,10 @@ characterset_height_in_sprites
 characterset_left_offset
 characterset_top_offset
 characterset_gap
+characterset_walk_left
+characterset_walk_down
+characterset_walk_right
+characterset_walk_up
 
 characters_animations
 
@@ -138,8 +142,10 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
+. MoveDirection -> MovingDirection
 . Use struct when reading files
 . Check whether ellipses-shaped collision can have an ellipse whose center is at a negative position
+. Better directory structure
 . Warning bug with readability-identifier-naming: https://stackoverflow.com/q/68475958 (upgrade clang-tidy?)
 . Check whether the built binary can run on a system without libsdl2
 . Improve the README: building in docker, development environment, required dependencies for running out of docker, ...

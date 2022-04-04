@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include "characterset.hpp"
+#include "move_direction.hpp"
 #include "navigator.hpp"
 #include "positioned_rectangle.hpp"
 
@@ -13,11 +15,12 @@
  */
 class Character {
  public:
-  Character(uint16_t characterset, Navigator const& navigator,
+  Character(Characterset const& characterset, Navigator const& navigator,
             Position const& initialPosition, Rectangle const& rectangle);
-  uint16_t characterset() const;
+  Characterset const& characterset() const;
   int64_t height() const;
   void moveBy(Vector const& desired_displacement);
+  MoveDirection const& movingDirection() const;
   Position const& position() const;
   Rectangle const& rectangle() const;
   int64_t width() const;
@@ -25,9 +28,14 @@ class Character {
   int64_t y() const;
 
  private:
-  uint16_t characterset_;
+  Characterset const& characterset_;
+  MoveDirection moving_direction_;
   Navigator const& navigator_;
   PositionedRectangle positioned_rectangle_;
+
+  void updateMovingDirection(Vector const& desired_displacement,
+                             Vector const& actual_displacement);
+  void updateMovingDirectionForDisplacement(Vector const& displacement);
 };
 
 /**
@@ -35,9 +43,10 @@ class Character {
  */
 class CharacterLoader {
  public:
-  static std::vector<Character> load(std::string const& characters_file_path,
-                                     Navigator const& navigator,
-                                     int64_t tiles_size);
+  static std::vector<Character> load(
+      std::string const& characters_file_path,
+      std::vector<Characterset> const& charactersets,
+      Navigator const& navigator, int64_t tiles_size);
 
  private:
   static int64_t constexpr kAnimationFieldSize{2};

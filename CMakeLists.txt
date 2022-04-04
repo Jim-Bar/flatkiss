@@ -42,6 +42,8 @@ add_executable(${PROJECT_NAME}
     src/level.hpp
     src/main.cpp
     src/main.hpp
+    src/move_direction.cpp
+    src/move_direction.hpp
     src/navigator.cpp
     src/navigator.hpp
     src/position.cpp

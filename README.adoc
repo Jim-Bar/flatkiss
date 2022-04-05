@@ -92,6 +92,9 @@ characterset_height_in_sprites
 characterset_left_offset
 characterset_top_offset
 characterset_gap
+characterset_alpha_red
+characterset_alpha_green
+characterset_alpha_blue
 characterset_walk_left
 characterset_walk_down
 characterset_walk_right

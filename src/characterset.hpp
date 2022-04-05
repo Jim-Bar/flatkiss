@@ -27,9 +27,11 @@ class Characterset {
   Characterset(std::string const& file_path, int64_t sprites_width,
                int64_t sprites_height, int64_t width_in_sprites,
                int64_t height_in_sprites, int64_t left_offset,
-               int64_t top_offset, int64_t gap, int64_t sprite_move_left_index,
-               int64_t sprite_move_down_index, int64_t sprite_move_right_index,
-               int64_t sprite_move_up_index, Renderer const& renderer);
+               int64_t top_offset, int64_t gap, uint8_t alpha_red,
+               uint8_t alpha_green, uint8_t alpha_blue,
+               int64_t sprite_move_left_index, int64_t sprite_move_down_index,
+               int64_t sprite_move_right_index, int64_t sprite_move_up_index,
+               Renderer const& renderer);
   Characterset(Characterset const& other) = default;
   Characterset(Characterset&& other) = delete;
   Characterset& operator=(Characterset const& other) = delete;
@@ -63,11 +65,19 @@ class Characterset {
    *
    * @param file_path Path to the characterset picture.
    * @param renderer Pointer to the renderer for creating the texture.
+   * @param alpha_red Red component of the colour that will be turned
+   * @param alpha_red Red component of the colour that will be turned
+   * transparent.
+   * @param alpha_green Green component of the colour that will be turned
+   * transparent.
+   * @param alpha_blue Blue component of the colour that will be turned
+   * transparent.
    * @return SDL_Texture* Newly created texture, the caller must handle its
    * destruction.
    */
   static SDL_Texture* loadTexture(std::string const& file_path,
-                                  Renderer const& renderer);
+                                  Renderer const& renderer, uint8_t alpha_red,
+                                  uint8_t alpha_green, uint8_t alpha_blue);
 };
 
 /**

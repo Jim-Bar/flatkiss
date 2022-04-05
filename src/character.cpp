@@ -21,6 +21,8 @@ Character::Character(Characterset const& characterset,
       navigator_{navigator},
       positioned_rectangle_{initialPosition, rectangle} {}
 
+int64_t Character::animationTick() const { return animation_tick_; }
+
 Characterset const& Character::characterset() const { return characterset_; }
 
 int64_t Character::height() const {
@@ -46,13 +48,24 @@ Rectangle const& Character::rectangle() const {
   return positioned_rectangle_.rectangle();
 }
 
+void Character::resetAnimationTick() {
+  /* Not resetting to zero. Instead resetting to the last tick before which the
+   * next animation is played. Consequently, next time the character moves, it
+   * immediately starts animating. In particular, this prevents it from sliding
+   * for small moves.*/
+  animation_tick_ =
+      characterset_.animationDurationForMovingDirection(moving_direction_) - 1;
+}
+
 void Character::updateMovingDirection(Vector const& desired_displacement,
                                       Vector const& actual_displacement) {
   /* Using the desired displacement as fallback ensures that when the character
    * is blocked, it still turns toward the tried direction. */
   if (actual_displacement != Vector::ZERO) {
+    animation_tick_++;
     updateMovingDirectionForDisplacement(actual_displacement);
   } else {
+    resetAnimationTick();
     updateMovingDirectionForDisplacement(desired_displacement);
   }
 }
@@ -77,7 +90,9 @@ void Character::updateMovingDirectionForDisplacement(
    * "random" direction is always right. */
   if (!moving_directions.empty() &&
       !moving_directions.contains(movingDirection())) {
+    // The direction changed.
     moving_direction_ = *moving_directions.begin();
+    resetAnimationTick();
   }
 }
 

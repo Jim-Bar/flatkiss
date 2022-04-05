@@ -22,6 +22,15 @@ Configuration::Configuration(string const& file_path) {
                    characterset_files_prefix_);
   inipp::get_value(ini.sections["Characters"], "characterset_files_suffix",
                    characterset_files_suffix_);
+  inipp::get_value(ini.sections["Characters"],
+                   "charactersets_animations_files_directory",
+                   charactersets_animations_files_directory_);
+  inipp::get_value(ini.sections["Characters"],
+                   "charactersets_animations_files_prefix",
+                   charactersets_animations_files_prefix_);
+  inipp::get_value(ini.sections["Characters"],
+                   "charactersets_animations_files_suffix",
+                   charactersets_animations_files_suffix_);
   inipp::get_value(ini.sections["Characters"], "charactersets_path",
                    charactersets_path_);
   inipp::get_value(ini.sections["Characters"], "path", characters_path_);
@@ -47,21 +56,32 @@ Configuration::Configuration(string const& file_path) {
 
 string const& Configuration::animationsPath() const { return animations_path_; }
 
-string const& Configuration::charactersetsPath() const {
-  return charactersets_path_;
-}
-
-string const& Configuration::charactersPath() const { return characters_path_; }
-
 string Configuration::charactersetPath(int64_t characterset) const {
   return characterset_files_directory_ + "/" + characterset_files_prefix_ +
          to_string(characterset) + characterset_files_suffix_;
   // FIXME: Use std::filesystem::path as below.
   /*return (path{characterset_files_directory_} /
-          path{characterset_files_prefix_ + to_string(0) +
+          path{characterset_files_prefix_ + to_string(characterset) +
                characterset_files_suffix_})
       .string();*/
 }
+
+std::string Configuration::charactersetsAnimationsPath(
+    int64_t characterset) const {
+  return charactersets_animations_files_directory_ + "/" +
+         charactersets_animations_files_prefix_ + to_string(characterset) +
+         charactersets_animations_files_suffix_;
+  // FIXME: Use std::filesystem::path as below.
+  /*return (path{charactersets_animations_files_directory_} /
+          path{charactersets_animations_files_prefix_ + to_string(characterset)
+     + charactersets_animations_files_suffix_}) .string();*/
+}
+
+string const& Configuration::charactersetsPath() const {
+  return charactersets_path_;
+}
+
+string const& Configuration::charactersPath() const { return characters_path_; }
 
 string const& Configuration::collisionsPath() const { return collisions_path_; }
 

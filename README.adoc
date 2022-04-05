@@ -145,6 +145,8 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
+. Documentation character animations / charactersets
+. Animation & AnimationPlayer are about "tiles" but work also with "sprites"
 . MoveDirection -> MovingDirection
 . Use struct when reading files
 . Check whether ellipses-shaped collision can have an ellipse whose center is at a negative position

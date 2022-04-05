@@ -17,7 +17,8 @@ Characterset::Characterset(
     int64_t top_offset, int64_t gap, uint8_t alpha_red, uint8_t alpha_green,
     uint8_t alpha_blue, int64_t sprite_move_left_index,
     int64_t sprite_move_down_index, int64_t sprite_move_right_index,
-    int64_t sprite_move_up_index, Renderer const& renderer)
+    int64_t sprite_move_up_index, Renderer const& renderer,
+    AnimationPlayer const animation_player)
     : sprites_width_{sprites_width},
       sprites_height_{sprites_height},
       width_in_sprites_{width_in_sprites},
@@ -29,9 +30,16 @@ Characterset::Characterset(
           sprite_move_left_index, sprite_move_down_index,
           sprite_move_right_index, sprite_move_up_index},
       texture_{Characterset::loadTexture(file_path, renderer, alpha_red,
-                                         alpha_green, alpha_blue)} {}
+                                         alpha_green, alpha_blue)},
+      animation_player_{animation_player} {}
 
 Characterset::~Characterset() { SDL_DestroyTexture(texture_); }
+
+int64_t Characterset::animationDurationForMovingDirection(
+    MoveDirection const& move_direction) const {
+  return animation_player_.animationDurationForTileIndex(
+      spriteIndexForMovingDirection(move_direction));
+}
 
 int64_t Characterset::gap() const { return gap_; }
 
@@ -57,11 +65,10 @@ SDL_Texture* Characterset::loadTexture(string const& file_path,
   return texture;
 }
 
-SDL_Rect Characterset::rectForMoveDirection(
-    MoveDirection const& move_direction) const {
-  // FIXME: Are you sure you want to use enum values as indices?
-  return rectForSpriteIndex(
-      sprites_move_directions_indices_.at(move_direction));
+SDL_Rect Characterset::rectForMoveDirection(MoveDirection const& move_direction,
+                                            int64_t tick) const {
+  return rectForSpriteIndex(animation_player_.animatedTileIndexFor(
+      spriteIndexForMovingDirection(move_direction), tick));
 }
 
 SDL_Rect Characterset::rectForSpriteIndex(int64_t sprite_index) const {
@@ -77,6 +84,20 @@ SDL_Rect Characterset::rectForSpriteIndex(int64_t sprite_index) const {
                                    topOffset());
 
   return source_rect;
+}
+
+int64_t Characterset::spriteIndexForMovingDirection(
+    MoveDirection const& move_direction) const {
+  switch (move_direction) {
+    case MoveDirection::LEFT:
+      return sprites_move_directions_indices_[0];
+    case MoveDirection::DOWN:
+      return sprites_move_directions_indices_[1];
+    case MoveDirection::RIGHT:
+      return sprites_move_directions_indices_[2];
+    case MoveDirection::UP:
+      return sprites_move_directions_indices_[3];
+  }
 }
 
 int64_t Characterset::spritesHeight() const { return sprites_height_; }
@@ -144,7 +165,9 @@ vector<Characterset> CharactersetLoader::load(
           configuration.charactersetPath(characterset_count), sprites_width,
           sprites_height, width_in_sprites, height_in_tiles, left_offset,
           top_offset, gap, alpha_red, alpha_green, alpha_blue, move_left_index,
-          move_down_index, move_right_index, move_up_index, renderer);
+          move_down_index, move_right_index, move_up_index, renderer,
+          AnimationLoader::load(
+              configuration.charactersetsAnimationsPath(characterset_count)));
       characterset_count++;
     }
     stream.close();

@@ -17,6 +17,7 @@ class Character {
  public:
   Character(Characterset const& characterset, Navigator const& navigator,
             Position const& initialPosition, Rectangle const& rectangle);
+  int64_t animationTick() const;
   Characterset const& characterset() const;
   int64_t height() const;
   void moveBy(Vector const& desired_displacement);
@@ -28,11 +29,13 @@ class Character {
   int64_t y() const;
 
  private:
+  int64_t animation_tick_{0};
   Characterset const& characterset_;
   MoveDirection moving_direction_;
   Navigator const& navigator_;
   PositionedRectangle positioned_rectangle_;
 
+  void resetAnimationTick();
   void updateMovingDirection(Vector const& desired_displacement,
                              Vector const& actual_displacement);
   void updateMovingDirectionForDisplacement(Vector const& displacement);

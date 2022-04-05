@@ -31,7 +31,7 @@ using std::unique_ptr;
 using std::vector;
 
 int64_t const kCharacterSizePixels(16);
-int64_t const kSpeedInPixels(2);
+int64_t const kSpeedInPixels(1);
 int64_t const kViewportSize(160);
 
 void handleKeyboardEvent(KeyboardState const& keyboard_state,

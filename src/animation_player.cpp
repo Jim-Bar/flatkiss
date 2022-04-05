@@ -18,3 +18,12 @@ uint16_t AnimationPlayer::animatedTileIndexFor(uint16_t tile_index,
       (tick % (animation.getPeriod() * animation.getDuration())) /
       animation.getDuration());
 }
+
+int64_t AnimationPlayer::animationDurationForTileIndex(
+    uint16_t tile_index) const {
+  if (!animations_per_tile_index_.contains(tile_index)) {
+    return 0;
+  }
+
+  return animations_per_tile_index_.at(tile_index).getDuration();
+}

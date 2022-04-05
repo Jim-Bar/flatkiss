@@ -26,6 +26,7 @@ class AnimationPlayer {
   AnimationPlayer(std::unordered_map<uint16_t, Animation const>&&
                       animations_per_tile_index);
   uint16_t animatedTileIndexFor(uint16_t tile_index, int64_t tick) const;
+  int64_t animationDurationForTileIndex(uint16_t tile_index) const;
 
  private:
   std::unordered_map<uint16_t, Animation const> animations_per_tile_index_;

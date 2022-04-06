@@ -110,10 +110,15 @@ int main(int argc, char* argv[]) {
       configuration.tilesetLeftOffset(),   configuration.tilesetTopOffset(),
       configuration.tilesetGap(),          renderer};
 
-  vector<Characterset> charactersets{CharactersetLoader::load(
-      configuration.charactersetsPath(),
-      configuration /* FIXME: Should not need to pass configuration */,
-      renderer)};
+  CharactersetLoader characterset_loader{
+      configuration.charactersetFilesDirectory(),
+      configuration.charactersetFilesPrefix(),
+      configuration.charactersetFilesSuffix(),
+      configuration.charactersetsAnimationsFilesDirectory(),
+      configuration.charactersetsAnimationsFilesPrefix(),
+      configuration.charactersetsAnimationsFilesSuffix()};
+  vector<Characterset> charactersets{
+      characterset_loader.load(configuration.charactersetsPath(), renderer)};
 
   bool quit = false;
   SDL_Event event;

@@ -1,6 +1,6 @@
 #include "vector.hpp"
 
-Vector const Vector::ZERO{0, 0};
+Vector const Vector::kZero{0, 0};
 
 Vector::Vector(int64_t dx, int64_t dy) : dx_{dx}, dy_{dy} {}
 

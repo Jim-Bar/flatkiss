@@ -6,6 +6,8 @@
     // Set *default* container specific settings.json values on container create.
     "settings": {
         "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+        // https://www.reddit.com/r/vscode/comments/l5hz4i/comment/gkvpo7f/?utm_source=share&utm_medium=web2x&context=3
+        "C_Cpp.intelliSenseCacheSize": 0,
         "editor.formatOnPaste": true,
         "editor.formatOnSave": true,
         "editor.formatOnSaveMode": "file",

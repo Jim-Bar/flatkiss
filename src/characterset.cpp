@@ -1,14 +1,16 @@
 #include "characterset.hpp"
 
 #include <fstream>
+#include <utility>
 
 #include "renderer.hpp"
 
 using std::ifstream;
 using std::ios;
 using std::istream;
-
+using std::move;
 using std::string;
+using std::to_string;
 using std::vector;
 
 Characterset::Characterset(
@@ -18,7 +20,7 @@ Characterset::Characterset(
     uint8_t alpha_blue, int64_t sprite_move_left_index,
     int64_t sprite_move_down_index, int64_t sprite_move_right_index,
     int64_t sprite_move_up_index, Renderer const& renderer,
-    AnimationPlayer const animation_player)
+    AnimationPlayer&& animation_player)
     : sprites_width_{sprites_width},
       sprites_height_{sprites_height},
       width_in_sprites_{width_in_sprites},
@@ -36,9 +38,9 @@ Characterset::Characterset(
 Characterset::~Characterset() { SDL_DestroyTexture(texture_); }
 
 int64_t Characterset::animationDurationForMovingDirection(
-    MoveDirection const& move_direction) const {
+    MovingDirection const& moving_direction) const {
   return animation_player_.animationDurationForTileIndex(
-      spriteIndexForMovingDirection(move_direction));
+      spriteIndexForMovingDirection(moving_direction));
 }
 
 int64_t Characterset::gap() const { return gap_; }
@@ -65,10 +67,10 @@ SDL_Texture* Characterset::loadTexture(string const& file_path,
   return texture;
 }
 
-SDL_Rect Characterset::rectForMoveDirection(MoveDirection const& move_direction,
-                                            int64_t tick) const {
+SDL_Rect Characterset::rectForMovingDirection(
+    MovingDirection const& moving_direction, int64_t tick) const {
   return rectForSpriteIndex(animation_player_.animatedTileIndexFor(
-      spriteIndexForMovingDirection(move_direction), tick));
+      spriteIndexForMovingDirection(moving_direction), tick));
 }
 
 SDL_Rect Characterset::rectForSpriteIndex(int64_t sprite_index) const {
@@ -87,15 +89,15 @@ SDL_Rect Characterset::rectForSpriteIndex(int64_t sprite_index) const {
 }
 
 int64_t Characterset::spriteIndexForMovingDirection(
-    MoveDirection const& move_direction) const {
-  switch (move_direction) {
-    case MoveDirection::LEFT:
+    MovingDirection const& moving_direction) const {
+  switch (moving_direction) {
+    case MovingDirection::kLeft:
       return sprites_move_directions_indices_[0];
-    case MoveDirection::DOWN:
+    case MovingDirection::kDown:
       return sprites_move_directions_indices_[1];
-    case MoveDirection::RIGHT:
+    case MovingDirection::kRight:
       return sprites_move_directions_indices_[2];
-    case MoveDirection::UP:
+    case MovingDirection::kUp:
       return sprites_move_directions_indices_[3];
   }
 }
@@ -110,9 +112,45 @@ int64_t Characterset::topOffset() const { return top_offset_; }
 
 int64_t Characterset::widthInSprites() const { return width_in_sprites_; }
 
-vector<Characterset> CharactersetLoader::load(
-    std::string const& file_path, Configuration const& configuration,
-    Renderer const& renderer) {
+CharactersetLoader::CharactersetLoader(
+    string characterset_files_directory, string characterset_files_prefix,
+    string characterset_files_suffix,
+    string charactersets_animations_files_directory,
+    string charactersets_animations_files_prefix,
+    string charactersets_animations_files_suffix)
+    : characterset_files_directory_{characterset_files_directory},
+      characterset_files_prefix_{characterset_files_prefix},
+      characterset_files_suffix_{characterset_files_suffix},
+      charactersets_animations_files_directory_{
+          charactersets_animations_files_directory},
+      charactersets_animations_files_prefix_{
+          charactersets_animations_files_prefix},
+      charactersets_animations_files_suffix_{
+          charactersets_animations_files_suffix} {}
+
+string CharactersetLoader::charactersetPath(int64_t characterset) const {
+  return characterset_files_directory_ + "/" + characterset_files_prefix_ +
+         to_string(characterset) + characterset_files_suffix_;
+  // FIXME: Use std::filesystem::path as below.
+  /*return (path{characterset_files_directory_} /
+          path{characterset_files_prefix_ + to_string(characterset) +
+               characterset_files_suffix_})
+      .string();*/
+}
+
+string CharactersetLoader::charactersetsAnimationsPath(
+    int64_t characterset) const {
+  return charactersets_animations_files_directory_ + "/" +
+         charactersets_animations_files_prefix_ + to_string(characterset) +
+         charactersets_animations_files_suffix_;
+  // FIXME: Use std::filesystem::path as below.
+  /*return (path{charactersets_animations_files_directory_} /
+          path{charactersets_animations_files_prefix_ + to_string(characterset)
+     + charactersets_animations_files_suffix_}) .string();*/
+}
+
+vector<Characterset> CharactersetLoader::load(string const& file_path,
+                                              Renderer const& renderer) {
   vector<Characterset> charactersets;
   ifstream stream;
   stream.open(file_path, ios::in | ios::binary);
@@ -162,12 +200,12 @@ vector<Characterset> CharactersetLoader::load(
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&move_up_index), 2);
       charactersets.emplace_back(
-          configuration.charactersetPath(characterset_count), sprites_width,
-          sprites_height, width_in_sprites, height_in_tiles, left_offset,
-          top_offset, gap, alpha_red, alpha_green, alpha_blue, move_left_index,
-          move_down_index, move_right_index, move_up_index, renderer,
+          charactersetPath(characterset_count), sprites_width, sprites_height,
+          width_in_sprites, height_in_tiles, left_offset, top_offset, gap,
+          alpha_red, alpha_green, alpha_blue, move_left_index, move_down_index,
+          move_right_index, move_up_index, renderer,
           AnimationLoader::load(
-              configuration.charactersetsAnimationsPath(characterset_count)));
+              charactersetsAnimationsPath(characterset_count)));
       characterset_count++;
     }
     stream.close();

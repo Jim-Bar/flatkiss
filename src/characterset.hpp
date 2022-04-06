@@ -8,8 +8,7 @@
 #include <vector>
 
 #include "animation_player.hpp"
-#include "configuration.hpp"
-#include "move_direction.hpp"
+#include "moving_direction.hpp"
 
 // Forward declaration to break the cycle Characterset / Renderer.
 class Renderer;
@@ -32,21 +31,19 @@ class Characterset {
                uint8_t alpha_green, uint8_t alpha_blue,
                int64_t sprite_move_left_index, int64_t sprite_move_down_index,
                int64_t sprite_move_right_index, int64_t sprite_move_up_index,
-               Renderer const& renderer,
-               AnimationPlayer const animation_player);
-  Characterset(Characterset const& other) =
-      default;  // FIXME: Try using the move constructor instead.
-  Characterset(Characterset&& other) = delete;
+               Renderer const& renderer, AnimationPlayer&& animation_player);
+  Characterset(Characterset const& other) = delete;
+  Characterset(Characterset&& other) = default;
   Characterset& operator=(Characterset const& other) = delete;
   Characterset& operator=(Characterset&& other) = delete;
   ~Characterset();
   int64_t animationDurationForMovingDirection(
-      MoveDirection const& move_direction) const;
+      MovingDirection const& moving_direction) const;
   int64_t gap() const;
   int64_t heightInSprites() const;
   int64_t leftOffset() const;
-  SDL_Rect rectForMoveDirection(MoveDirection const& move_direction,
-                                int64_t tick) const;
+  SDL_Rect rectForMovingDirection(MovingDirection const& moving_direction,
+                                  int64_t tick) const;
   int64_t spritesHeight() const;
   int64_t spritesWidth() const;
   SDL_Texture* texture() const;
@@ -86,7 +83,7 @@ class Characterset {
                                   uint8_t alpha_green, uint8_t alpha_blue);
   SDL_Rect rectForSpriteIndex(int64_t sprite_index) const;
   int64_t spriteIndexForMovingDirection(
-      MoveDirection const& move_direction) const;
+      MovingDirection const& moving_direction) const;
 };
 
 /**
@@ -94,9 +91,26 @@ class Characterset {
  */
 class CharactersetLoader {
  public:
-  static std::vector<Characterset> load(std::string const& file_path,
-                                        Configuration const& configuration,
-                                        Renderer const& renderer);
+  CharactersetLoader(std::string characterset_files_directory,
+                     std::string characterset_files_prefix,
+                     std::string characterset_files_suffix,
+                     std::string charactersets_animations_files_directory,
+                     std::string charactersets_animations_files_prefix,
+                     std::string charactersets_animations_files_suffix);
+
+  std::vector<Characterset> load(std::string const& file_path,
+                                 Renderer const& renderer);
+
+ private:
+  std::string const characterset_files_directory_;
+  std::string const characterset_files_prefix_;
+  std::string const characterset_files_suffix_;
+  std::string const charactersets_animations_files_prefix_;
+  std::string const charactersets_animations_files_suffix_;
+  std::string const charactersets_animations_files_directory_;
+
+  std::string charactersetPath(int64_t characterset) const;
+  std::string charactersetsAnimationsPath(int64_t characterset) const;
 };
 
 #endif

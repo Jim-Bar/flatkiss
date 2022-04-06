@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "characterset.hpp"
-#include "move_direction.hpp"
+#include "moving_direction.hpp"
 #include "navigator.hpp"
 #include "positioned_rectangle.hpp"
 
@@ -21,7 +21,7 @@ class Character {
   Characterset const& characterset() const;
   int64_t height() const;
   void moveBy(Vector const& desired_displacement);
-  MoveDirection const& movingDirection() const;
+  MovingDirection const& movingDirection() const;
   Position const& position() const;
   Rectangle const& rectangle() const;
   int64_t width() const;
@@ -31,7 +31,7 @@ class Character {
  private:
   int64_t animation_tick_{0};
   Characterset const& characterset_;
-  MoveDirection moving_direction_;
+  MovingDirection moving_direction_;
   Navigator const& navigator_;
   PositionedRectangle positioned_rectangle_;
 

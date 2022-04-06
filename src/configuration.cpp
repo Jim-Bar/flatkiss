@@ -6,7 +6,6 @@
 
 using std::ifstream;
 using std::string;
-using std::to_string;
 
 Configuration::Configuration(string const& file_path) {
   inipp::Ini<char> ini;
@@ -56,25 +55,28 @@ Configuration::Configuration(string const& file_path) {
 
 string const& Configuration::animationsPath() const { return animations_path_; }
 
-string Configuration::charactersetPath(int64_t characterset) const {
-  return characterset_files_directory_ + "/" + characterset_files_prefix_ +
-         to_string(characterset) + characterset_files_suffix_;
-  // FIXME: Use std::filesystem::path as below.
-  /*return (path{characterset_files_directory_} /
-          path{characterset_files_prefix_ + to_string(characterset) +
-               characterset_files_suffix_})
-      .string();*/
+string Configuration::charactersetFilesDirectory() const {
+  return characterset_files_directory_;
 }
 
-std::string Configuration::charactersetsAnimationsPath(
-    int64_t characterset) const {
-  return charactersets_animations_files_directory_ + "/" +
-         charactersets_animations_files_prefix_ + to_string(characterset) +
-         charactersets_animations_files_suffix_;
-  // FIXME: Use std::filesystem::path as below.
-  /*return (path{charactersets_animations_files_directory_} /
-          path{charactersets_animations_files_prefix_ + to_string(characterset)
-     + charactersets_animations_files_suffix_}) .string();*/
+string Configuration::charactersetFilesPrefix() const {
+  return characterset_files_prefix_;
+}
+
+string Configuration::charactersetFilesSuffix() const {
+  return characterset_files_suffix_;
+}
+
+string Configuration::charactersetsAnimationsFilesDirectory() const {
+  return charactersets_animations_files_directory_;
+}
+
+string Configuration::charactersetsAnimationsFilesPrefix() const {
+  return charactersets_animations_files_prefix_;
+}
+
+string Configuration::charactersetsAnimationsFilesSuffix() const {
+  return charactersets_animations_files_suffix_;
 }
 
 string const& Configuration::charactersetsPath() const {

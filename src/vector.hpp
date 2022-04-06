@@ -17,7 +17,7 @@ class Vector {
   int64_t dx() const;
   int64_t dy() const;
 
-  static Vector const ZERO;
+  static Vector const kZero;
 
  private:
   int64_t const dx_;

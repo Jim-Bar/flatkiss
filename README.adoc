@@ -70,46 +70,37 @@ object collides with the tile.
 
 === Characters
 
-A character is defined by its initial position, character family, and controller type.
+As many characters can be defined as one like. A character is defined like this:
 
-The character family holds all the information common to all characters sharing this family. This is identifier of the
-characterset on two bytes, then the width and height, both on one byte each. Then each character refers to its family by
-its identifier.
+. Initial X position (eight byte)
+. Initial Y position (eight byte)
+. Index of the characterset to use (two bytes)
+. Index of the character animation to use with the characterset (two bytes)
+. Index of the character collision to use (two bytes)
+. Index of the controller to use (one byte)
 
-Then comes the character in itself.
+Just append the characters for adding more than one.
 
-First is the initial position in tiles in the level on the X-axis (eight bytes), then the same for the Y-axis (another
-eight bytes). Then comes the character family, stored on two bytes. Finally the type of controller handling this
-character is specified on one byte. The controller can mean: keyboard controlled, mouse controlled, AI controlled,
-etc...
+==== Charactersets
 
-==== WIP
+A characterset is the set of sprites making up a character. All the charactersets are defined in the same file, however
+each have a corresponding picture file containing the index of its matching characterset in its name. A characterset is
+defined by:
 
-characterset_sprites_width
-characterset_sprites_height
-characterset_width_in_sprites
-characterset_height_in_sprites
-characterset_left_offset
-characterset_top_offset
-characterset_gap
-characterset_alpha_red
-characterset_alpha_green
-characterset_alpha_blue
-characterset_walk_left
-characterset_walk_down
-characterset_walk_right
-characterset_walk_up
-
-characters_animations
-
-characters_collisions
-
-character_position_x
-character_position_y
-character_characterset
-character_animation
-character_collision
-character_controller
+. Width of the sprites in pixels (one byte)
+. Height of the sprites in pixels (one byte)
+. Width of the characterset in sprites (two bytes)
+. Height of the characterset in sprites (two bytes)
+. Number of pixels from the left border of the characterset to the first sprite (two bytes)
+. Number of pixels from the top border of the characterset to the first sprite (two bytes)
+. Number of pixels between each sprites, called gap (two bytes)
+. Red component of the colour which will be turned transparent (one byte)
+. Green component of the colour which will be turned transparent (one byte)
+. Blue component of the colour which will be turned transparent (one byte)
+. Index of the first sprite representing the character walking to the left (two bytes)
+. Index of the first sprite representing the character walking down (two bytes)
+. Index of the first sprite representing the character walking to the right (two bytes)
+. Index of the first sprite representing the character walking up (two bytes)
 
 == Quality
 
@@ -145,9 +136,8 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
-. Documentation character animations / charactersets
+. Characters are sometimes drawn in the wrong order (one walking on the head of another)
 . Animation & AnimationPlayer are about "tiles" but work also with "sprites"
-. MoveDirection -> MovingDirection
 . Use struct when reading files
 . Check whether ellipses-shaped collision can have an ellipse whose center is at a negative position
 . Better directory structure

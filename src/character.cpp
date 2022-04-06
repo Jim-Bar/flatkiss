@@ -17,7 +17,7 @@ Character::Character(Characterset const& characterset,
                      Position const& initialPosition,
                      Rectangle const& rectangle)
     : characterset_{characterset},
-      moving_direction_{MoveDirection::DOWN},
+      moving_direction_{MovingDirection::kDown},
       navigator_{navigator},
       positioned_rectangle_{initialPosition, rectangle} {}
 
@@ -36,7 +36,7 @@ void Character::moveBy(Vector const& desired_displacement) {
   positioned_rectangle_.position(move(final_position));
 }
 
-MoveDirection const& Character::movingDirection() const {
+MovingDirection const& Character::movingDirection() const {
   return moving_direction_;
 }
 
@@ -61,7 +61,7 @@ void Character::updateMovingDirection(Vector const& desired_displacement,
                                       Vector const& actual_displacement) {
   /* Using the desired displacement as fallback ensures that when the character
    * is blocked, it still turns toward the tried direction. */
-  if (actual_displacement != Vector::ZERO) {
+  if (actual_displacement != Vector::kZero) {
     animation_tick_++;
     updateMovingDirectionForDisplacement(actual_displacement);
   } else {
@@ -72,17 +72,17 @@ void Character::updateMovingDirection(Vector const& desired_displacement,
 
 void Character::updateMovingDirectionForDisplacement(
     Vector const& displacement) {
-  set<MoveDirection> moving_directions;
+  set<MovingDirection> moving_directions;
   if (displacement.dx() < 0) {
-    moving_directions.insert(MoveDirection::LEFT);
+    moving_directions.insert(MovingDirection::kLeft);
   } else if (displacement.dx() > 0) {
-    moving_directions.insert(MoveDirection::RIGHT);
+    moving_directions.insert(MovingDirection::kRight);
   }
 
   if (displacement.dy() < 0) {
-    moving_directions.insert(MoveDirection::UP);
+    moving_directions.insert(MovingDirection::kUp);
   } else if (displacement.dy() > 0) {
-    moving_directions.insert(MoveDirection::DOWN);
+    moving_directions.insert(MovingDirection::kDown);
   }
 
   /* Favour the current moving direction if it is still active. Otherwise pick a

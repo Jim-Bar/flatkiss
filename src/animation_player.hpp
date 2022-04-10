@@ -3,7 +3,6 @@
 
 #include <cstdint>
 #include <unordered_map>
-#include <vector>
 
 #include "animation.hpp"
 
@@ -38,16 +37,15 @@ class AnimationPlayer {
  */
 class AnimationPlayerLoader {
  public:
-  AnimationPlayerLoader(int64_t count, std::string animations_files_directory,
+  AnimationPlayerLoader(std::string animations_files_directory,
                         std::string animations_files_prefix,
                         std::string animations_files_suffix);
-  std::vector<AnimationPlayer> load();
+  AnimationPlayer load(int64_t index);
 
  private:
   std::string const animations_files_directory_;
   std::string const animations_files_prefix_;
   std::string const animations_files_suffix_;
-  int64_t const count_;
 
   std::string animationsFilePath(int64_t index) const;
 };

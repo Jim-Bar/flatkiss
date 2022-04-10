@@ -10,6 +10,7 @@ using std::istream;
 using std::move;
 using std::set;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 Character::Character(Characterset const& characterset,
@@ -114,8 +115,8 @@ int64_t Character::y() const { return position().y(); }
 vector<Character> CharacterLoader::load(
     string const& characters_file_path,
     vector<Characterset> const& charactersets,
-    vector<AnimationPlayer> const& animation_players, Navigator const& navigator,
-    int64_t tiles_size) {
+    unordered_map<int64_t, AnimationPlayer> const& animation_players,
+    Navigator const& navigator, int64_t tiles_size) {
   vector<Character> characters;
   ifstream stream;
   stream.open(characters_file_path, ios::in | ios::binary);
@@ -142,7 +143,7 @@ vector<Character> CharacterLoader::load(
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&controller), kControllerFieldSize);
       characters.emplace_back(charactersets[characterset_index],
-                              animation_players[animations_index], navigator,
+                              animation_players.at(animations_index), navigator,
                               Position{x * tiles_size, y * tiles_size},
                               Rectangle{16, 16});  // FIXME: From collisions.
     }

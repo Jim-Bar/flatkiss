@@ -13,7 +13,8 @@
 // Forward declaration to break the cycle Characterset / Renderer.
 class Renderer;
 
-// FIXME: Merge with Spriteset?
+// FIXME: Merge with Tileset in Spriteset?
+// FIXME: Would be better if it did not know of AnimationPlayer: (1) in README.
 /**
  * @brief Models a characterset.
  *

@@ -28,6 +28,7 @@ using std::cout;
 using std::endl;
 using std::move;
 using std::unique_ptr;
+using std::unordered_map;
 using std::vector;
 
 int64_t const kCharacterSizePixels(16);
@@ -118,24 +119,25 @@ int main(int argc, char* argv[]) {
       characterset_loader.load(configuration.charactersetsPath(), renderer)};
 
   AnimationPlayerLoader animation_player_loader{
-      1, configuration.animationsFilesDirectory(),  // FIXME: 1.
+      configuration.animationsFilesDirectory(),
       configuration.animationsFilesPrefix(),
       configuration.animationsFilesSuffix()};
-  vector<AnimationPlayer> animations_players{animation_player_loader.load()};
+  unordered_map<int64_t, AnimationPlayer> animation_players;
+  // FIXME: Unhardcode. Use another file like `animations_groups_indices.bin`.
+  animation_players.emplace(0, animation_player_loader.load(0));
+  animation_players.emplace(1, animation_player_loader.load(1));
 
   bool quit = false;
   SDL_Event event;
   KeyboardState keyboard_state;
-  AnimationPlayer animation_player{
-      AnimationLoader::load(configuration.animationsPath())};
   Collider collider{CollisionLoader::load(configuration.collisionsPath())};
   Navigator navigator{collider, *level, tileset.tilesSize()};
   vector<Character> characters{CharacterLoader::load(
-      configuration.charactersPath(), charactersets, animations_players,
+      configuration.charactersPath(), charactersets, animation_players,
       navigator, tileset.tilesSize())};
   int64_t tick(0);
   while (!quit) {
-    renderer.render(animation_player, *level, tileset, viewport, tick++,
+    renderer.render(animation_players.at(0), *level, tileset, viewport, tick++,
                     charactersets, characters);
     SDL_Delay(configuration.engineTickDurationMs());
     while (SDL_PollEvent(&event)) {

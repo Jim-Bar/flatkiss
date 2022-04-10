@@ -20,7 +20,6 @@ Configuration::Configuration(string const& file_path) {
                    animations_files_prefix_);
   inipp::get_value(ini.sections["Characters"], "animations_files_suffix",
                    animations_files_suffix_);
-  inipp::get_value(ini.sections["Animations"], "path", animations_path_);
   inipp::get_value(ini.sections["Characters"], "characterset_files_directory",
                    characterset_files_directory_);
   inipp::get_value(ini.sections["Characters"], "characterset_files_prefix",
@@ -61,8 +60,6 @@ string Configuration::animationsFilesPrefix() const {
 string Configuration::animationsFilesSuffix() const {
   return animations_files_suffix_;
 }
-
-string const& Configuration::animationsPath() const { return animations_path_; }
 
 string Configuration::charactersetFilesDirectory() const {
   return characterset_files_directory_;

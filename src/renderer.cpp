@@ -1,5 +1,8 @@
 #include "renderer.hpp"
 
+#include <algorithm>
+
+using std::sort;
 using std::vector;
 
 Renderer::Renderer(SDL_Window* sdl_window)
@@ -24,9 +27,7 @@ void Renderer::render(AnimationPlayer const& animation_player,
                       vector<Character> const& characters) const {
   SDL_RenderClear(sdl_renderer_);
   renderLevel(animation_player, level, tileset, viewport, tick);
-  for (Character const& character : characters) {
-    renderCharacter(viewport, tick, character.characterset(), character);
-  }
+  renderCharacters(viewport, tick, characters);
   SDL_RenderPresent(sdl_renderer_);
 }
 
@@ -43,6 +44,37 @@ void Renderer::renderCharacter(PositionedRectangle const& viewport,
 
   SDL_RenderCopy(sdl_renderer_, characterset.texture(), &source_rect,
                  &dest_rect);
+}
+
+void Renderer::renderCharacters(PositionedRectangle const& viewport,
+                                int64_t tick,
+                                vector<Character> const& characters) const {
+  /* The characters with the lower positions on the Y-axis must appear behind
+   * the others. Sort them using their Y-positions. However it is better not to
+   * modify the input vector (plus it is const). A copy could be made, but then
+   * sorting it would require Character to be copy-assignable (i.e. no const
+   * attributes), so that is not possible either. Instead create a vector of
+   * indices to the character, and sort that instead. Easy! See:
+   * https://stackoverflow.com/a/47537314 */
+
+  // Vector of indices.
+  vector<int64_t> character_indices;
+  for (int64_t i{0}; i < characters.size(); i++) {
+    character_indices.push_back(i);
+  }
+
+  // Sorted by Y-position.
+  sort(character_indices.begin(), character_indices.end(),
+       [characters](int64_t left, int64_t right) {
+         return characters[left].position().y() <
+                characters[right].position().y();
+       });
+
+  // Render the characters from top-most to bottom-most.
+  for (int64_t character_index : character_indices) {
+    renderCharacter(viewport, tick, characters[character_index].characterset(),
+                    characters[character_index]);
+  }
 }
 
 void Renderer::renderLevel(AnimationPlayer const& animation_player,

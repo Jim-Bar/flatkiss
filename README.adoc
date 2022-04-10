@@ -136,8 +136,8 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
-. Characters are sometimes drawn in the wrong order (one walking on the head of another)
 . Animation & AnimationPlayer are about "tiles" but work also with "sprites"
+. Characters are updated every ticks. Add a parameter for updating them every N ticks instead (allows lower speeds)?
 . Use struct when reading files
 . Check whether ellipses-shaped collision can have an ellipse whose center is at a negative position
 . Better directory structure

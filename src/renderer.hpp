@@ -42,6 +42,8 @@ class Renderer {
   void renderCharacter(PositionedRectangle const& viewport, int64_t tick,
                        Characterset const& characterset,
                        Character const& character) const;
+  void renderCharacters(PositionedRectangle const& viewport, int64_t tick,
+                        std::vector<Character> const& characters) const;
   void renderLevel(AnimationPlayer const& animation_player, Level const& level,
                    Tileset const& tileset, PositionedRectangle const& viewport,
                    int64_t tick) const;

@@ -87,7 +87,7 @@ void Renderer::renderLevel(AnimationPlayer const& animation_player,
     for (int64_t x(viewport.x() / tileset.tilesSize());
          x <= (viewport.x() + viewport.width()) / tileset.tilesSize(); x++) {
       uint16_t tile_index(
-          animation_player.animatedTileIndexFor(level.tileIndex(x, y), tick));
+          animation_player.animatedSpriteIndexFor(level.tileIndex(x, y), tick));
 
       SDL_Rect source_rect{tileset.rectForTileIndex(tile_index)};
       SDL_Rect dest_rect;

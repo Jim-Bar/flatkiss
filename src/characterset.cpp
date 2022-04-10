@@ -38,7 +38,7 @@ Characterset::~Characterset() { SDL_DestroyTexture(texture_); }
 int64_t Characterset::animationDurationForMovingDirection(
     MovingDirection const& moving_direction,
     AnimationPlayer const& animation_player) const {
-  return animation_player.animationDurationForTileIndex(
+  return animation_player.animationDurationForSpriteIndex(
       spriteIndexForMovingDirection(moving_direction));
 }
 
@@ -69,7 +69,7 @@ SDL_Texture* Characterset::loadTexture(string const& file_path,
 SDL_Rect Characterset::rectForMovingDirection(
     MovingDirection const& moving_direction,
     AnimationPlayer const& animation_player, int64_t tick) const {
-  return rectForSpriteIndex(animation_player.animatedTileIndexFor(
+  return rectForSpriteIndex(animation_player.animatedSpriteIndexFor(
       spriteIndexForMovingDirection(moving_direction), tick));
 }
 

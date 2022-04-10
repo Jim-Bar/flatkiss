@@ -136,7 +136,6 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
-. Animation & AnimationPlayer are about "tiles" but work also with "sprites"
 . Characters are updated every ticks. Add a parameter for updating them every N ticks instead (allows lower speeds)?
 . Use struct when reading files
 . "Index of the first sprite of the character walking to X direction" information is owned by characterset, but could be

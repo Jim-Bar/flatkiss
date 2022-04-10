@@ -6,29 +6,29 @@ using std::unordered_map;
 using std::vector;
 
 AnimationPlayer::AnimationPlayer(
-    unordered_map<uint16_t, Animation const>&& animations_per_tile_index) {
-  this->animations_per_tile_index_.swap(animations_per_tile_index);
+    unordered_map<uint16_t, Animation const>&& animations_per_sprite_index) {
+  this->animations_per_sprite_index_.swap(animations_per_sprite_index);
 }
 
-uint16_t AnimationPlayer::animatedTileIndexFor(uint16_t tile_index,
-                                               int64_t tick) const {
-  if (!animations_per_tile_index_.contains(tile_index)) {
-    return tile_index;
+uint16_t AnimationPlayer::animatedSpriteIndexFor(uint16_t sprite_index,
+                                                 int64_t tick) const {
+  if (!animations_per_sprite_index_.contains(sprite_index)) {
+    return sprite_index;
   }
 
-  Animation const& animation{animations_per_tile_index_.at(tile_index)};
-  return animation.tileIndexAtStep(
+  Animation const& animation{animations_per_sprite_index_.at(sprite_index)};
+  return animation.spriteIndexAtStep(
       (tick % (animation.getPeriod() * animation.getDuration())) /
       animation.getDuration());
 }
 
-int64_t AnimationPlayer::animationDurationForTileIndex(
-    uint16_t tile_index) const {
-  if (!animations_per_tile_index_.contains(tile_index)) {
+int64_t AnimationPlayer::animationDurationForSpriteIndex(
+    uint16_t sprite_index) const {
+  if (!animations_per_sprite_index_.contains(sprite_index)) {
     return 0;
   }
 
-  return animations_per_tile_index_.at(tile_index).getDuration();
+  return animations_per_sprite_index_.at(sprite_index).getDuration();
 }
 
 AnimationPlayerLoader::AnimationPlayerLoader(int64_t count,

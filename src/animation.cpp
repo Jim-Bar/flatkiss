@@ -12,22 +12,24 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-Animation::Animation(vector<uint16_t> const& tile_indices, uint8_t period,
+Animation::Animation(vector<uint16_t> const& sprite_indices, uint8_t period,
                      uint8_t duration)
-    : tile_indices_{move(tile_indices)}, period_{period}, duration_{duration} {}
+    : sprite_indices_{move(sprite_indices)},
+      period_{period},
+      duration_{duration} {}
 
 uint8_t Animation::getDuration() const { return duration_; }
 
 uint8_t Animation::getPeriod() const { return period_; }
 
-uint16_t Animation::tileIndexAtStep(uint16_t step) const {
-  return tile_indices_[step];
+uint16_t Animation::spriteIndexAtStep(uint16_t step) const {
+  return sprite_indices_[step];
 }
 
 unordered_map<uint16_t, Animation const> AnimationLoader::load(
     string const& file_path) {
   ifstream stream;
-  unordered_map<uint16_t, Animation const> animations_per_tile_index;
+  unordered_map<uint16_t, Animation const> animations_per_sprite_index;
   stream.open(file_path, ios::in | ios::binary);
   if (stream.is_open()) {
     while (stream.peek() != istream::traits_type::eof()) {
@@ -39,8 +41,8 @@ unordered_map<uint16_t, Animation const> AnimationLoader::load(
       auto animation{vector<uint16_t>(animation_period, 0)};
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(animation.data()),
-                  animation_period * 2);  // Two bytes per tile.
-      animations_per_tile_index.emplace(
+                  animation_period * 2);  // Two bytes per sprite.
+      animations_per_sprite_index.emplace(
           piecewise_construct, forward_as_tuple(animation[0]),
           forward_as_tuple(move(animation), animation_period,
                            animation_duration));
@@ -48,5 +50,5 @@ unordered_map<uint16_t, Animation const> AnimationLoader::load(
     stream.close();
   }  // FIXME: Raise exception.
 
-  return animations_per_tile_index;
+  return animations_per_sprite_index;
 }

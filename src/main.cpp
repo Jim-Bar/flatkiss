@@ -113,12 +113,15 @@ int main(int argc, char* argv[]) {
   CharactersetLoader characterset_loader{
       configuration.charactersetFilesDirectory(),
       configuration.charactersetFilesPrefix(),
-      configuration.charactersetFilesSuffix(),
-      configuration.charactersetsAnimationsFilesDirectory(),
-      configuration.charactersetsAnimationsFilesPrefix(),
-      configuration.charactersetsAnimationsFilesSuffix()};
+      configuration.charactersetFilesSuffix()};
   vector<Characterset> charactersets{
       characterset_loader.load(configuration.charactersetsPath(), renderer)};
+
+  AnimationPlayerLoader animation_player_loader{
+      1, configuration.animationsFilesDirectory(),  // FIXME: 1.
+      configuration.animationsFilesPrefix(),
+      configuration.animationsFilesSuffix()};
+  vector<AnimationPlayer> animations_players{animation_player_loader.load()};
 
   bool quit = false;
   SDL_Event event;
@@ -127,9 +130,9 @@ int main(int argc, char* argv[]) {
       AnimationLoader::load(configuration.animationsPath())};
   Collider collider{CollisionLoader::load(configuration.collisionsPath())};
   Navigator navigator{collider, *level, tileset.tilesSize()};
-  vector<Character> characters{
-      CharacterLoader::load(configuration.charactersPath(), charactersets,
-                            navigator, tileset.tilesSize())};
+  vector<Character> characters{CharacterLoader::load(
+      configuration.charactersPath(), charactersets, animations_players,
+      navigator, tileset.tilesSize())};
   int64_t tick(0);
   while (!quit) {
     renderer.render(animation_player, *level, tileset, viewport, tick++,

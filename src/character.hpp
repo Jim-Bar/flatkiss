@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "animation_player.hpp"
 #include "characterset.hpp"
 #include "moving_direction.hpp"
 #include "navigator.hpp"
@@ -15,8 +16,10 @@
  */
 class Character {
  public:
-  Character(Characterset const& characterset, Navigator const& navigator,
+  Character(Characterset const& characterset,
+            AnimationPlayer const& animation_player, Navigator const& navigator,
             Position const& initialPosition, Rectangle const& rectangle);
+  AnimationPlayer const& animationPlayer() const;
   int64_t animationTick() const;
   Characterset const& characterset() const;
   int64_t height() const;
@@ -29,6 +32,7 @@ class Character {
   int64_t y() const;
 
  private:
+  AnimationPlayer const& animation_player_;
   int64_t animation_tick_{0};
   Characterset const& characterset_;
   MovingDirection moving_direction_;
@@ -49,6 +53,7 @@ class CharacterLoader {
   static std::vector<Character> load(
       std::string const& characters_file_path,
       std::vector<Characterset> const& charactersets,
+      std::vector<AnimationPlayer> const& animation_players,
       Navigator const& navigator, int64_t tiles_size);
 
  private:

@@ -12,13 +12,13 @@
 class Configuration {
  public:
   Configuration(std::string const& file_path);
+  std::string animationsFilesDirectory() const;
+  std::string animationsFilesPrefix() const;
+  std::string animationsFilesSuffix() const;
   std::string const& animationsPath() const;
   std::string charactersetFilesDirectory() const;
   std::string charactersetFilesPrefix() const;
   std::string charactersetFilesSuffix() const;
-  std::string charactersetsAnimationsFilesDirectory() const;
-  std::string charactersetsAnimationsFilesPrefix() const;
-  std::string charactersetsAnimationsFilesSuffix() const;
   std::string const& charactersetsPath() const;
   std::string const& charactersPath() const;
   std::string const& collisionsPath() const;
@@ -35,15 +35,15 @@ class Configuration {
   int64_t tilesetWidthInTiles() const;
 
  private:
+  std::string animations_files_directory_{};
+  std::string animations_files_prefix_{};
+  std::string animations_files_suffix_{};
   std::string animations_path_{};
   std::string charactersets_path_{};
   std::string characters_path_{};
   std::string characterset_files_directory_{};
   std::string characterset_files_prefix_{};
   std::string characterset_files_suffix_{};
-  std::string charactersets_animations_files_directory_{};
-  std::string charactersets_animations_files_prefix_{};
-  std::string charactersets_animations_files_suffix_{};
   std::string collisions_path_{};
   int64_t engine_tick_duration_ms_{0};
   int64_t level_height_in_tiles_{0};

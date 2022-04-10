@@ -31,18 +31,20 @@ class Characterset {
                uint8_t alpha_green, uint8_t alpha_blue,
                int64_t sprite_move_left_index, int64_t sprite_move_down_index,
                int64_t sprite_move_right_index, int64_t sprite_move_up_index,
-               Renderer const& renderer, AnimationPlayer&& animation_player);
+               Renderer const& renderer);
   Characterset(Characterset const& other) = delete;
   Characterset(Characterset&& other) = default;
   Characterset& operator=(Characterset const& other) = delete;
   Characterset& operator=(Characterset&& other) = delete;
   ~Characterset();
   int64_t animationDurationForMovingDirection(
-      MovingDirection const& moving_direction) const;
+      MovingDirection const& moving_direction,
+      AnimationPlayer const& animation_player) const;
   int64_t gap() const;
   int64_t heightInSprites() const;
   int64_t leftOffset() const;
   SDL_Rect rectForMovingDirection(MovingDirection const& moving_direction,
+                                  AnimationPlayer const& animation_player,
                                   int64_t tick) const;
   int64_t spritesHeight() const;
   int64_t spritesWidth() const;
@@ -51,7 +53,6 @@ class Characterset {
   int64_t widthInSprites() const;
 
  private:
-  AnimationPlayer const animation_player_;
   int64_t const gap_;
   int64_t const height_in_sprites_;
   int64_t const left_offset_;
@@ -93,10 +94,7 @@ class CharactersetLoader {
  public:
   CharactersetLoader(std::string characterset_files_directory,
                      std::string characterset_files_prefix,
-                     std::string characterset_files_suffix,
-                     std::string charactersets_animations_files_directory,
-                     std::string charactersets_animations_files_prefix,
-                     std::string charactersets_animations_files_suffix);
+                     std::string characterset_files_suffix);
 
   std::vector<Characterset> load(std::string const& file_path,
                                  Renderer const& renderer);
@@ -105,12 +103,8 @@ class CharactersetLoader {
   std::string const characterset_files_directory_;
   std::string const characterset_files_prefix_;
   std::string const characterset_files_suffix_;
-  std::string const charactersets_animations_files_prefix_;
-  std::string const charactersets_animations_files_suffix_;
-  std::string const charactersets_animations_files_directory_;
 
   std::string charactersetPath(int64_t characterset) const;
-  std::string charactersetsAnimationsPath(int64_t characterset) const;
 };
 
 #endif

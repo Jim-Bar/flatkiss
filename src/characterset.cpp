@@ -19,8 +19,7 @@ Characterset::Characterset(
     int64_t top_offset, int64_t gap, uint8_t alpha_red, uint8_t alpha_green,
     uint8_t alpha_blue, int64_t sprite_move_left_index,
     int64_t sprite_move_down_index, int64_t sprite_move_right_index,
-    int64_t sprite_move_up_index, Renderer const& renderer,
-    AnimationPlayer&& animation_player)
+    int64_t sprite_move_up_index, Renderer const& renderer)
     : sprites_width_{sprites_width},
       sprites_height_{sprites_height},
       width_in_sprites_{width_in_sprites},
@@ -32,14 +31,14 @@ Characterset::Characterset(
           sprite_move_left_index, sprite_move_down_index,
           sprite_move_right_index, sprite_move_up_index},
       texture_{Characterset::loadTexture(file_path, renderer, alpha_red,
-                                         alpha_green, alpha_blue)},
-      animation_player_{animation_player} {}
+                                         alpha_green, alpha_blue)} {}
 
 Characterset::~Characterset() { SDL_DestroyTexture(texture_); }
 
 int64_t Characterset::animationDurationForMovingDirection(
-    MovingDirection const& moving_direction) const {
-  return animation_player_.animationDurationForTileIndex(
+    MovingDirection const& moving_direction,
+    AnimationPlayer const& animation_player) const {
+  return animation_player.animationDurationForTileIndex(
       spriteIndexForMovingDirection(moving_direction));
 }
 
@@ -68,8 +67,9 @@ SDL_Texture* Characterset::loadTexture(string const& file_path,
 }
 
 SDL_Rect Characterset::rectForMovingDirection(
-    MovingDirection const& moving_direction, int64_t tick) const {
-  return rectForSpriteIndex(animation_player_.animatedTileIndexFor(
+    MovingDirection const& moving_direction,
+    AnimationPlayer const& animation_player, int64_t tick) const {
+  return rectForSpriteIndex(animation_player.animatedTileIndexFor(
       spriteIndexForMovingDirection(moving_direction), tick));
 }
 
@@ -112,21 +112,12 @@ int64_t Characterset::topOffset() const { return top_offset_; }
 
 int64_t Characterset::widthInSprites() const { return width_in_sprites_; }
 
-CharactersetLoader::CharactersetLoader(
-    string characterset_files_directory, string characterset_files_prefix,
-    string characterset_files_suffix,
-    string charactersets_animations_files_directory,
-    string charactersets_animations_files_prefix,
-    string charactersets_animations_files_suffix)
+CharactersetLoader::CharactersetLoader(string characterset_files_directory,
+                                       string characterset_files_prefix,
+                                       string characterset_files_suffix)
     : characterset_files_directory_{characterset_files_directory},
       characterset_files_prefix_{characterset_files_prefix},
-      characterset_files_suffix_{characterset_files_suffix},
-      charactersets_animations_files_directory_{
-          charactersets_animations_files_directory},
-      charactersets_animations_files_prefix_{
-          charactersets_animations_files_prefix},
-      charactersets_animations_files_suffix_{
-          charactersets_animations_files_suffix} {}
+      characterset_files_suffix_{characterset_files_suffix} {}
 
 string CharactersetLoader::charactersetPath(int64_t characterset) const {
   return characterset_files_directory_ + "/" + characterset_files_prefix_ +
@@ -136,17 +127,6 @@ string CharactersetLoader::charactersetPath(int64_t characterset) const {
           path{characterset_files_prefix_ + to_string(characterset) +
                characterset_files_suffix_})
       .string();*/
-}
-
-string CharactersetLoader::charactersetsAnimationsPath(
-    int64_t characterset) const {
-  return charactersets_animations_files_directory_ + "/" +
-         charactersets_animations_files_prefix_ + to_string(characterset) +
-         charactersets_animations_files_suffix_;
-  // FIXME: Use std::filesystem::path as below.
-  /*return (path{charactersets_animations_files_directory_} /
-          path{charactersets_animations_files_prefix_ + to_string(characterset)
-     + charactersets_animations_files_suffix_}) .string();*/
 }
 
 vector<Characterset> CharactersetLoader::load(string const& file_path,
@@ -203,9 +183,7 @@ vector<Characterset> CharactersetLoader::load(string const& file_path,
           charactersetPath(characterset_count), sprites_width, sprites_height,
           width_in_sprites, height_in_tiles, left_offset, top_offset, gap,
           alpha_red, alpha_green, alpha_blue, move_left_index, move_down_index,
-          move_right_index, move_up_index, renderer,
-          AnimationLoader::load(
-              charactersetsAnimationsPath(characterset_count)));
+          move_right_index, move_up_index, renderer);
       characterset_count++;
     }
     stream.close();

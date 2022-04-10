@@ -13,13 +13,19 @@ using std::string;
 using std::vector;
 
 Character::Character(Characterset const& characterset,
+                     AnimationPlayer const& animation_player,
                      Navigator const& navigator,
                      Position const& initialPosition,
                      Rectangle const& rectangle)
     : characterset_{characterset},
+      animation_player_{animation_player},
       moving_direction_{MovingDirection::kDown},
       navigator_{navigator},
       positioned_rectangle_{initialPosition, rectangle} {}
+
+AnimationPlayer const& Character::animationPlayer() const {
+  return animation_player_;
+}
 
 int64_t Character::animationTick() const { return animation_tick_; }
 
@@ -53,8 +59,9 @@ void Character::resetAnimationTick() {
    * next animation is played. Consequently, next time the character moves, it
    * immediately starts animating. In particular, this prevents it from sliding
    * for small moves.*/
-  animation_tick_ =
-      characterset_.animationDurationForMovingDirection(moving_direction_) - 1;
+  animation_tick_ = characterset_.animationDurationForMovingDirection(
+                        moving_direction_, animation_player_) -
+                    1;
 }
 
 void Character::updateMovingDirection(Vector const& desired_displacement,
@@ -106,7 +113,8 @@ int64_t Character::y() const { return position().y(); }
 
 vector<Character> CharacterLoader::load(
     string const& characters_file_path,
-    vector<Characterset> const& charactersets, Navigator const& navigator,
+    vector<Characterset> const& charactersets,
+    vector<AnimationPlayer> const& animation_players, Navigator const& navigator,
     int64_t tiles_size) {
   vector<Character> characters;
   ifstream stream;
@@ -116,7 +124,7 @@ vector<Character> CharacterLoader::load(
       int64_t x{0};
       int64_t y{0};
       uint16_t characterset_index{0};
-      uint16_t animation{0};  // FIXME: Make use.
+      uint16_t animations_index{0};
       uint16_t collision{0};  // FIXME: Make use.
       uint8_t controller{0};  // FIXME: Make use.
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -127,12 +135,14 @@ vector<Character> CharacterLoader::load(
       stream.read(reinterpret_cast<char*>(&characterset_index),
                   kCharactersetFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&animation), kAnimationFieldSize);
+      stream.read(reinterpret_cast<char*>(&animations_index),
+                  kAnimationFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&collision), kCollisionFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&controller), kControllerFieldSize);
-      characters.emplace_back(charactersets[characterset_index], navigator,
+      characters.emplace_back(charactersets[characterset_index],
+                              animation_players[animations_index], navigator,
                               Position{x * tiles_size, y * tiles_size},
                               Rectangle{16, 16});  // FIXME: From collisions.
     }

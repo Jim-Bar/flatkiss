@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <unordered_map>
+#include <vector>
 
 #include "animation.hpp"
 
@@ -30,6 +31,25 @@ class AnimationPlayer {
 
  private:
   std::unordered_map<uint16_t, Animation const> animations_per_tile_index_;
+};
+
+/**
+ * @brief Helper class for loading the animations from a file.
+ */
+class AnimationPlayerLoader {
+ public:
+  AnimationPlayerLoader(int64_t count, std::string animations_files_directory,
+                        std::string animations_files_prefix,
+                        std::string animations_files_suffix);
+  std::vector<AnimationPlayer> load();
+
+ private:
+  std::string const animations_files_directory_;
+  std::string const animations_files_prefix_;
+  std::string const animations_files_suffix_;
+  int64_t const count_;
+
+  std::string animationsFilePath(int64_t index) const;
 };
 
 #endif

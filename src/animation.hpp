@@ -15,9 +15,9 @@ class Animation {
  public:
   Animation(std::vector<uint16_t> const& sprite_indices, uint8_t period,
             uint8_t Duration);
-  uint8_t getDuration() const;
-  uint8_t getPeriod() const;
-  uint16_t spriteIndexAtStep(uint16_t Step) const;
+  int64_t getDuration() const;
+  int64_t getPeriod() const;
+  uint16_t spriteIndexAtStep(int64_t step) const;
 
  private:
   uint8_t const duration_;

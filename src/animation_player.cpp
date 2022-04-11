@@ -62,9 +62,9 @@ unordered_map<int64_t, AnimationPlayer const> AnimationPlayerLoader::load(
 }
 
 unordered_map<uint16_t, Animation const> AnimationPlayerLoader::loadGroup(
-    uint16_t group_size, ifstream& stream) {
+    int64_t group_size, ifstream& stream) {
   unordered_map<uint16_t, Animation const> animations_per_sprite_index;
-  for (uint16_t i{0}; i < group_size; i++) {
+  for (int64_t i{0}; i < group_size; i++) {
     uint8_t animation_period{static_cast<uint8_t>(stream.get())};
     uint8_t animation_duration{static_cast<uint8_t>(stream.get())};
     /* The vector containing animations is created and space is reserved for

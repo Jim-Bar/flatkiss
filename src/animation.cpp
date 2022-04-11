@@ -8,10 +8,10 @@ Animation::Animation(vector<uint16_t> const& sprite_indices, uint8_t period,
       period_{period},
       duration_{duration} {}
 
-uint8_t Animation::getDuration() const { return duration_; }
+int64_t Animation::getDuration() const { return duration_; }
 
-uint8_t Animation::getPeriod() const { return period_; }
+int64_t Animation::getPeriod() const { return period_; }
 
-uint16_t Animation::spriteIndexAtStep(uint16_t step) const {
+uint16_t Animation::spriteIndexAtStep(int64_t step) const {
   return sprite_indices_[step];
 }

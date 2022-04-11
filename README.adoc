@@ -139,13 +139,13 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
-. `uint16_t` and others proliferating (use `int64_t`)
 . Characters are updated every ticks. Add a parameter for updating them every N ticks instead (allows lower speeds)?
 . Use struct when reading files
 . Another definition file for sprites indices (walk left, walk down, etc...)
 . "Index of the first sprite of the character walking to X direction" information is owned by characterset, but could be
   owned by the character instead? So that for example a single characterset can be used for all the characters? Related
   to previous bullet. (1)
+. Dedicated type for tiles / sprites instead of `uint16_t`
 . Check whether ellipses-shaped collision can have an ellipse whose center is at a negative position
 . Better directory structure
 . Warning bug with readability-identifier-naming: https://stackoverflow.com/q/68475958 (upgrade clang-tidy?)

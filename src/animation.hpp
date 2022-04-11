@@ -1,8 +1,7 @@
 #ifndef ANIMATION_HPP_INCLUDED
 #define ANIMATION_HPP_INCLUDED
 
-#include <string>
-#include <unordered_map>
+#include <cstdint>
 #include <vector>
 
 /**
@@ -24,15 +23,6 @@ class Animation {
   uint8_t const duration_;
   uint8_t const period_;
   std::vector<uint16_t> const sprite_indices_;
-};
-
-/**
- * @brief Helper class for loading the animations from a file.
- */
-class AnimationLoader {
- public:
-  static std::unordered_map<uint16_t, Animation const> load(
-      std::string const& file_path);
 };
 
 #endif

@@ -54,7 +54,8 @@ class CharacterLoader {
   static std::vector<Character> load(
       std::string const& characters_file_path,
       std::vector<Characterset> const& charactersets,
-      std::unordered_map<int64_t, AnimationPlayer> const& animation_players,
+      std::unordered_map<int64_t, AnimationPlayer const> const&
+          animation_players,
       Navigator const& navigator, int64_t tiles_size);
 
  private:

@@ -12,9 +12,7 @@
 class Configuration {
  public:
   Configuration(std::string const& file_path);
-  std::string animationsFilesDirectory() const;
-  std::string animationsFilesPrefix() const;
-  std::string animationsFilesSuffix() const;
+  std::string animationsPath() const;
   std::string charactersetFilesDirectory() const;
   std::string charactersetFilesPrefix() const;
   std::string charactersetFilesSuffix() const;
@@ -34,9 +32,7 @@ class Configuration {
   int64_t tilesetWidthInTiles() const;
 
  private:
-  std::string animations_files_directory_{};
-  std::string animations_files_prefix_{};
-  std::string animations_files_suffix_{};
+  std::string animations_path_{};
   std::string charactersets_path_{};
   std::string characters_path_{};
   std::string characterset_files_directory_{};

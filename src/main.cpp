@@ -118,14 +118,8 @@ int main(int argc, char* argv[]) {
   vector<Characterset> charactersets{
       characterset_loader.load(configuration.charactersetsPath(), renderer)};
 
-  AnimationPlayerLoader animation_player_loader{
-      configuration.animationsFilesDirectory(),
-      configuration.animationsFilesPrefix(),
-      configuration.animationsFilesSuffix()};
-  unordered_map<int64_t, AnimationPlayer> animation_players;
-  // FIXME: Unhardcode. Use another file like `animations_groups_indices.bin`.
-  animation_players.emplace(0, animation_player_loader.load(0));
-  animation_players.emplace(1, animation_player_loader.load(1));
+  unordered_map<int64_t, AnimationPlayer const> animation_players{
+      AnimationPlayerLoader::load(configuration.animationsPath())};
 
   bool quit = false;
   SDL_Event event;

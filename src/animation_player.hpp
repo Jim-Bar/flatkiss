@@ -2,6 +2,7 @@
 #define ANIMATION_PLAYER_HPP_INCLUDED
 
 #include <cstdint>
+#include <fstream>
 #include <unordered_map>
 
 #include "animation.hpp"
@@ -37,17 +38,12 @@ class AnimationPlayer {
  */
 class AnimationPlayerLoader {
  public:
-  AnimationPlayerLoader(std::string animations_files_directory,
-                        std::string animations_files_prefix,
-                        std::string animations_files_suffix);
-  AnimationPlayer load(int64_t index);
+  static std::unordered_map<int64_t, AnimationPlayer const> load(
+      std::string const& file_path);
 
  private:
-  std::string const animations_files_directory_;
-  std::string const animations_files_prefix_;
-  std::string const animations_files_suffix_;
-
-  std::string animationsFilePath(int64_t index) const;
+  static std::unordered_map<uint16_t, Animation const> loadGroup(
+      uint16_t group_size, std::ifstream& animations_stream);
 };
 
 #endif

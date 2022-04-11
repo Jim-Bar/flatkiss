@@ -99,6 +99,8 @@ int64_t Characterset::spriteIndexForMovingDirection(
       return sprites_move_directions_indices_[2];
     case MovingDirection::kUp:
       return sprites_move_directions_indices_[3];
+    default:
+      return 0;  // FIXME: Exception?
   }
 }
 
@@ -137,6 +139,7 @@ vector<Characterset> CharactersetLoader::load(string const& file_path,
   if (stream.is_open()) {
     int64_t characterset_count{0};
     while (stream.peek() != istream::traits_type::eof()) {
+      // FIXME: Use stream.get() for uint8_t variables.
       uint8_t sprites_width{0};
       uint8_t sprites_height{0};
       uint16_t width_in_sprites{0};

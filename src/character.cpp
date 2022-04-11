@@ -115,7 +115,7 @@ int64_t Character::y() const { return position().y(); }
 vector<Character> CharacterLoader::load(
     string const& characters_file_path,
     vector<Characterset> const& charactersets,
-    unordered_map<int64_t, AnimationPlayer> const& animation_players,
+    unordered_map<int64_t, AnimationPlayer const> const& animation_players,
     Navigator const& navigator, int64_t tiles_size) {
   vector<Character> characters;
   ifstream stream;

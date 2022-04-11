@@ -14,12 +14,7 @@ Configuration::Configuration(string const& file_path) {
 
   /* The values are retrieved at construction time to fail early if something is
    * wrong. */
-  inipp::get_value(ini.sections["Characters"], "animations_files_directory",
-                   animations_files_directory_);
-  inipp::get_value(ini.sections["Characters"], "animations_files_prefix",
-                   animations_files_prefix_);
-  inipp::get_value(ini.sections["Characters"], "animations_files_suffix",
-                   animations_files_suffix_);
+  inipp::get_value(ini.sections["Animations"], "path", animations_path_);
   inipp::get_value(ini.sections["Characters"], "characterset_files_directory",
                    characterset_files_directory_);
   inipp::get_value(ini.sections["Characters"], "characterset_files_prefix",
@@ -49,16 +44,8 @@ Configuration::Configuration(string const& file_path) {
                    tileset_width_in_tiles_);
 }
 
-string Configuration::animationsFilesDirectory() const {
-  return animations_files_directory_;
-}
-
-string Configuration::animationsFilesPrefix() const {
-  return animations_files_prefix_;
-}
-
-string Configuration::animationsFilesSuffix() const {
-  return animations_files_suffix_;
+string Configuration::animationsPath() const {
+  return animations_path_;
 }
 
 string Configuration::charactersetFilesDirectory() const {

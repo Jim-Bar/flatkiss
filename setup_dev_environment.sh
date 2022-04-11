@@ -16,8 +16,7 @@ python3 level_to_bin.py
 cd ..
 
 cd assets
-python3 animations_to_bin.py animations_0
-python3 animations_to_bin.py animations_1
+python3 animations_to_bin.py
 python3 charactersets_to_bin.py
 python3 characters_to_bin.py
 python3 collisions_to_bin.py

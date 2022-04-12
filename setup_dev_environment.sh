@@ -20,6 +20,7 @@ python3 animations_to_bin.py
 python3 charactersets_to_bin.py
 python3 characters_to_bin.py
 python3 collisions_to_bin.py
+python3 indices_to_bin.py
 wget --output-document tileset.png "https://www.spriters-resource.com/resources/sheets/9/9445.png?updated=1460953914"
 wget --output-document characterset_0.png "https://i.postimg.cc/8cJk8WKQ/characterset-0.png"
 cd ..

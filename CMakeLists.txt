@@ -20,6 +20,8 @@ include_directories(${SDL2_INCLUDE_DIRS})
 # only reason to list them is to get them to show up in IDEs". Refer to:
 # https://cliutils.gitlab.io/modern-cmake/chapters/basics.html
 add_executable(${PROJECT_NAME}
+    src/action.cpp
+    src/action.hpp
     src/animation.cpp
     src/animation.hpp
     src/animation_player.cpp
@@ -56,6 +58,8 @@ add_executable(${PROJECT_NAME}
     src/rectangle.hpp
     src/renderer.cpp
     src/renderer.hpp
+    src/sprite_indices.cpp
+    src/sprite_indices.hpp
     src/tileset.cpp
     src/tileset.hpp
     src/vector.cpp

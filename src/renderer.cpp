@@ -34,9 +34,8 @@ void Renderer::render(AnimationPlayer const& animation_player,
 void Renderer::renderCharacter(PositionedRectangle const& viewport,
                                int64_t tick, Characterset const& characterset,
                                Character const& character) const {
-  SDL_Rect source_rect{characterset.rectForMovingDirection(
-      character.movingDirection(), character.animationPlayer(),
-      character.animationTick())};
+  SDL_Rect source_rect{
+      characterset.rectForSpriteIndex(character.spriteIndex())};
   SDL_Rect dest_rect;
   dest_rect.x = static_cast<int>(character.x() - viewport.x());
   dest_rect.y = static_cast<int>(character.y() - viewport.y());

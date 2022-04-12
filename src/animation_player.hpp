@@ -30,6 +30,7 @@ class AnimationPlayer {
   int64_t animationDurationForSpriteIndex(uint16_t sprite_index) const;
 
  private:
+  // FIXME: Map itself const?
   std::unordered_map<uint16_t, Animation const> animations_per_sprite_index_;
 };
 

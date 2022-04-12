@@ -20,6 +20,7 @@ class Configuration {
   std::string const& charactersPath() const;
   std::string const& collisionsPath() const;
   int64_t engineTickDurationMs() const;
+  std::string const& indicesPath() const;
   int64_t levelHeightInTiles() const;
   std::string const& levelPath() const;
   int64_t levelWidthInTiles() const;
@@ -40,6 +41,7 @@ class Configuration {
   std::string characterset_files_suffix_{};
   std::string collisions_path_{};
   int64_t engine_tick_duration_ms_{0};
+  std::string indices_path_{};
   int64_t level_height_in_tiles_{0};
   std::string level_path_{};
   int64_t level_width_in_tiles_{0};

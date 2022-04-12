@@ -41,8 +41,8 @@ int64_t AnimationPlayer::animationDurationForSpriteIndex(
 
 unordered_map<int64_t, AnimationPlayer const> AnimationPlayerLoader::load(
     string const& file_path) {
-  ifstream stream;
   unordered_map<int64_t, AnimationPlayer const> animation_players_per_group;
+  ifstream stream;
   stream.open(file_path, ios::in | ios::binary);
   if (stream.is_open()) {
     while (stream.peek() != istream::traits_type::eof()) {

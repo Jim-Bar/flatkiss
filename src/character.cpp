@@ -14,23 +14,35 @@ using std::unordered_map;
 using std::vector;
 
 Character::Character(Characterset const& characterset,
+                     SpriteIndices const& sprite_indices,
                      AnimationPlayer const& animation_player,
                      Navigator const& navigator,
                      Position const& initialPosition,
                      Rectangle const& rectangle)
     : characterset_{characterset},
+      sprite_indices_{sprite_indices},
       animation_player_{animation_player},
       moving_direction_{MovingDirection::kDown},
       navigator_{navigator},
       positioned_rectangle_{initialPosition, rectangle} {}
 
-AnimationPlayer const& Character::animationPlayer() const {
-  return animation_player_;
-}
-
-int64_t Character::animationTick() const { return animation_tick_; }
-
 Characterset const& Character::characterset() const { return characterset_; }
+
+Action Character::currentAction() const {
+  // FIXME: On the necessity of MovingDirection?
+  switch (moving_direction_) {
+    case kLeft:
+      return Action::kWalkLeft;
+    case kDown:
+      return Action::kWalkDown;
+    case kRight:
+      return Action::kWalkRight;
+    case kUp:
+      return Action::kWalkUp;
+    default:
+      return Action::kWalkLeft;  // FIXME.
+  }
+}
 
 int64_t Character::height() const {
   return positioned_rectangle_.rectangle().height();
@@ -41,10 +53,6 @@ void Character::moveBy(Vector const& desired_displacement) {
       navigator_.moveBy(positioned_rectangle_, desired_displacement)};
   updateMovingDirection(desired_displacement, final_position - position());
   positioned_rectangle_.position(move(final_position));
-}
-
-MovingDirection const& Character::movingDirection() const {
-  return moving_direction_;
 }
 
 Position const& Character::position() const {
@@ -60,9 +68,13 @@ void Character::resetAnimationTick() {
    * next animation is played. Consequently, next time the character moves, it
    * immediately starts animating. In particular, this prevents it from sliding
    * for small moves.*/
-  animation_tick_ = characterset_.animationDurationForMovingDirection(
-                        moving_direction_, animation_player_) -
-                    1;
+  animation_tick_ =
+      animation_player_.animationDurationForSpriteIndex(spriteIndex()) - 1;
+}
+
+uint16_t Character::spriteIndex() const {
+  return animation_player_.animatedSpriteIndexFor(
+      sprite_indices_.spriteIndexForAction(currentAction()), animation_tick_);
 }
 
 void Character::updateMovingDirection(Vector const& desired_displacement,
@@ -97,7 +109,7 @@ void Character::updateMovingDirectionForDisplacement(
    * random direction. Because direction changes are sequential, picking a
    * "random" direction is always right. */
   if (!moving_directions.empty() &&
-      !moving_directions.contains(movingDirection())) {
+      !moving_directions.contains(moving_direction_)) {
     // The direction changed.
     moving_direction_ = *moving_directions.begin();
     resetAnimationTick();
@@ -115,6 +127,7 @@ int64_t Character::y() const { return position().y(); }
 vector<Character> CharacterLoader::load(
     string const& characters_file_path,
     vector<Characterset> const& charactersets,
+    unordered_map<int64_t, SpriteIndices const> const& sprite_indices,
     unordered_map<int64_t, AnimationPlayer const> const& animation_players,
     Navigator const& navigator, int64_t tiles_size) {
   vector<Character> characters;
@@ -125,6 +138,7 @@ vector<Character> CharacterLoader::load(
       int64_t x{0};
       int64_t y{0};
       uint16_t characterset_index{0};
+      uint16_t sprite_indices_index{0};
       uint16_t animations_index{0};
       uint16_t collision{0};  // FIXME: Make use.
       uint8_t controller{0};  // FIXME: Make use.
@@ -136,6 +150,9 @@ vector<Character> CharacterLoader::load(
       stream.read(reinterpret_cast<char*>(&characterset_index),
                   kCharactersetFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+      stream.read(reinterpret_cast<char*>(&sprite_indices_index),
+                  kIndicesFieldSize);
+      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&animations_index),
                   kAnimationFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -143,6 +160,7 @@ vector<Character> CharacterLoader::load(
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&controller), kControllerFieldSize);
       characters.emplace_back(charactersets[characterset_index],
+                              sprite_indices.at(sprite_indices_index),
                               animation_players.at(animations_index), navigator,
                               Position{x * tiles_size, y * tiles_size},
                               Rectangle{16, 16});  // FIXME: From collisions.

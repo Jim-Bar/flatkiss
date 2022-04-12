@@ -27,6 +27,7 @@ Configuration::Configuration(string const& file_path) {
   inipp::get_value(ini.sections["Collisions"], "path", collisions_path_);
   inipp::get_value(ini.sections["Engine"], "tick_duration_ms",
                    engine_tick_duration_ms_);
+  inipp::get_value(ini.sections["Indices"], "path", indices_path_);
   inipp::get_value(ini.sections["Level"], "height_in_tiles",
                    level_height_in_tiles_);
   inipp::get_value(ini.sections["Level"], "path", level_path_);
@@ -44,9 +45,7 @@ Configuration::Configuration(string const& file_path) {
                    tileset_width_in_tiles_);
 }
 
-string Configuration::animationsPath() const {
-  return animations_path_;
-}
+string Configuration::animationsPath() const { return animations_path_; }
 
 string Configuration::charactersetFilesDirectory() const {
   return characterset_files_directory_;
@@ -71,6 +70,8 @@ string const& Configuration::collisionsPath() const { return collisions_path_; }
 int64_t Configuration::engineTickDurationMs() const {
   return engine_tick_duration_ms_;
 }
+
+string const& Configuration::indicesPath() const { return indices_path_; }
 
 int64_t Configuration::levelHeightInTiles() const {
   return level_height_in_tiles_;

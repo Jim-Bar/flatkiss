@@ -9,6 +9,7 @@
 #include "moving_direction.hpp"
 #include "navigator.hpp"
 #include "positioned_rectangle.hpp"
+#include "sprite_indices.hpp"
 
 /**
  * @brief A character in the level.
@@ -18,16 +19,15 @@
 class Character {
  public:
   Character(Characterset const& characterset,
+            SpriteIndices const& sprite_indices,
             AnimationPlayer const& animation_player, Navigator const& navigator,
             Position const& initialPosition, Rectangle const& rectangle);
-  AnimationPlayer const& animationPlayer() const;
-  int64_t animationTick() const;
   Characterset const& characterset() const;
   int64_t height() const;
   void moveBy(Vector const& desired_displacement);
-  MovingDirection const& movingDirection() const;
   Position const& position() const;
   Rectangle const& rectangle() const;
+  uint16_t spriteIndex() const;
   int64_t width() const;
   int64_t x() const;
   int64_t y() const;
@@ -39,7 +39,9 @@ class Character {
   MovingDirection moving_direction_;
   Navigator const& navigator_;
   PositionedRectangle positioned_rectangle_;
+  SpriteIndices const& sprite_indices_;
 
+  Action currentAction() const;
   void resetAnimationTick();
   void updateMovingDirection(Vector const& desired_displacement,
                              Vector const& actual_displacement);
@@ -54,6 +56,8 @@ class CharacterLoader {
   static std::vector<Character> load(
       std::string const& characters_file_path,
       std::vector<Characterset> const& charactersets,
+      std::unordered_map<int64_t, SpriteIndices const> const&
+          sprite_indices,
       std::unordered_map<int64_t, AnimationPlayer const> const&
           animation_players,
       Navigator const& navigator, int64_t tiles_size);
@@ -63,6 +67,7 @@ class CharacterLoader {
   static int64_t constexpr kCharactersetFieldSize{2};
   static int64_t constexpr kControllerFieldSize{1};
   static int64_t constexpr kCollisionFieldSize{2};
+  static int64_t constexpr kIndicesFieldSize{2};
   static int64_t constexpr kXFieldSize{8};
   static int64_t constexpr kYFieldSize{8};
 };

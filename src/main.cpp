@@ -20,6 +20,7 @@
 #include "navigator.hpp"
 #include "positioned_rectangle.hpp"
 #include "renderer.hpp"
+#include "sprite_indices.hpp"
 #include "tileset.hpp"
 #include "vector.hpp"
 
@@ -120,6 +121,8 @@ int main(int argc, char* argv[]) {
 
   unordered_map<int64_t, AnimationPlayer const> animation_players{
       AnimationPlayerLoader::load(configuration.animationsPath())};
+  unordered_map<int64_t, SpriteIndices const> sprite_indices{
+      SpriteIndicesLoader::load(configuration.indicesPath())};
 
   bool quit = false;
   SDL_Event event;
@@ -127,8 +130,8 @@ int main(int argc, char* argv[]) {
   Collider collider{CollisionLoader::load(configuration.collisionsPath())};
   Navigator navigator{collider, *level, tileset.tilesSize()};
   vector<Character> characters{CharacterLoader::load(
-      configuration.charactersPath(), charactersets, animation_players,
-      navigator, tileset.tilesSize())};
+      configuration.charactersPath(), charactersets, sprite_indices,
+      animation_players, navigator, tileset.tilesSize())};
   int64_t tick(0);
   while (!quit) {
     renderer.render(animation_players.at(0), *level, tileset, viewport, tick++,

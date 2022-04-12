@@ -13,13 +13,12 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-Characterset::Characterset(
-    string const& file_path, int64_t sprites_width, int64_t sprites_height,
-    int64_t width_in_sprites, int64_t height_in_sprites, int64_t left_offset,
-    int64_t top_offset, int64_t gap, uint8_t alpha_red, uint8_t alpha_green,
-    uint8_t alpha_blue, int64_t sprite_move_left_index,
-    int64_t sprite_move_down_index, int64_t sprite_move_right_index,
-    int64_t sprite_move_up_index, Renderer const& renderer)
+Characterset::Characterset(string const& file_path, int64_t sprites_width,
+                           int64_t sprites_height, int64_t width_in_sprites,
+                           int64_t height_in_sprites, int64_t left_offset,
+                           int64_t top_offset, int64_t gap, uint8_t alpha_red,
+                           uint8_t alpha_green, uint8_t alpha_blue,
+                           Renderer const& renderer)
     : sprites_width_{sprites_width},
       sprites_height_{sprites_height},
       width_in_sprites_{width_in_sprites},
@@ -27,20 +26,10 @@ Characterset::Characterset(
       left_offset_{left_offset},
       top_offset_{top_offset},
       gap_{gap},
-      sprites_move_directions_indices_{
-          sprite_move_left_index, sprite_move_down_index,
-          sprite_move_right_index, sprite_move_up_index},
       texture_{Characterset::loadTexture(file_path, renderer, alpha_red,
                                          alpha_green, alpha_blue)} {}
 
 Characterset::~Characterset() { SDL_DestroyTexture(texture_); }
-
-int64_t Characterset::animationDurationForMovingDirection(
-    MovingDirection const& moving_direction,
-    AnimationPlayer const& animation_player) const {
-  return animation_player.animationDurationForSpriteIndex(
-      spriteIndexForMovingDirection(moving_direction));
-}
 
 int64_t Characterset::gap() const { return gap_; }
 
@@ -66,13 +55,6 @@ SDL_Texture* Characterset::loadTexture(string const& file_path,
   return texture;
 }
 
-SDL_Rect Characterset::rectForMovingDirection(
-    MovingDirection const& moving_direction,
-    AnimationPlayer const& animation_player, int64_t tick) const {
-  return rectForSpriteIndex(animation_player.animatedSpriteIndexFor(
-      spriteIndexForMovingDirection(moving_direction), tick));
-}
-
 SDL_Rect Characterset::rectForSpriteIndex(int64_t sprite_index) const {
   SDL_Rect source_rect;
   source_rect.w = static_cast<int>(spritesWidth());
@@ -86,22 +68,6 @@ SDL_Rect Characterset::rectForSpriteIndex(int64_t sprite_index) const {
                                    topOffset());
 
   return source_rect;
-}
-
-int64_t Characterset::spriteIndexForMovingDirection(
-    MovingDirection const& moving_direction) const {
-  switch (moving_direction) {
-    case MovingDirection::kLeft:
-      return sprites_move_directions_indices_[0];
-    case MovingDirection::kDown:
-      return sprites_move_directions_indices_[1];
-    case MovingDirection::kRight:
-      return sprites_move_directions_indices_[2];
-    case MovingDirection::kUp:
-      return sprites_move_directions_indices_[3];
-    default:
-      return 0;  // FIXME: Exception?
-  }
 }
 
 int64_t Characterset::spritesHeight() const { return sprites_height_; }
@@ -150,10 +116,6 @@ vector<Characterset> CharactersetLoader::load(string const& file_path,
       uint8_t alpha_red{0};
       uint8_t alpha_green{0};
       uint8_t alpha_blue{0};
-      uint16_t move_left_index{0};
-      uint16_t move_down_index{0};
-      uint16_t move_right_index{0};
-      uint16_t move_up_index{0};
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&sprites_width), 1);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -174,19 +136,10 @@ vector<Characterset> CharactersetLoader::load(string const& file_path,
       stream.read(reinterpret_cast<char*>(&alpha_green), 1);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&alpha_blue), 1);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&move_left_index), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&move_down_index), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&move_right_index), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&move_up_index), 2);
       charactersets.emplace_back(
           charactersetPath(characterset_count), sprites_width, sprites_height,
           width_in_sprites, height_in_tiles, left_offset, top_offset, gap,
-          alpha_red, alpha_green, alpha_blue, move_left_index, move_down_index,
-          move_right_index, move_up_index, renderer);
+          alpha_red, alpha_green, alpha_blue, renderer);
       characterset_count++;
     }
     stream.close();

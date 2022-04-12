@@ -3,18 +3,13 @@
 
 #include <SDL2/SDL.h>
 
-#include <array>
 #include <string>
 #include <vector>
-
-#include "animation_player.hpp"
-#include "moving_direction.hpp"
 
 // Forward declaration to break the cycle Characterset / Renderer.
 class Renderer;
 
 // FIXME: Merge with Tileset in Spriteset?
-// FIXME: Would be better if it did not know of AnimationPlayer: (1) in README.
 /**
  * @brief Models a characterset.
  *
@@ -30,23 +25,16 @@ class Characterset {
                int64_t height_in_sprites, int64_t left_offset,
                int64_t top_offset, int64_t gap, uint8_t alpha_red,
                uint8_t alpha_green, uint8_t alpha_blue,
-               int64_t sprite_move_left_index, int64_t sprite_move_down_index,
-               int64_t sprite_move_right_index, int64_t sprite_move_up_index,
                Renderer const& renderer);
   Characterset(Characterset const& other) = delete;
   Characterset(Characterset&& other) = default;
   Characterset& operator=(Characterset const& other) = delete;
   Characterset& operator=(Characterset&& other) = delete;
   ~Characterset();
-  int64_t animationDurationForMovingDirection(
-      MovingDirection const& moving_direction,
-      AnimationPlayer const& animation_player) const;
   int64_t gap() const;
   int64_t heightInSprites() const;
   int64_t leftOffset() const;
-  SDL_Rect rectForMovingDirection(MovingDirection const& moving_direction,
-                                  AnimationPlayer const& animation_player,
-                                  int64_t tick) const;
+  SDL_Rect rectForSpriteIndex(int64_t sprite_index) const;
   int64_t spritesHeight() const;
   int64_t spritesWidth() const;
   SDL_Texture* texture() const;
@@ -59,7 +47,6 @@ class Characterset {
   int64_t const left_offset_;
   int64_t const sprites_height_;
   int64_t const sprites_width_;
-  std::array<int64_t, 4> sprites_move_directions_indices_;
   SDL_Texture* const texture_;
   int64_t const top_offset_;
   int64_t const width_in_sprites_;
@@ -83,9 +70,6 @@ class Characterset {
   static SDL_Texture* loadTexture(std::string const& file_path,
                                   Renderer const& renderer, uint8_t alpha_red,
                                   uint8_t alpha_green, uint8_t alpha_blue);
-  SDL_Rect rectForSpriteIndex(int64_t sprite_index) const;
-  int64_t spriteIndexForMovingDirection(
-      MovingDirection const& moving_direction) const;
 };
 
 /**

@@ -78,6 +78,7 @@ As many characters can be defined as one like. A character is defined like this:
 . Initial X position (eight byte)
 . Initial Y position (eight byte)
 . Index of the characterset to use (two bytes)
+. Index of the group of sprite indices to use with the characterset (two bytes)
 . Index of the character animation to use with the characterset (two bytes)
 . Index of the character collision to use (two bytes)
 . Index of the controller to use (one byte)
@@ -100,10 +101,21 @@ defined by:
 . Red component of the colour which will be turned transparent (one byte)
 . Green component of the colour which will be turned transparent (one byte)
 . Blue component of the colour which will be turned transparent (one byte)
-. Index of the first sprite representing the character walking to the left (two bytes)
-. Index of the first sprite representing the character walking down (two bytes)
-. Index of the first sprite representing the character walking to the right (two bytes)
-. Index of the first sprite representing the character walking up (two bytes)
+
+==== Sprite indices
+
+Group of sprite indices mapping actions to the first sprite index of the animation in the characterset. The actions are:
+
+. Walk left: 0
+. Walk down: 1
+. Walk right: 2
+. Walk up: 3
+
+A group of animation is made up of its index (two bytes), then of its size (two bytes). Then the couples of each action
+mapped to the first sprite index of the animation for that action, concatenated. Both the action and sprite index are
+two bytes each. Example of a map: 2 to 4 which means that the index of the first sprite of the animation showing the
+character walk to the right (2) is at the fourth position in the characterset (4). Combined with the animation, this is
+enough for finding all the (animated) sprites showing the character walking to the right.
 
 == Quality
 
@@ -141,10 +153,6 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 . Characters are updated every ticks. Add a parameter for updating them every N ticks instead (allows lower speeds)?
 . Use struct when reading files
-. Another definition file for sprites indices (walk left, walk down, etc...)
-. "Index of the first sprite of the character walking to X direction" information is owned by characterset, but could be
-  owned by the character instead? So that for example a single characterset can be used for all the characters? Related
-  to previous bullet. (1)
 . Dedicated type for tiles / sprites instead of `uint16_t`
 . Check whether ellipses-shaped collision can have an ellipse whose center is at a negative position
 . Better directory structure

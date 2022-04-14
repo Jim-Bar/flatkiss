@@ -11,14 +11,16 @@
  */
 class Navigator {
  public:
-  Navigator(Collider const& collider, Level const& level, int64_t tiles_size);
+  Navigator(Collider const& collider, Level const& level, int64_t tiles_width,
+            int64_t tiles_height);
   Position moveBy(PositionedRectangle const& source_positioned_rectangle,
                   Vector const& desired_displacement) const;
 
  private:
   Collider const& collider_;
   Level const& level_;
-  int64_t const tiles_size_;
+  int64_t const tiles_height_;
+  int64_t const tiles_width_;
 
   /**
    * @brief Given a position and a movement (delta) on an axis (representing

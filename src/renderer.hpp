@@ -7,10 +7,9 @@
 
 #include "animation_player.hpp"
 #include "character.hpp"
-#include "characterset.hpp"
 #include "level.hpp"
 #include "positioned_rectangle.hpp"
-#include "tileset.hpp"
+#include "spriteset.hpp"
 
 /**
  * @brief Renders the whole scene.
@@ -32,20 +31,20 @@ class Renderer {
    */
   SDL_Texture* createTextureFromSurface(SDL_Surface* surface) const;
   void render(AnimationPlayer const& animation_player, Level const& level,
-              Tileset const& tileset, PositionedRectangle const& viewport,
-              int64_t tick, std::vector<Characterset> const& charactersets,
+              Spriteset const& tileset, PositionedRectangle const& viewport,
+              int64_t tick, std::vector<Spriteset> const& charactersets,
               std::vector<Character> const& characters) const;
 
  private:
   SDL_Renderer* const sdl_renderer_;
 
   void renderCharacter(PositionedRectangle const& viewport, int64_t tick,
-                       Characterset const& characterset,
+                       Spriteset const& characterset,
                        Character const& character) const;
   void renderCharacters(PositionedRectangle const& viewport, int64_t tick,
                         std::vector<Character> const& characters) const;
   void renderLevel(AnimationPlayer const& animation_player, Level const& level,
-                   Tileset const& tileset, PositionedRectangle const& viewport,
+                   Spriteset const& tileset, PositionedRectangle const& viewport,
                    int64_t tick) const;
 };
 

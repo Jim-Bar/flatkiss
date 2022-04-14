@@ -6,10 +6,10 @@
 
 #include "action_sprite_mapper.hpp"
 #include "animation_player.hpp"
-#include "characterset.hpp"
 #include "moving_direction.hpp"
 #include "navigator.hpp"
 #include "positioned_rectangle.hpp"
+#include "spriteset.hpp"
 
 /**
  * @brief A character in the level.
@@ -18,11 +18,11 @@
  */
 class Character {
  public:
-  Character(Characterset const& characterset,
+  Character(Spriteset const& characterset,
             ActionSpriteMapper const& action_sprite_mapper,
             AnimationPlayer const& animation_player, Navigator const& navigator,
             Position const& initialPosition, Rectangle const& rectangle);
-  Characterset const& characterset() const;
+  Spriteset const& characterset() const;
   int64_t height() const;
   void moveBy(Vector const& desired_displacement);
   Position const& position() const;
@@ -35,7 +35,7 @@ class Character {
  private:
   AnimationPlayer const& animation_player_;
   int64_t animation_tick_{0};
-  Characterset const& characterset_;
+  Spriteset const& characterset_;
   MovingDirection moving_direction_;
   Navigator const& navigator_;
   PositionedRectangle positioned_rectangle_;
@@ -55,12 +55,12 @@ class CharacterLoader {
  public:
   static std::vector<Character> load(
       std::string const& characters_file_path,
-      std::vector<Characterset> const& charactersets,
+      std::vector<Spriteset> const& charactersets,
       std::unordered_map<int64_t, ActionSpriteMapper const> const&
           action_sprite_mapper,
       std::unordered_map<int64_t, AnimationPlayer const> const&
           animation_players,
-      Navigator const& navigator, int64_t tiles_size);
+      Navigator const& navigator, int64_t tiles_width, int64_t tiles_height);
 
  private:
   static int64_t constexpr kAnimationFieldSize{2};

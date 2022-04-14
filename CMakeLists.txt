@@ -30,8 +30,6 @@ add_executable(${PROJECT_NAME}
     src/animation_player.hpp
     src/character.cpp
     src/character.hpp
-    src/characterset.cpp
-    src/characterset.hpp
     src/collider.cpp
     src/collider.hpp
     src/collision.cpp
@@ -60,8 +58,8 @@ add_executable(${PROJECT_NAME}
     src/rectangle.hpp
     src/renderer.cpp
     src/renderer.hpp
-    src/tileset.cpp
-    src/tileset.hpp
+    src/spriteset.cpp
+    src/spriteset.hpp
     src/vector.cpp
     src/vector.hpp
 )

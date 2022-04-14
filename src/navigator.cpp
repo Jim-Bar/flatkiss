@@ -6,8 +6,11 @@ using std::abs;
 using std::max;
 
 Navigator::Navigator(Collider const& collider, Level const& level,
-                     int64_t tiles_size)
-    : collider_{collider}, level_{level}, tiles_size_{tiles_size} {}
+                     int64_t tiles_width, int64_t tiles_height)
+    : collider_{collider},
+      level_{level},
+      tiles_width_{tiles_width},
+      tiles_height_{tiles_height} {}
 
 int64_t Navigator::clampToBounds(int64_t object_position, int64_t object_size,
                                  int64_t delta_value, int64_t upper_bound) {
@@ -24,17 +27,17 @@ int64_t Navigator::clampToBounds(int64_t object_position, int64_t object_size,
 
 bool Navigator::collidesWithTiles(
     PositionedRectangle const& positioned_rectangle) const {
-  for (int64_t y(positioned_rectangle.y() / tiles_size_);
+  for (int64_t y(positioned_rectangle.y() / tiles_height_);
        y <= (positioned_rectangle.y() + positioned_rectangle.height() - 1) /
-                tiles_size_;
+                tiles_height_;
        y++) {
-    for (int64_t x(positioned_rectangle.x() / tiles_size_);
+    for (int64_t x(positioned_rectangle.x() / tiles_width_);
          x <= (positioned_rectangle.x() + positioned_rectangle.width() - 1) /
-                  tiles_size_;
+                  tiles_width_;
          x++) {
       uint16_t tile_index(level_.tileIndex(x, y));
       if (collider_.collide(positioned_rectangle, tile_index,
-                            Position{x * tiles_size_, y * tiles_size_})) {
+                            Position{x * tiles_width_, y * tiles_height_})) {
         return true;
       }
     }
@@ -82,10 +85,10 @@ Position Navigator::moveBy(
   Position destination{
       clampToBounds(
           source_positioned_rectangle.x(), source_positioned_rectangle.width(),
-          desired_displacement.dx(), level_.widthInTiles() * tiles_size_),
+          desired_displacement.dx(), level_.widthInTiles() * tiles_width_),
       clampToBounds(
           source_positioned_rectangle.y(), source_positioned_rectangle.height(),
-          desired_displacement.dy(), level_.heightInTiles() * tiles_size_)};
+          desired_displacement.dy(), level_.heightInTiles() * tiles_height_)};
 
   /* Secondly, if the destination is the same as the current position, nothing
    * to do. */

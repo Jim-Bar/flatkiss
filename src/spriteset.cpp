@@ -1,4 +1,4 @@
-#include "characterset.hpp"
+#include "spriteset.hpp"
 
 #include <fstream>
 #include <utility>
@@ -13,7 +13,7 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-Characterset::Characterset(string const& file_path, int64_t sprites_width,
+Spriteset::Spriteset(string const& file_path, int64_t sprites_width,
                            int64_t sprites_height, int64_t width_in_sprites,
                            int64_t height_in_sprites, int64_t left_offset,
                            int64_t top_offset, int64_t gap, uint8_t alpha_red,
@@ -26,18 +26,18 @@ Characterset::Characterset(string const& file_path, int64_t sprites_width,
       left_offset_{left_offset},
       top_offset_{top_offset},
       gap_{gap},
-      texture_{Characterset::loadTexture(file_path, renderer, alpha_red,
+      texture_{Spriteset::loadTexture(file_path, renderer, alpha_red,
                                          alpha_green, alpha_blue)} {}
 
-Characterset::~Characterset() { SDL_DestroyTexture(texture_); }
+Spriteset::~Spriteset() { SDL_DestroyTexture(texture_); }
 
-int64_t Characterset::gap() const { return gap_; }
+int64_t Spriteset::gap() const { return gap_; }
 
-int64_t Characterset::heightInSprites() const { return height_in_sprites_; }
+int64_t Spriteset::heightInSprites() const { return height_in_sprites_; }
 
-int64_t Characterset::leftOffset() const { return left_offset_; }
+int64_t Spriteset::leftOffset() const { return left_offset_; }
 
-SDL_Texture* Characterset::loadTexture(string const& file_path,
+SDL_Texture* Spriteset::loadTexture(string const& file_path,
                                        Renderer const& renderer,
                                        uint8_t alpha_red, uint8_t alpha_green,
                                        uint8_t alpha_blue) {
@@ -55,7 +55,7 @@ SDL_Texture* Characterset::loadTexture(string const& file_path,
   return texture;
 }
 
-SDL_Rect Characterset::rectForSpriteIndex(int64_t sprite_index) const {
+SDL_Rect Spriteset::rectForSpriteIndex(int64_t sprite_index) const {
   SDL_Rect source_rect;
   source_rect.w = static_cast<int>(spritesWidth());
   source_rect.h = static_cast<int>(spritesHeight());
@@ -70,15 +70,15 @@ SDL_Rect Characterset::rectForSpriteIndex(int64_t sprite_index) const {
   return source_rect;
 }
 
-int64_t Characterset::spritesHeight() const { return sprites_height_; }
+int64_t Spriteset::spritesHeight() const { return sprites_height_; }
 
-int64_t Characterset::spritesWidth() const { return sprites_width_; }
+int64_t Spriteset::spritesWidth() const { return sprites_width_; }
 
-SDL_Texture* Characterset::texture() const { return texture_; }
+SDL_Texture* Spriteset::texture() const { return texture_; }
 
-int64_t Characterset::topOffset() const { return top_offset_; }
+int64_t Spriteset::topOffset() const { return top_offset_; }
 
-int64_t Characterset::widthInSprites() const { return width_in_sprites_; }
+int64_t Spriteset::widthInSprites() const { return width_in_sprites_; }
 
 CharactersetLoader::CharactersetLoader(string characterset_files_directory,
                                        string characterset_files_prefix,
@@ -97,9 +97,9 @@ string CharactersetLoader::charactersetPath(int64_t characterset) const {
       .string();*/
 }
 
-vector<Characterset> CharactersetLoader::load(string const& file_path,
+vector<Spriteset> CharactersetLoader::load(string const& file_path,
                                               Renderer const& renderer) {
-  vector<Characterset> charactersets;
+  vector<Spriteset> charactersets;
   ifstream stream;
   stream.open(file_path, ios::in | ios::binary);
   if (stream.is_open()) {

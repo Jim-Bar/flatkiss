@@ -13,7 +13,6 @@
 #include "action_sprite_mapper.hpp"
 #include "animation_player.hpp"
 #include "character.hpp"
-#include "characterset.hpp"
 #include "collider.hpp"
 #include "configuration.hpp"
 #include "keyboard_state.hpp"
@@ -21,7 +20,7 @@
 #include "navigator.hpp"
 #include "positioned_rectangle.hpp"
 #include "renderer.hpp"
-#include "tileset.hpp"
+#include "spriteset.hpp"
 #include "vector.hpp"
 
 using std::cerr;
@@ -38,7 +37,8 @@ int64_t const kViewportSize(160);
 
 void handleKeyboardEvent(KeyboardState const& keyboard_state,
                          Character& character, PositionedRectangle& viewport,
-                         unique_ptr<Level const>& level, int64_t tilesSize) {
+                         unique_ptr<Level const>& level, int64_t tiles_width,
+                         int64_t tiles_height) {
   int64_t dx{0};
   int64_t dy{0};
   if (keyboard_state.isPressed(SDL_SCANCODE_UP)) {
@@ -59,10 +59,10 @@ void handleKeyboardEvent(KeyboardState const& keyboard_state,
   if (character.y() <
       viewport.rectangle().height() / 2 - character.height() / 2) {
     viewport.y(0);
-  } else if (character.y() > level->heightInTiles() * tilesSize -
+  } else if (character.y() > level->heightInTiles() * tiles_height -
                                  viewport.rectangle().height() / 2 -
                                  character.height() / 2) {
-    viewport.y(level->heightInTiles() * tilesSize -
+    viewport.y(level->heightInTiles() * tiles_height -
                viewport.rectangle().height());
   } else {
     viewport.y(character.y() - viewport.rectangle().height() / 2 +
@@ -71,10 +71,10 @@ void handleKeyboardEvent(KeyboardState const& keyboard_state,
   if (character.x() <
       viewport.rectangle().width() / 2 - character.width() / 2) {
     viewport.x(0);
-  } else if (character.x() > level->widthInTiles() * tilesSize -
+  } else if (character.x() > level->widthInTiles() * tiles_width -
                                  viewport.rectangle().width() / 2 -
                                  character.width() / 2) {
-    viewport.x(level->widthInTiles() * tilesSize -
+    viewport.x(level->widthInTiles() * tiles_width -
                viewport.rectangle().width());
   } else {
     viewport.x(character.x() - viewport.rectangle().width() / 2 +
@@ -106,17 +106,24 @@ int main(int argc, char* argv[]) {
 
   Renderer renderer{window};
 
-  Tileset const tileset{
-      configuration.tilesetPath(),         configuration.tilesetTilesSize(),
-      configuration.tilesetWidthInTiles(), configuration.tilesetHeightInTiles(),
-      configuration.tilesetLeftOffset(),   configuration.tilesetTopOffset(),
-      configuration.tilesetGap(),          renderer};
+  Spriteset const tileset{configuration.tilesetPath(),
+                          configuration.tilesetTilesSize(),
+                          configuration.tilesetTilesSize(),
+                          configuration.tilesetWidthInTiles(),
+                          configuration.tilesetHeightInTiles(),
+                          configuration.tilesetLeftOffset(),
+                          configuration.tilesetTopOffset(),
+                          configuration.tilesetGap(),
+                          255,
+                          0,
+                          255,
+                          renderer};
 
   CharactersetLoader characterset_loader{
       configuration.charactersetFilesDirectory(),
       configuration.charactersetFilesPrefix(),
       configuration.charactersetFilesSuffix()};
-  vector<Characterset> charactersets{
+  vector<Spriteset> charactersets{
       characterset_loader.load(configuration.charactersetsPath(), renderer)};
 
   unordered_map<int64_t, AnimationPlayer const> animation_players{
@@ -128,10 +135,12 @@ int main(int argc, char* argv[]) {
   SDL_Event event;
   KeyboardState keyboard_state;
   Collider collider{CollisionLoader::load(configuration.collisionsPath())};
-  Navigator navigator{collider, *level, tileset.tilesSize()};
-  vector<Character> characters{CharacterLoader::load(
-      configuration.charactersPath(), charactersets, action_sprite_mapper,
-      animation_players, navigator, tileset.tilesSize())};
+  Navigator navigator{collider, *level, tileset.spritesWidth(),
+                      tileset.spritesHeight()};
+  vector<Character> characters{
+      CharacterLoader::load(configuration.charactersPath(), charactersets,
+                            action_sprite_mapper, animation_players, navigator,
+                            tileset.spritesWidth(), tileset.spritesHeight())};
   int64_t tick(0);
   while (!quit) {
     renderer.render(animation_players.at(0), *level, tileset, viewport, tick++,
@@ -150,7 +159,7 @@ int main(int argc, char* argv[]) {
     // FIXME: Not all characters are keyboard-controlled.
     for (Character& character : characters) {
       handleKeyboardEvent(keyboard_state, character, viewport, level,
-                          tileset.tilesSize());
+                          tileset.spritesWidth(), tileset.spritesHeight());
     }
   }
 

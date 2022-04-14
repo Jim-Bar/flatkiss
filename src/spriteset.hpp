@@ -1,36 +1,35 @@
-#ifndef CHARACTERSET_HPP_INCLUDED
-#define CHARACTERSET_HPP_INCLUDED
+#ifndef SPRITESET_HPP_INCLUDED
+#define SPRITESET_HPP_INCLUDED
 
 #include <SDL2/SDL.h>
 
 #include <string>
 #include <vector>
 
-// Forward declaration to break the cycle Characterset / Renderer.
+// Forward declaration to break the cycle Spriteset / Renderer.
 class Renderer;
 
-// FIXME: Merge with Tileset in Spriteset?
 /**
- * @brief Models a characterset.
+ * @brief Models a spriteset.
  *
- * A characterset is a picture containing multiple sprites. It provides handy
- * methods to get information on the characterset and to easily render sprites.
+ * A spriteset is a picture containing multiple sprites. It provides handy
+ * methods to get information on the spriteset and to easily render sprites.
+ * Charactersets and tilesets are in fact spritesets.
  *
- * This class also handles the lifecycle of the texture of the characterset.
+ * This class also handles the lifecycle of the texture of the spriteset.
  */
-class Characterset {
+class Spriteset {
  public:
-  Characterset(std::string const& file_path, int64_t sprites_width,
-               int64_t sprites_height, int64_t width_in_sprites,
-               int64_t height_in_sprites, int64_t left_offset,
-               int64_t top_offset, int64_t gap, uint8_t alpha_red,
-               uint8_t alpha_green, uint8_t alpha_blue,
-               Renderer const& renderer);
-  Characterset(Characterset const& other) = delete;
-  Characterset(Characterset&& other) = default;
-  Characterset& operator=(Characterset const& other) = delete;
-  Characterset& operator=(Characterset&& other) = delete;
-  ~Characterset();
+  Spriteset(std::string const& file_path, int64_t sprites_width,
+            int64_t sprites_height, int64_t width_in_sprites,
+            int64_t height_in_sprites, int64_t left_offset, int64_t top_offset,
+            int64_t gap, uint8_t alpha_red, uint8_t alpha_green,
+            uint8_t alpha_blue, Renderer const& renderer);
+  Spriteset(Spriteset const& other) = delete;
+  Spriteset(Spriteset&& other) = default;
+  Spriteset& operator=(Spriteset const& other) = delete;
+  Spriteset& operator=(Spriteset&& other) = delete;
+  ~Spriteset();
   int64_t gap() const;
   int64_t heightInSprites() const;
   int64_t leftOffset() const;
@@ -52,10 +51,10 @@ class Characterset {
   int64_t const width_in_sprites_;
 
   /**
-   * @brief For creating the texture of the characterset in the initializer
+   * @brief For creating the texture of the spriteset in the initializer
    * list.
    *
-   * @param file_path Path to the characterset picture.
+   * @param file_path Path to the spriteset picture.
    * @param renderer Pointer to the renderer for creating the texture.
    * @param alpha_red Red component of the colour that will be turned
    * @param alpha_red Red component of the colour that will be turned
@@ -81,8 +80,8 @@ class CharactersetLoader {
                      std::string characterset_files_prefix,
                      std::string characterset_files_suffix);
 
-  std::vector<Characterset> load(std::string const& file_path,
-                                 Renderer const& renderer);
+  std::vector<Spriteset> load(std::string const& file_path,
+                              Renderer const& renderer);
 
  private:
   std::string const characterset_files_directory_;

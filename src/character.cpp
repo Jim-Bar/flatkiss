@@ -13,7 +13,7 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-Character::Character(Characterset const& characterset,
+Character::Character(Spriteset const& characterset,
                      ActionSpriteMapper const& action_sprite_mapper,
                      AnimationPlayer const& animation_player,
                      Navigator const& navigator,
@@ -26,7 +26,7 @@ Character::Character(Characterset const& characterset,
       navigator_{navigator},
       positioned_rectangle_{initialPosition, rectangle} {}
 
-Characterset const& Character::characterset() const { return characterset_; }
+Spriteset const& Character::characterset() const { return characterset_; }
 
 Action Character::currentAction() const {
   // FIXME: On the necessity of MovingDirection?
@@ -74,7 +74,8 @@ void Character::resetAnimationTick() {
 
 uint16_t Character::spriteIndex() const {
   return animation_player_.animatedSpriteIndexFor(
-      action_sprite_mapper_.spriteIndexForAction(currentAction()), animation_tick_);
+      action_sprite_mapper_.spriteIndexForAction(currentAction()),
+      animation_tick_);
 }
 
 void Character::updateMovingDirection(Vector const& desired_displacement,
@@ -125,11 +126,11 @@ int64_t Character::x() const { return position().x(); }
 int64_t Character::y() const { return position().y(); }
 
 vector<Character> CharacterLoader::load(
-    string const& characters_file_path,
-    vector<Characterset> const& charactersets,
-    unordered_map<int64_t, ActionSpriteMapper const> const& action_sprite_mapper,
+    string const& characters_file_path, vector<Spriteset> const& charactersets,
+    unordered_map<int64_t, ActionSpriteMapper const> const&
+        action_sprite_mapper,
     unordered_map<int64_t, AnimationPlayer const> const& animation_players,
-    Navigator const& navigator, int64_t tiles_size) {
+    Navigator const& navigator, int64_t tiles_width, int64_t tiles_height) {
   vector<Character> characters;
   ifstream stream;
   stream.open(characters_file_path, ios::in | ios::binary);
@@ -159,11 +160,12 @@ vector<Character> CharacterLoader::load(
       stream.read(reinterpret_cast<char*>(&collision), kCollisionFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&controller), kControllerFieldSize);
-      characters.emplace_back(charactersets[characterset_index],
-                              action_sprite_mapper.at(action_sprite_mapper_index),
-                              animation_players.at(animations_index), navigator,
-                              Position{x * tiles_size, y * tiles_size},
-                              Rectangle{16, 16});  // FIXME: From collisions.
+      characters.emplace_back(
+          charactersets[characterset_index],
+          action_sprite_mapper.at(action_sprite_mapper_index),
+          animation_players.at(animations_index), navigator,
+          Position{x * tiles_width, y * tiles_height},
+          Rectangle{16, 16});  // FIXME: From collisions.
     }
     stream.close();
   }  // FIXME: Raise exception.

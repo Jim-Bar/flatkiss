@@ -4,12 +4,12 @@
 #include <unordered_map>
 #include <vector>
 
+#include "action_sprite_mapper.hpp"
 #include "animation_player.hpp"
 #include "characterset.hpp"
 #include "moving_direction.hpp"
 #include "navigator.hpp"
 #include "positioned_rectangle.hpp"
-#include "sprite_indices.hpp"
 
 /**
  * @brief A character in the level.
@@ -19,7 +19,7 @@
 class Character {
  public:
   Character(Characterset const& characterset,
-            SpriteIndices const& sprite_indices,
+            ActionSpriteMapper const& action_sprite_mapper,
             AnimationPlayer const& animation_player, Navigator const& navigator,
             Position const& initialPosition, Rectangle const& rectangle);
   Characterset const& characterset() const;
@@ -39,7 +39,7 @@ class Character {
   MovingDirection moving_direction_;
   Navigator const& navigator_;
   PositionedRectangle positioned_rectangle_;
-  SpriteIndices const& sprite_indices_;
+  ActionSpriteMapper const& action_sprite_mapper_;
 
   Action currentAction() const;
   void resetAnimationTick();
@@ -56,8 +56,8 @@ class CharacterLoader {
   static std::vector<Character> load(
       std::string const& characters_file_path,
       std::vector<Characterset> const& charactersets,
-      std::unordered_map<int64_t, SpriteIndices const> const&
-          sprite_indices,
+      std::unordered_map<int64_t, ActionSpriteMapper const> const&
+          action_sprite_mapper,
       std::unordered_map<int64_t, AnimationPlayer const> const&
           animation_players,
       Navigator const& navigator, int64_t tiles_size);

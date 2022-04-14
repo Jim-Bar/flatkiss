@@ -14,13 +14,13 @@ using std::unordered_map;
 using std::vector;
 
 Character::Character(Characterset const& characterset,
-                     SpriteIndices const& sprite_indices,
+                     ActionSpriteMapper const& action_sprite_mapper,
                      AnimationPlayer const& animation_player,
                      Navigator const& navigator,
                      Position const& initialPosition,
                      Rectangle const& rectangle)
     : characterset_{characterset},
-      sprite_indices_{sprite_indices},
+      action_sprite_mapper_{action_sprite_mapper},
       animation_player_{animation_player},
       moving_direction_{MovingDirection::kDown},
       navigator_{navigator},
@@ -74,7 +74,7 @@ void Character::resetAnimationTick() {
 
 uint16_t Character::spriteIndex() const {
   return animation_player_.animatedSpriteIndexFor(
-      sprite_indices_.spriteIndexForAction(currentAction()), animation_tick_);
+      action_sprite_mapper_.spriteIndexForAction(currentAction()), animation_tick_);
 }
 
 void Character::updateMovingDirection(Vector const& desired_displacement,
@@ -127,7 +127,7 @@ int64_t Character::y() const { return position().y(); }
 vector<Character> CharacterLoader::load(
     string const& characters_file_path,
     vector<Characterset> const& charactersets,
-    unordered_map<int64_t, SpriteIndices const> const& sprite_indices,
+    unordered_map<int64_t, ActionSpriteMapper const> const& action_sprite_mapper,
     unordered_map<int64_t, AnimationPlayer const> const& animation_players,
     Navigator const& navigator, int64_t tiles_size) {
   vector<Character> characters;
@@ -138,7 +138,7 @@ vector<Character> CharacterLoader::load(
       int64_t x{0};
       int64_t y{0};
       uint16_t characterset_index{0};
-      uint16_t sprite_indices_index{0};
+      uint16_t action_sprite_mapper_index{0};
       uint16_t animations_index{0};
       uint16_t collision{0};  // FIXME: Make use.
       uint8_t controller{0};  // FIXME: Make use.
@@ -150,7 +150,7 @@ vector<Character> CharacterLoader::load(
       stream.read(reinterpret_cast<char*>(&characterset_index),
                   kCharactersetFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&sprite_indices_index),
+      stream.read(reinterpret_cast<char*>(&action_sprite_mapper_index),
                   kIndicesFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&animations_index),
@@ -160,7 +160,7 @@ vector<Character> CharacterLoader::load(
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&controller), kControllerFieldSize);
       characters.emplace_back(charactersets[characterset_index],
-                              sprite_indices.at(sprite_indices_index),
+                              action_sprite_mapper.at(action_sprite_mapper_index),
                               animation_players.at(animations_index), navigator,
                               Position{x * tiles_size, y * tiles_size},
                               Rectangle{16, 16});  // FIXME: From collisions.

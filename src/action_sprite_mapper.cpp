@@ -1,4 +1,4 @@
-#include "sprite_indices.hpp"
+#include "action_sprite_mapper.hpp"
 
 #include <fstream>
 #include <utility>
@@ -12,11 +12,11 @@ using std::piecewise_construct;
 using std::string;
 using std::unordered_map;
 
-SpriteIndices::SpriteIndices(
+ActionSpriteMapper::ActionSpriteMapper(
     unordered_map<Action, uint16_t>&& action_to_indices)
     : action_to_indices_{move(action_to_indices)} {}
 
-uint16_t SpriteIndices::spriteIndexForAction(Action const& action) const {
+uint16_t ActionSpriteMapper::spriteIndexForAction(Action const& action) const {
   if (action_to_indices_.contains(action)) {
     return action_to_indices_.at(action);
   }
@@ -24,7 +24,7 @@ uint16_t SpriteIndices::spriteIndexForAction(Action const& action) const {
   return 0;  // FIXME: Raise exception.
 }
 
-Action SpriteIndicesLoader::actionIdentifierToAction(
+Action ActionSpriteMapperLoader::actionIdentifierToAction(
     uint16_t action_identifier) {
   switch (action_identifier) {
     case 0:
@@ -40,10 +40,9 @@ Action SpriteIndicesLoader::actionIdentifierToAction(
   }
 }
 
-unordered_map<int64_t, SpriteIndices const> SpriteIndicesLoader::load(
+unordered_map<int64_t, ActionSpriteMapper const> ActionSpriteMapperLoader::load(
     string const& indices_file_path) {
-  // FIXME: Find a better name for SpriteIndices (double plural here).
-  unordered_map<int64_t, SpriteIndices const> sprite_indices_per_group;
+  unordered_map<int64_t, ActionSpriteMapper const> index_to_mapper;
   ifstream stream;
   stream.open(indices_file_path, ios::in | ios::binary);
   if (stream.is_open()) {
@@ -54,17 +53,17 @@ unordered_map<int64_t, SpriteIndices const> SpriteIndicesLoader::load(
       stream.read(reinterpret_cast<char*>(&group_index), 2);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&group_size), 2);
-      sprite_indices_per_group.emplace(
+      index_to_mapper.emplace(
           piecewise_construct, forward_as_tuple(group_index),
           forward_as_tuple(move(loadGroup(group_size, stream))));
     }
     stream.close();
   }  // FIXME: Raise exception.
 
-  return sprite_indices_per_group;
+  return index_to_mapper;
 }
 
-unordered_map<Action, uint16_t> SpriteIndicesLoader::loadGroup(
+unordered_map<Action, uint16_t> ActionSpriteMapperLoader::loadGroup(
     int64_t group_size, ifstream& stream) {
   unordered_map<Action, uint16_t> action_to_indices;
   for (int64_t i{0}; i < group_size; i++) {

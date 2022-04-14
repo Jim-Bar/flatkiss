@@ -20,10 +20,6 @@ class ActionSpriteMapper {
    * @brief Construct a ActionSpriteMapper from a map of actions to matching sprite
    * indices.
    *
-   * When this constructor returns, the passed map is empty because its values
-   * have been transferred to the player. FIXME: No and compare with
-   * AnimationPlayer.
-   *
    * @param action_to_indices Map of actions to the index of the first sprite
    * showing this action in a characterset.
    */

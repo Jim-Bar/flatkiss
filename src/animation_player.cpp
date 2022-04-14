@@ -1,12 +1,14 @@
 #include "animation_player.hpp"
 
 #include <fstream>
+#include <utility>
 #include <vector>
 
 using std::forward_as_tuple;
 using std::ifstream;
 using std::ios;
 using std::istream;
+using std::move;
 using std::piecewise_construct;
 using std::string;
 using std::to_string;
@@ -14,9 +16,8 @@ using std::unordered_map;
 using std::vector;
 
 AnimationPlayer::AnimationPlayer(
-    unordered_map<uint16_t, Animation const>&& animations_per_sprite_index) {
-  this->animations_per_sprite_index_.swap(animations_per_sprite_index);
-}
+    unordered_map<uint16_t, Animation>&& animations_per_sprite_index)
+    : animations_per_sprite_index_{move(animations_per_sprite_index)} {}
 
 uint16_t AnimationPlayer::animatedSpriteIndexFor(uint16_t sprite_index,
                                                  int64_t tick) const {
@@ -52,7 +53,8 @@ unordered_map<int64_t, AnimationPlayer const> AnimationPlayerLoader::load(
       stream.read(reinterpret_cast<char*>(&group_index), 2);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&group_size), 2);
-      animation_players_per_group.emplace(piecewise_construct, forward_as_tuple(group_index),
+      animation_players_per_group.emplace(
+          piecewise_construct, forward_as_tuple(group_index),
           forward_as_tuple(move(loadGroup(group_size, stream))));
     }
     stream.close();
@@ -61,9 +63,9 @@ unordered_map<int64_t, AnimationPlayer const> AnimationPlayerLoader::load(
   return animation_players_per_group;
 }
 
-unordered_map<uint16_t, Animation const> AnimationPlayerLoader::loadGroup(
+unordered_map<uint16_t, Animation> AnimationPlayerLoader::loadGroup(
     int64_t group_size, ifstream& stream) {
-  unordered_map<uint16_t, Animation const> animations_per_sprite_index;
+  unordered_map<uint16_t, Animation> animations_per_sprite_index;
   for (int64_t i{0}; i < group_size; i++) {
     uint8_t animation_period{static_cast<uint8_t>(stream.get())};
     uint8_t animation_duration{static_cast<uint8_t>(stream.get())};

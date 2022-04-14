@@ -18,20 +18,16 @@ class AnimationPlayer {
   /**
    * @brief Construct an AnimationPlayer from a map of animations.
    *
-   * When this constructor returns, the passed map is empty because its values
-   * have been transferred to the player.
-   *
    * @param animations_per_sprite_index Map of sprite indices to their
    * respective animations.
    */
-  AnimationPlayer(std::unordered_map<uint16_t, Animation const>&&
+  AnimationPlayer(std::unordered_map<uint16_t, Animation>&&
                       animations_per_sprite_index);
   uint16_t animatedSpriteIndexFor(uint16_t sprite_index, int64_t tick) const;
   int64_t animationDurationForSpriteIndex(uint16_t sprite_index) const;
 
  private:
-  // FIXME: Map itself const?
-  std::unordered_map<uint16_t, Animation const> animations_per_sprite_index_;
+  std::unordered_map<uint16_t, Animation> const animations_per_sprite_index_;
 };
 
 /**
@@ -43,7 +39,7 @@ class AnimationPlayerLoader {
       std::string const& file_path);
 
  private:
-  static std::unordered_map<uint16_t, Animation const> loadGroup(
+  static std::unordered_map<uint16_t, Animation> loadGroup(
       int64_t group_size, std::ifstream& animations_stream);
 };
 

@@ -47,29 +47,32 @@ Then come the animations concatenated together.
 
 Collisions are either rectangles or ellipses which cannot be crossed.
 
-Rectangle collisions are delimitated by an origin (x, y) at the top left of the tile, and a size (width, height). They
-are associated with tiles indices. For instance, if tiles are 16x16 pixels, the collision of origin (12, 12) and size
-(4, 4) makes a tile not walkable on the square of 4x4 pixels at its bottom right.
+Rectangle collisions are delimitated by an origin (x, y) at the top left of the sprite, and a size (width, height). They
+are associated with sprites indices. For instance, if sprites are 16x16 pixels, the collision of origin (12, 12) and
+size (4, 4) makes a sprite not walkable on the square of 4x4 pixels at its bottom right.
 
-Ellipse collisions are delimitated by an ellipse whose center (x, y) is at the top left of the tile, and two radii for
-each axis (radiusX, radiusY). As for rectangle collisions, they are associated with tiles indices. For instance, if
-tiles are 16x16 pixels, the collision of origin (4, 4) and radii (4, 4) makes a tile not walkable on the circle of 8x8
-pixels at its top left.
+Ellipse collisions are delimitated by an ellipse whose center (x, y) is at the top left of the sprite, and two radii for
+each axis (radiusX, radiusY). As for rectangle collisions, they are associated with sprites indices. For instance, if
+sprites are 16x16 pixels, the collision of origin (4, 4) and radii (4, 4) makes a sprite not walkable on the circle of
+8x8 pixels at its top left.
 
-NOTE: The origin (respectively center) of the rectangle (respectively ellipse) can be outside of the tile. Likewise, the
-size of the rectangle or ellipse can be greather than the one of the tile. Consequently, the rectangle or ellipse can
-overflow the tile. *However*, the portion outside of the tile will be ignored.
+NOTE: The origin (respectively center) of the rectangle (respectively ellipse) can be outside of the sprite. Likewise,
+the size of the rectangle or ellipse can be greather than the one of the sprite. Consequently, the rectangle or ellipse
+can overflow the sprite. *However*, the portion outside of the sprite will be ignored.
 
 A collision is stored as:
 
-. First two bytes: tile index
+. First two bytes: sprite index
 . Next byte: collision type (0 for rectangle, 1 for circle)
 . Then on the four next bytes (each on one byte): x, y, width, height
 
 All of those are interpreted as positive integers.
 
-TIP: Several collisions can be added for a single tile index. Every one of those will be checked to determine whether an
-object collides with the tile.
+TIP: Several collisions can be added for a single sprite index. Every one of those will be checked to determine whether
+an object collides with the sprite.
+
+A group of collisions starts with the index on two bytes. Then the number of collisions making up the group on two
+bytes. Then come the collisions concatenated together.
 
 === Characters
 

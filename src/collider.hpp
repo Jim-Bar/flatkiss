@@ -19,7 +19,7 @@ class Collider {
    * @param collisions_per_tile_index Map of tile indices to their respective
    * collisions.
    */
-  Collider(std::unordered_map<uint16_t, Collision const>&&
+  Collider(std::unordered_map<uint16_t, Collision>&&
                collisions_per_tile_index);
   /**
    * @brief Tells whether a positioned rectangle overlaps with the tile at the
@@ -36,7 +36,20 @@ class Collider {
                uint16_t tile_index, Position const& tile_position) const;
 
  private:
-  std::unordered_map<uint16_t, Collision const> collisions_per_tile_index_;
+  std::unordered_map<uint16_t, Collision> const collisions_per_tile_index_;
+};
+
+/**
+ * @brief Helper class for loading the collisions from a file.
+ */
+class ColliderLoader {
+ public:
+  static std::unordered_map<int64_t, Collider const> load(
+      std::string const& file_path);
+
+ private:
+  static std::unordered_map<uint16_t, Collision> loadGroup(
+      int64_t group_size, std::ifstream& collisions_stream);
 };
 
 #endif

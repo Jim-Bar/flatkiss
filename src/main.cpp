@@ -128,19 +128,20 @@ int main(int argc, char* argv[]) {
 
   unordered_map<int64_t, AnimationPlayer const> animation_players{
       AnimationPlayerLoader::load(configuration.animationsPath())};
-  unordered_map<int64_t, ActionSpriteMapper const> action_sprite_mapper{
+  unordered_map<int64_t, ActionSpriteMapper const> action_sprite_mappers{
       ActionSpriteMapperLoader::load(configuration.indicesPath())};
+  unordered_map<int64_t, Collider const> colliders{
+      ColliderLoader::load(configuration.collisionsPath())};
 
   bool quit = false;
   SDL_Event event;
   KeyboardState keyboard_state;
-  Collider collider{CollisionLoader::load(configuration.collisionsPath())};
-  Navigator navigator{collider, *level, tileset.spritesWidth(),
+  Navigator navigator{colliders.at(0), *level, tileset.spritesWidth(),
                       tileset.spritesHeight()};
-  vector<Character> characters{
-      CharacterLoader::load(configuration.charactersPath(), charactersets,
-                            action_sprite_mapper, animation_players, navigator,
-                            tileset.spritesWidth(), tileset.spritesHeight())};
+  vector<Character> characters{CharacterLoader::load(
+      configuration.charactersPath(), charactersets, action_sprite_mappers,
+      animation_players, colliders, navigator, tileset.spritesWidth(),
+      tileset.spritesHeight())};
   int64_t tick(0);
   while (!quit) {
     renderer.render(animation_players.at(0), *level, tileset, viewport, tick++,

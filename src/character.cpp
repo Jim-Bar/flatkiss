@@ -16,12 +16,13 @@ using std::vector;
 Character::Character(Spriteset const& characterset,
                      ActionSpriteMapper const& action_sprite_mapper,
                      AnimationPlayer const& animation_player,
-                     Navigator const& navigator,
+                     Collider const& collider, Navigator const& navigator,
                      Position const& initialPosition,
                      Rectangle const& rectangle)
     : characterset_{characterset},
       action_sprite_mapper_{action_sprite_mapper},
       animation_player_{animation_player},
+      collider_{collider},
       moving_direction_{MovingDirection::kDown},
       navigator_{navigator},
       positioned_rectangle_{initialPosition, rectangle} {}
@@ -128,8 +129,9 @@ int64_t Character::y() const { return position().y(); }
 vector<Character> CharacterLoader::load(
     string const& characters_file_path, vector<Spriteset> const& charactersets,
     unordered_map<int64_t, ActionSpriteMapper const> const&
-        action_sprite_mapper,
+        action_sprite_mappers,
     unordered_map<int64_t, AnimationPlayer const> const& animation_players,
+    unordered_map<int64_t, Collider const> const& colliders,
     Navigator const& navigator, int64_t tiles_width, int64_t tiles_height) {
   vector<Character> characters;
   ifstream stream;
@@ -141,8 +143,8 @@ vector<Character> CharacterLoader::load(
       uint16_t characterset_index{0};
       uint16_t action_sprite_mapper_index{0};
       uint16_t animations_index{0};
-      uint16_t collision{0};  // FIXME: Make use.
-      uint8_t controller{0};  // FIXME: Make use.
+      uint16_t collision_index{0};  // FIXME: Make use.
+      uint8_t controller{0};        // FIXME: Make use.
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&x), kXFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -157,14 +159,15 @@ vector<Character> CharacterLoader::load(
       stream.read(reinterpret_cast<char*>(&animations_index),
                   kAnimationFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&collision), kCollisionFieldSize);
+      stream.read(reinterpret_cast<char*>(&collision_index),
+                  kCollisionFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&controller), kControllerFieldSize);
       characters.emplace_back(
           charactersets[characterset_index],
-          action_sprite_mapper.at(action_sprite_mapper_index),
-          animation_players.at(animations_index), navigator,
-          Position{x * tiles_width, y * tiles_height},
+          action_sprite_mappers.at(action_sprite_mapper_index),
+          animation_players.at(animations_index), colliders.at(collision_index),
+          navigator, Position{x * tiles_width, y * tiles_height},
           Rectangle{16, 16});  // FIXME: From collisions.
     }
     stream.close();

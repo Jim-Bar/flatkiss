@@ -6,6 +6,7 @@
 
 #include "action_sprite_mapper.hpp"
 #include "animation_player.hpp"
+#include "collider.hpp"
 #include "moving_direction.hpp"
 #include "navigator.hpp"
 #include "positioned_rectangle.hpp"
@@ -20,8 +21,9 @@ class Character {
  public:
   Character(Spriteset const& characterset,
             ActionSpriteMapper const& action_sprite_mapper,
-            AnimationPlayer const& animation_player, Navigator const& navigator,
-            Position const& initialPosition, Rectangle const& rectangle);
+            AnimationPlayer const& animation_player, Collider const& collider,
+            Navigator const& navigator, Position const& initialPosition,
+            Rectangle const& rectangle);
   Spriteset const& characterset() const;
   int64_t height() const;
   void moveBy(Vector const& desired_displacement);
@@ -36,6 +38,7 @@ class Character {
   AnimationPlayer const& animation_player_;
   int64_t animation_tick_{0};
   Spriteset const& characterset_;
+  Collider const& collider_;
   MovingDirection moving_direction_;
   Navigator const& navigator_;
   PositionedRectangle positioned_rectangle_;
@@ -57,9 +60,10 @@ class CharacterLoader {
       std::string const& characters_file_path,
       std::vector<Spriteset> const& charactersets,
       std::unordered_map<int64_t, ActionSpriteMapper const> const&
-          action_sprite_mapper,
+          action_sprite_mappers,
       std::unordered_map<int64_t, AnimationPlayer const> const&
           animation_players,
+      std::unordered_map<int64_t, Collider const> const& colliders,
       Navigator const& navigator, int64_t tiles_width, int64_t tiles_height);
 
  private:

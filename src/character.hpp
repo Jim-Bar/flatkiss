@@ -6,10 +6,10 @@
 
 #include "action_sprite_mapper.hpp"
 #include "animation_player.hpp"
-#include "collider.hpp"
 #include "moving_direction.hpp"
 #include "navigator.hpp"
-#include "positioned_rectangle.hpp"
+#include "positioned_solid.hpp"
+#include "rectangle.hpp"
 #include "spriteset.hpp"
 
 /**
@@ -21,14 +21,13 @@ class Character {
  public:
   Character(Spriteset const& characterset,
             ActionSpriteMapper const& action_sprite_mapper,
-            AnimationPlayer const& animation_player, Collider const& collider,
+            AnimationPlayer const& animation_player, Collision const& solid,
             Navigator const& navigator, Position const& initialPosition,
             Rectangle const& rectangle);
   Spriteset const& characterset() const;
   int64_t height() const;
   void moveBy(Vector const& desired_displacement);
   Position const& position() const;
-  Rectangle const& rectangle() const;
   uint16_t spriteIndex() const;
   int64_t width() const;
   int64_t x() const;
@@ -38,10 +37,10 @@ class Character {
   AnimationPlayer const& animation_player_;
   int64_t animation_tick_{0};
   Spriteset const& characterset_;
-  Collider const& collider_;
   MovingDirection moving_direction_;
   Navigator const& navigator_;
-  PositionedRectangle positioned_rectangle_;
+  PositionedSolid const positioned_solid_;
+  Rectangle const rectangle_;
   ActionSpriteMapper const& action_sprite_mapper_;
 
   Action currentAction() const;

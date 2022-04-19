@@ -50,10 +50,12 @@ add_executable(${PROJECT_NAME}
     src/navigator.hpp
     src/position.cpp
     src/position.hpp
-    src/positioned_rectangle.cpp
-    src/positioned_rectangle.hpp
     src/positioned_ellipse.cpp
     src/positioned_ellipse.hpp
+    src/positioned_rectangle.cpp
+    src/positioned_rectangle.hpp
+    src/positioned_solid.cpp
+    src/positioned_solid.hpp
     src/rectangle.cpp
     src/rectangle.hpp
     src/renderer.cpp

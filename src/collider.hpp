@@ -13,9 +13,6 @@ class Collider {
   /**
    * @brief Constructs a Collider from a map of collisions.
    *
-   * When this constructor returns, the passed map is empty because its values
-   * have been transferred to the collider.
-   *
    * @param collisions_per_tile_index Map of tile indices to their respective
    * collisions.
    */
@@ -34,6 +31,7 @@ class Collider {
    */
   bool collide(PositionedRectangle const& positioned_rectangle,
                uint16_t tile_index, Position const& tile_position) const;
+  Collision const& zero() const;  // FIXME: Delete.
 
  private:
   std::unordered_map<uint16_t, Collision> const collisions_per_tile_index_;

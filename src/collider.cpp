@@ -33,6 +33,10 @@ bool Collider::collide(PositionedRectangle const& positioned_rectangle,
   return collision.collidesWith(positioned_rectangle, tile_position);
 }
 
+Collision const& Collider::zero() const {
+  return collisions_per_tile_index_.at(0);
+}
+
 unordered_map<int64_t, Collider const> ColliderLoader::load(
     string const& file_path) {
   unordered_map<int64_t, Collider const> colliders_per_group;

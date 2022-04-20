@@ -24,8 +24,6 @@ class Collision {
    * @return PositionedRectangle const& The bounding box.
    */
   PositionedRectangle const& boundingBox() const;
-  bool collidesWith(PositionedRectangle const& positioned_rectangle,
-                    Position const& when_at_position) const;
   // TODO: Use an abstract class PositionedShape?
   std::vector<PositionedEllipse> const& positionedEllipses() const;
   std::vector<PositionedRectangle> const& positionedRectangles() const;

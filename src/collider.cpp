@@ -21,7 +21,7 @@ Collider::Collider(
     unordered_map<uint16_t, Collision>&& collisions_per_tile_index)
     : collisions_per_tile_index_{move(collisions_per_tile_index)} {}
 
-bool Collider::collide(PositionedRectangle const& positioned_rectangle,
+bool Collider::collide(PositionedSolid const& positioned_solid,
                        uint16_t tile_index,
                        Position const& tile_position) const {
   if (!collisions_per_tile_index_.contains(tile_index)) {
@@ -30,7 +30,8 @@ bool Collider::collide(PositionedRectangle const& positioned_rectangle,
 
   Collision const& collision{collisions_per_tile_index_.at(tile_index)};
 
-  return collision.collidesWith(positioned_rectangle, tile_position);
+  return positioned_solid.collidesWith(
+      PositionedSolid{tile_position, collision});
 }
 
 Collision const& Collider::zero() const {

@@ -1,5 +1,9 @@
 #include "positioned_solid.hpp"
 
+#include <utility>
+
+using std::move;
+
 PositionedSolid::PositionedSolid(Position const& position,
                                  Collision const& solid)
     : position_{position}, solid_{solid} {}
@@ -49,6 +53,24 @@ bool PositionedSolid::collidesWith(PositionedSolid const& other) const {
   return false;
 }
 
+int64_t PositionedSolid::height() const {
+  return solid_.boundingBox().height();
+}
+
+PositionedSolid PositionedSolid::operator+(Vector const& vector) const {
+  return PositionedSolid{position() + vector, solid_};
+}
+
 Position const& PositionedSolid::position() const { return position_; }
 
+void PositionedSolid::position(Position&& new_position) {
+  position_ = move(new_position);
+}
+
 Collision const& PositionedSolid::solid() const { return solid_; }
+
+int64_t PositionedSolid::width() const { return solid_.boundingBox().width(); }
+
+int64_t PositionedSolid::x() const { return position_.x(); }
+
+int64_t PositionedSolid::y() const { return position_.y(); }

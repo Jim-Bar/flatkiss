@@ -39,7 +39,7 @@ class Character {
   Spriteset const& characterset_;
   MovingDirection moving_direction_;
   Navigator const& navigator_;
-  PositionedSolid const positioned_solid_;
+  PositionedSolid positioned_solid_;
   Rectangle const rectangle_;
   ActionSpriteMapper const& action_sprite_mapper_;
 

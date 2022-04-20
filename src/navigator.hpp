@@ -3,17 +3,17 @@
 
 #include "collider.hpp"
 #include "level.hpp"
-#include "positioned_rectangle.hpp"
+#include "positioned_solid.hpp"
 #include "vector.hpp"
 
 /**
- * @brief Move a positioned rectangle to the closest desired location.
+ * @brief Move a positioned solid to the closest desired location.
  */
 class Navigator {
  public:
   Navigator(Collider const& collider, Level const& level, int64_t tiles_width,
             int64_t tiles_height);
-  Position moveBy(PositionedRectangle const& source_positioned_rectangle,
+  Position moveBy(PositionedSolid const& source_positioned_solid,
                   Vector const& desired_displacement) const;
 
  private:
@@ -37,9 +37,9 @@ class Navigator {
   static int64_t clampToBounds(int64_t object_position, int64_t object_size,
                                int64_t delta_value, int64_t upper_bound);
   // FIXME: Move to Collider?
-  bool collidesWithTiles(PositionedRectangle const& positioned_rectangle) const;
+  bool collidesWithTiles(PositionedSolid const& positioned_solid) const;
   Position findNearestPositionToDestination(
-      PositionedRectangle const& source_positioned_rectangle,
+      PositionedSolid const& source_positioned_solid,
       Position const& destination) const;
 };
 

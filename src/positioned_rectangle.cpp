@@ -93,8 +93,8 @@ PositionedRectangle PositionedRectangle::operator+(Vector const& vector) const {
 
 Position const& PositionedRectangle::position() const { return position_; }
 
-void PositionedRectangle::position(Position&& newPosition) {
-  position_ = move(newPosition);
+void PositionedRectangle::position(Position&& new_position) {
+  position_ = move(new_position);
 }
 
 Rectangle const& PositionedRectangle::rectangle() const { return rectangle_; }

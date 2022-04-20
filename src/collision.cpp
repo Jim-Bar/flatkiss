@@ -23,22 +23,6 @@ PositionedRectangle const& Collision::boundingBox() const {
   return bounding_box_;
 }
 
-// FIXME: Delete (use a PositionedSolid instead).
-bool Collision::collidesWith(PositionedRectangle const& positioned_rectangle,
-                             Position const& when_at_position) const {
-  for (auto ellipse : positioned_ellipses_) {  // FIXME: Is auto a reference?
-    if (positioned_rectangle.intersectsWith(when_at_position + ellipse)) {
-      return true;
-    }
-  }
-
-  return any_of(positioned_rectangles_,
-                [&](PositionedRectangle const& rectangle) {
-                  return positioned_rectangle.intersectsWith(when_at_position +
-                                                             rectangle);
-                });
-}
-
 PositionedRectangle Collision::computeBoundingBox(
     std::vector<PositionedEllipse> positioned_ellipses,
     std::vector<PositionedRectangle> positioned_rectangles) {

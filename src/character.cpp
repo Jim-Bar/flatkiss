@@ -49,9 +49,9 @@ int64_t Character::height() const { return rectangle_.height(); }
 
 void Character::moveBy(Vector const& desired_displacement) {
   Position final_position{
-      navigator_.moveBy(positioned_rectangle_, desired_displacement)};
+      navigator_.moveBy(positioned_solid_, desired_displacement)};
   updateMovingDirection(desired_displacement, final_position - position());
-  positioned_rectangle_.position(move(final_position));
+  positioned_solid_.position(move(final_position));
 }
 
 Position const& Character::position() const {
@@ -62,7 +62,8 @@ void Character::resetAnimationTick() {
   /* Not resetting to zero. Instead resetting to the last tick before which the
    * next animation is played. Consequently, next time the character moves, it
    * immediately starts animating. In particular, this prevents it from sliding
-   * for small moves.*/
+   * for small moves. If this causes issues in the future, it could be replaced
+   * by adding pre-animation, played a single time when the animation starts. */
   animation_tick_ =
       animation_player_.animationDurationForSpriteIndex(spriteIndex()) - 1;
 }

@@ -8,8 +8,12 @@ PositionedSolid::PositionedSolid(Position const& position,
                                  Collision const& solid)
     : position_{position}, solid_{solid} {}
 
-PositionedRectangle PositionedSolid::boundingBox() const {
+PositionedRectangle PositionedSolid::absoluteBoundingBox() const {
   return position_ + solid_.boundingBox();
+}
+
+PositionedRectangle PositionedSolid::boundingBox() const {
+  return solid_.boundingBox();
 }
 
 bool PositionedSolid::collidesWith(PositionedSolid const& other) const {
@@ -53,10 +57,6 @@ bool PositionedSolid::collidesWith(PositionedSolid const& other) const {
   return false;
 }
 
-int64_t PositionedSolid::height() const {
-  return solid_.boundingBox().height();
-}
-
 PositionedSolid PositionedSolid::operator+(Vector const& vector) const {
   return PositionedSolid{position() + vector, solid_};
 }
@@ -68,8 +68,6 @@ void PositionedSolid::position(Position&& new_position) {
 }
 
 Collision const& PositionedSolid::solid() const { return solid_; }
-
-int64_t PositionedSolid::width() const { return solid_.boundingBox().width(); }
 
 int64_t PositionedSolid::x() const { return position_.x(); }
 

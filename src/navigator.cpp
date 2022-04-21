@@ -27,15 +27,15 @@ int64_t Navigator::clampToBounds(int64_t object_position, int64_t object_size,
 
 bool Navigator::collidesWithTiles(
     PositionedSolid const& positioned_solid) const {
-  for (int64_t y(positioned_solid.boundingBox().y() / tiles_height_);
-       y <=
-       (positioned_solid.boundingBox().y() + positioned_solid.height() - 1) /
-           tiles_height_;
+  for (int64_t y(positioned_solid.absoluteBoundingBox().y() / tiles_height_);
+       y <= (positioned_solid.absoluteBoundingBox().y() +
+             positioned_solid.boundingBox().height() - 1) /
+                tiles_height_;
        y++) {
-    for (int64_t x(positioned_solid.boundingBox().x() / tiles_width_);
-         x <=
-         (positioned_solid.boundingBox().x() + positioned_solid.width() - 1) /
-             tiles_width_;
+    for (int64_t x(positioned_solid.absoluteBoundingBox().x() / tiles_width_);
+         x <= (positioned_solid.absoluteBoundingBox().x() +
+               positioned_solid.boundingBox().width() - 1) /
+                  tiles_width_;
          x++) {
       uint16_t tile_index(level_.tileIndex(x, y));
       if (collider_.collide(positioned_solid, tile_index,
@@ -59,8 +59,7 @@ Position Navigator::findNearestPositionToDestination(
    * not collide. Note that this implementation find the nearest position on the
    * line between the source and the destination. It will not return the actual
    * nearest position when it is outside of that line. */
-  Vector displacement{destination -
-                      source_positioned_solid.boundingBox().position()};
+  Vector displacement{destination - source_positioned_solid.position()};
   int64_t max_displacement{max(abs(displacement.dx()), abs(displacement.dy()))};
   for (int64_t step{1}; step <= max_displacement; step++) {
     Vector partial_displacement{(step * displacement.dx()) / max_displacement,
@@ -68,9 +67,9 @@ Position Navigator::findNearestPositionToDestination(
     if (collidesWithTiles(source_positioned_solid + partial_displacement)) {
       /* Return the last step for which the position does not collide (for the
        * first step this is the original position). */
-      return Position{source_positioned_solid.boundingBox().x() +
+      return Position{source_positioned_solid.x() +
                           ((step - 1) * displacement.dx()) / max_displacement,
-                      source_positioned_solid.boundingBox().y() +
+                      source_positioned_solid.y() +
                           ((step - 1) * displacement.dy()) / max_displacement};
     }
   }
@@ -85,19 +84,16 @@ Position Navigator::moveBy(PositionedSolid const& source_positioned_solid,
   /* First collide with the bounds of the level. Compute the resulting
    * (potential) destination. */
   Position destination{
-      // FIXME: Bwa, those substractions are ugly and not simple at all.
-      clampToBounds(source_positioned_solid.boundingBox().x(),
+      clampToBounds(source_positioned_solid.absoluteBoundingBox().x(),
                     source_positioned_solid.boundingBox().width(),
                     desired_displacement.dx(),
                     level_.widthInTiles() * tiles_width_) -
-          source_positioned_solid.boundingBox().x() +
-          source_positioned_solid.x(),
-      clampToBounds(source_positioned_solid.boundingBox().y(),
+          source_positioned_solid.boundingBox().x(),
+      clampToBounds(source_positioned_solid.absoluteBoundingBox().y(),
                     source_positioned_solid.boundingBox().height(),
                     desired_displacement.dy(),
                     level_.heightInTiles() * tiles_height_) -
-          source_positioned_solid.boundingBox().y() +
-          source_positioned_solid.y()};
+          source_positioned_solid.boundingBox().y()};
 
   /* Secondly, if the destination is the same as the current position, nothing
    * to do. */

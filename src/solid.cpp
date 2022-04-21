@@ -1,4 +1,4 @@
-#include "collision.hpp"
+#include "solid.hpp"
 
 #include <algorithm>
 #include <limits>
@@ -10,20 +10,17 @@ using std::min;
 using std::move;
 using std::numeric_limits;
 using std::vector;
-using std::ranges::any_of;
 
-Collision::Collision(vector<PositionedEllipse> positioned_ellipses,
-                     vector<PositionedRectangle> positioned_rectangles)
-    : bounding_box_{Collision::computeBoundingBox(positioned_ellipses,
-                                                  positioned_rectangles)},
+Solid::Solid(vector<PositionedEllipse> positioned_ellipses,
+             vector<PositionedRectangle> positioned_rectangles)
+    : bounding_box_{Solid::computeBoundingBox(positioned_ellipses,
+                                              positioned_rectangles)},
       positioned_ellipses_{move(positioned_ellipses)},
       positioned_rectangles_{move(positioned_rectangles)} {}
 
-PositionedRectangle const& Collision::boundingBox() const {
-  return bounding_box_;
-}
+PositionedRectangle const& Solid::boundingBox() const { return bounding_box_; }
 
-PositionedRectangle Collision::computeBoundingBox(
+PositionedRectangle Solid::computeBoundingBox(
     std::vector<PositionedEllipse> positioned_ellipses,
     std::vector<PositionedRectangle> positioned_rectangles) {
   // This assumes there is at least one item.
@@ -52,10 +49,10 @@ PositionedRectangle Collision::computeBoundingBox(
                              Rectangle{max_x - min_x, max_y - min_y}};
 }
 
-vector<PositionedEllipse> const& Collision::positionedEllipses() const {
+vector<PositionedEllipse> const& Solid::positionedEllipses() const {
   return positioned_ellipses_;
 }
 
-vector<PositionedRectangle> const& Collision::positionedRectangles() const {
+vector<PositionedRectangle> const& Solid::positionedRectangles() const {
   return positioned_rectangles_;
 }

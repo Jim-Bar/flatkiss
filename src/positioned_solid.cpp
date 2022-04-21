@@ -4,8 +4,7 @@
 
 using std::move;
 
-PositionedSolid::PositionedSolid(Position const& position,
-                                 Collision const& solid)
+PositionedSolid::PositionedSolid(Position const& position, Solid const& solid)
     : position_{position}, solid_{solid} {}
 
 PositionedRectangle PositionedSolid::absoluteBoundingBox() const {
@@ -67,7 +66,7 @@ void PositionedSolid::position(Position&& new_position) {
   position_ = move(new_position);
 }
 
-Collision const& PositionedSolid::solid() const { return solid_; }
+Solid const& PositionedSolid::solid() const { return solid_; }
 
 int64_t PositionedSolid::x() const { return position_.x(); }
 

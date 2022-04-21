@@ -3,8 +3,8 @@
 
 #include <unordered_map>
 
-#include "collision.hpp"
 #include "positioned_solid.hpp"
+#include "solid.hpp"
 
 /**
  * @brief Collides objects with tile indices.
@@ -12,12 +12,12 @@
 class Collider {
  public:
   /**
-   * @brief Constructs a Collider from a map of collisions.
+   * @brief Constructs a Collider from a map of solids.
    *
-   * @param collisions_per_tile_index Map of tile indices to their respective
-   * collisions.
+   * @param solids_per_tile_index Map of tile indices to their respective
+   * solids.
    */
-  Collider(std::unordered_map<uint16_t, Collision>&& collisions_per_tile_index);
+  Collider(std::unordered_map<uint16_t, Solid>&& solids_per_tile_index);
   /**
    * @brief Tells whether a positioned solid overlaps with the tile at the
    * given position.
@@ -31,14 +31,14 @@ class Collider {
    */
   bool collide(PositionedSolid const& positioned_solid, uint16_t tile_index,
                Position const& tile_position) const;
-  Collision const& zero() const;  // FIXME: Delete.
+  Solid const& zero() const;  // FIXME: Delete.
 
  private:
-  std::unordered_map<uint16_t, Collision> const collisions_per_tile_index_;
+  std::unordered_map<uint16_t, Solid> const solids_per_tile_index_;
 };
 
 /**
- * @brief Helper class for loading the collisions from a file.
+ * @brief Helper class for loading the solids from a file.
  */
 class ColliderLoader {
  public:
@@ -46,7 +46,7 @@ class ColliderLoader {
       std::string const& file_path);
 
  private:
-  static std::unordered_map<uint16_t, Collision> loadGroup(
+  static std::unordered_map<uint16_t, Solid> loadGroup(
       int64_t group_size, std::ifstream& collisions_stream);
 };
 

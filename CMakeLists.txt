@@ -32,8 +32,6 @@ add_executable(${PROJECT_NAME}
     src/character.hpp
     src/collider.cpp
     src/collider.hpp
-    src/collision.cpp
-    src/collision.hpp
     src/configuration.cpp
     src/configuration.hpp
     src/ellipse.cpp
@@ -60,6 +58,8 @@ add_executable(${PROJECT_NAME}
     src/rectangle.hpp
     src/renderer.cpp
     src/renderer.hpp
+    src/solid.cpp
+    src/solid.hpp
     src/spriteset.cpp
     src/spriteset.hpp
     src/vector.cpp

@@ -21,7 +21,7 @@ class Character {
  public:
   Character(Spriteset const& characterset,
             ActionSpriteMapper const& action_sprite_mapper,
-            AnimationPlayer const& animation_player, Collision const& solid,
+            AnimationPlayer const& animation_player, Solid const& solid,
             Navigator const& navigator, Position const& initialPosition,
             Rectangle const& rectangle);
   Spriteset const& characterset() const;

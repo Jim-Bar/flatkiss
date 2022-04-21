@@ -16,7 +16,7 @@ using std::vector;
 Character::Character(Spriteset const& characterset,
                      ActionSpriteMapper const& action_sprite_mapper,
                      AnimationPlayer const& animation_player,
-                     Collision const& solid, Navigator const& navigator,
+                     Solid const& solid, Navigator const& navigator,
                      Position const& initialPosition,
                      Rectangle const& rectangle)
     : characterset_{characterset},
@@ -136,8 +136,8 @@ vector<Character> CharacterLoader::load(
       uint16_t characterset_index{0};
       uint16_t action_sprite_mapper_index{0};
       uint16_t animations_index{0};
-      uint16_t collision_index{0};  // FIXME: Make use.
-      uint8_t controller{0};        // FIXME: Make use.
+      uint16_t collision_index{0};
+      uint8_t controller{0};  // FIXME: Make use.
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&x), kXFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)

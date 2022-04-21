@@ -1,12 +1,12 @@
-#ifndef SOLID_HPP_INCLUDED
-#define SOLID_HPP_INCLUDED
+#ifndef POSITIONED_SOLID_HPP_INCLUDED
+#define POSITIONED_SOLID_HPP_INCLUDED
 
-#include "collision.hpp"
 #include "position.hpp"
+#include "solid.hpp"
 
 class PositionedSolid {
  public:
-  PositionedSolid(Position const& position, Collision const& solid);
+  PositionedSolid(Position const& position, Solid const& solid);
   /**
    * @brief Return the bounding box of the solid moved by the position of the
    * solid.
@@ -25,13 +25,13 @@ class PositionedSolid {
   PositionedSolid operator+(Vector const& vector) const;
   Position const& position() const;
   void position(Position&& new_position);
-  Collision const& solid() const;
+  Solid const& solid() const;
   int64_t x() const;
   int64_t y() const;
 
  private:
   Position position_;
-  Collision const solid_;
+  Solid const solid_;
 };
 
 #endif

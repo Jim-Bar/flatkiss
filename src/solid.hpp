@@ -1,5 +1,5 @@
-#ifndef COLLISION_HPP_INCLUDED
-#define COLLISION_HPP_INCLUDED
+#ifndef SOLID_HPP_INCLUDED
+#define SOLID_HPP_INCLUDED
 
 #include <string>
 #include <unordered_map>
@@ -8,18 +8,17 @@
 #include "positioned_ellipse.hpp"
 #include "positioned_rectangle.hpp"
 
-// FIXME: Rename to `Solid`.
 /**
- * @brief An area made up of several rectangles and which cannot be crossed.
+ * @brief An area made up of several shapes and which cannot be crossed.
  */
-class Collision {
+class Solid {
  public:
-  Collision(std::vector<PositionedEllipse> positioned_ellipses,
-            std::vector<PositionedRectangle> positioned_rectangles);
+  Solid(std::vector<PositionedEllipse> positioned_ellipses,
+        std::vector<PositionedRectangle> positioned_rectangles);
   /**
    * @brief Return the minimal rectangle containing all the shapes and
-   * positioned inside the collision at the location (x, y) defined by the
-   * smallest x-position (respectively y-position) among all the shapes.
+   * positioned inside the solid at the location (x, y) defined by the smallest
+   * x-position (respectively y-position) among all the shapes.
    *
    * @return PositionedRectangle const& The bounding box.
    */

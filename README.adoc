@@ -84,7 +84,7 @@ As many characters can be defined as one like. A character is defined like this:
 . Index of the characterset to use (two bytes)
 . Index of the group of sprite indices to use with the characterset (two bytes)
 . Index of the character animation to use with the characterset (two bytes)
-. Index of the character collision to use (two bytes)
+. Index of the solid to use (two bytes)
 . Index of the controller to use (one byte)
 
 Just append the characters for adding more than one.

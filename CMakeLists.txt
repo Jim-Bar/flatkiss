@@ -62,6 +62,8 @@ add_executable(${PROJECT_NAME}
     src/solid.hpp
     src/spriteset.cpp
     src/spriteset.hpp
+    src/tile_solid_mapper.cpp
+    src/tile_solid_mapper.hpp
     src/vector.cpp
     src/vector.hpp
 )

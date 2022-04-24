@@ -4,10 +4,14 @@
 
 using std::abs;
 using std::max;
+using std::unordered_map;
 
-Navigator::Navigator(Collider const& collider, Level const& level,
-                     int64_t tiles_width, int64_t tiles_height)
-    : collider_{collider},
+Navigator::Navigator(TileSolidMapper const& tile_solid_mapper,
+                     unordered_map<int64_t, Solid const>& solids,
+                     Level const& level, int64_t tiles_width,
+                     int64_t tiles_height)
+    : tile_solid_mapper_{tile_solid_mapper},
+      solids_{solids},
       level_{level},
       tiles_width_{tiles_width},
       tiles_height_{tiles_height} {}
@@ -38,8 +42,9 @@ bool Navigator::collidesWithTiles(
                   tiles_width_;
          x++) {
       uint16_t tile_index(level_.tileIndex(x, y));
-      if (collider_.collide(positioned_solid, tile_index,
-                            Position{x * tiles_width_, y * tiles_height_})) {
+      if (solidCollidesWithTileAtPosition(
+              positioned_solid, tile_index,
+              Position{x * tiles_width_, y * tiles_height_})) {
         return true;
       }
     }
@@ -143,4 +148,22 @@ Position Navigator::moveBy(PositionedSolid const& source_positioned_solid,
 
   // But if there is not collision, just go to the final destination.
   return destination;
+}
+
+bool Navigator::solidCollidesWithTileAtPosition(
+    PositionedSolid const& positioned_solid, uint16_t tile_index,
+    Position const& position) const {
+  if (tile_solid_mapper_.contains(tile_index)) {
+    return positioned_solid.collidesWith(
+        solidForTileIndexAtPosition(tile_index, position));
+  }
+
+  return false;
+}
+
+PositionedSolid Navigator::solidForTileIndexAtPosition(
+    uint16_t tile_index, Position const& position) const {
+  return PositionedSolid{
+      position,
+      solids_.at(tile_solid_mapper_.solidIndexForTileIndex(tile_index))};
 }

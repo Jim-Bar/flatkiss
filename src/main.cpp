@@ -21,6 +21,7 @@
 #include "positioned_rectangle.hpp"
 #include "renderer.hpp"
 #include "spriteset.hpp"
+#include "tile_solid_mapper.hpp"
 #include "vector.hpp"
 
 using std::cerr;
@@ -130,17 +131,24 @@ int main(int argc, char* argv[]) {
       AnimationPlayerLoader::load(configuration.animationsPath())};
   unordered_map<int64_t, ActionSpriteMapper const> action_sprite_mappers{
       ActionSpriteMapperLoader::load(configuration.indicesPath())};
+  // FIXME: Hardcoded path.
+  unordered_map<int64_t, TileSolidMapper const> tile_solid_mappers{
+      TileSolidMapperLoader::load("assets/tile_solid_map.bin")};
   unordered_map<int64_t, Collider const> colliders{
       ColliderLoader::load(configuration.collisionsPath())};
+  // FIXME: Hardcoded path.
+  unordered_map<int64_t, Solid const> solids{
+      SolidLoader::load("assets/solids.bin")};
 
   bool quit = false;
   SDL_Event event;
   KeyboardState keyboard_state;
-  Navigator navigator{colliders.at(0), *level, tileset.spritesWidth(),
-                      tileset.spritesHeight()};
+  // FIXME: Hardcoded first mapper.
+  Navigator navigator{tile_solid_mappers.at(0), solids, *level,
+                      tileset.spritesWidth(), tileset.spritesHeight()};
   vector<Character> characters{CharacterLoader::load(
       configuration.charactersPath(), charactersets, action_sprite_mappers,
-      animation_players, colliders, navigator, tileset.spritesWidth(),
+      animation_players, solids, navigator, tileset.spritesWidth(),
       tileset.spritesHeight())};
   int64_t tick(0);
   while (!quit) {

@@ -6,6 +6,7 @@
 #include "positioned_solid.hpp"
 #include "solid.hpp"
 
+// FIXME: Delete with everything related.
 /**
  * @brief Collides objects with tile indices.
  */

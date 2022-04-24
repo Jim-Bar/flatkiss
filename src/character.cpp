@@ -124,7 +124,7 @@ vector<Character> CharacterLoader::load(
     unordered_map<int64_t, ActionSpriteMapper const> const&
         action_sprite_mappers,
     unordered_map<int64_t, AnimationPlayer const> const& animation_players,
-    unordered_map<int64_t, Collider const> const& colliders,
+    unordered_map<int64_t, Solid const> const& solids,
     Navigator const& navigator, int64_t tiles_width, int64_t tiles_height) {
   vector<Character> characters;
   ifstream stream;
@@ -136,7 +136,7 @@ vector<Character> CharacterLoader::load(
       uint16_t characterset_index{0};
       uint16_t action_sprite_mapper_index{0};
       uint16_t animations_index{0};
-      uint16_t collision_index{0};
+      uint16_t solid_index{0};
       uint8_t controller{0};  // FIXME: Make use.
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&x), kXFieldSize);
@@ -152,16 +152,14 @@ vector<Character> CharacterLoader::load(
       stream.read(reinterpret_cast<char*>(&animations_index),
                   kAnimationFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&collision_index),
-                  kCollisionFieldSize);
+      stream.read(reinterpret_cast<char*>(&solid_index), kCollisionFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&controller), kControllerFieldSize);
       characters.emplace_back(
           charactersets[characterset_index],
           action_sprite_mappers.at(action_sprite_mapper_index),
-          animation_players.at(animations_index),
-          colliders.at(collision_index).zero(), navigator,
-          Position{x * tiles_width, y * tiles_height},
+          animation_players.at(animations_index), solids.at(solid_index),
+          navigator, Position{x * tiles_width, y * tiles_height},
           Rectangle{16, 16});  // FIXME: From collisions.
     }
     stream.close();

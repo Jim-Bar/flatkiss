@@ -62,7 +62,7 @@ class CharacterLoader {
           action_sprite_mappers,
       std::unordered_map<int64_t, AnimationPlayer const> const&
           animation_players,
-      std::unordered_map<int64_t, Collider const> const& colliders,
+      std::unordered_map<int64_t, Solid const> const& solids,
       Navigator const& navigator, int64_t tiles_width, int64_t tiles_height);
 
  private:

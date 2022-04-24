@@ -1,9 +1,9 @@
 #ifndef NAVIGATOR_HPP_INCLUDED
 #define NAVIGATOR_HPP_INCLUDED
 
-#include "collider.hpp"
 #include "level.hpp"
 #include "positioned_solid.hpp"
+#include "tile_solid_mapper.hpp"
 #include "vector.hpp"
 
 /**
@@ -11,14 +11,16 @@
  */
 class Navigator {
  public:
-  Navigator(Collider const& collider, Level const& level, int64_t tiles_width,
-            int64_t tiles_height);
+  Navigator(TileSolidMapper const& tile_solid_mapper,
+            std::unordered_map<int64_t, Solid const>& solids,
+            Level const& level, int64_t tiles_width, int64_t tiles_height);
   Position moveBy(PositionedSolid const& source_positioned_solid,
                   Vector const& desired_displacement) const;
 
  private:
-  Collider const& collider_;
   Level const& level_;
+  std::unordered_map<int64_t, Solid const>& solids_;
+  TileSolidMapper const& tile_solid_mapper_;
   int64_t const tiles_height_;
   int64_t const tiles_width_;
 
@@ -36,11 +38,16 @@ class Navigator {
    */
   static int64_t clampToBounds(int64_t object_position, int64_t object_size,
                                int64_t delta_value, int64_t upper_bound);
-  // FIXME: Move to Collider?
   bool collidesWithTiles(PositionedSolid const& positioned_solid) const;
   Position findNearestPositionToDestination(
       PositionedSolid const& source_positioned_solid,
       Position const& destination) const;
+  // FIXME: Think more about those two methods (improvements?).
+  bool solidCollidesWithTileAtPosition(PositionedSolid const& positioned_solid,
+                                       uint16_t tile_index,
+                                       Position const& position) const;
+  PositionedSolid solidForTileIndexAtPosition(uint16_t tile_index,
+                                              Position const& position) const;
 };
 
 #endif

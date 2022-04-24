@@ -37,4 +37,16 @@ class Solid {
       std::vector<PositionedRectangle> positioned_rectangles);
 };
 
+/**
+ * @brief Helper class for loading the solids from a file.
+ */
+class SolidLoader {
+ public:
+  static std::unordered_map<int64_t, Solid const> load(
+      std::string const& file_path);
+
+ private:
+  static Solid loadSolid(int64_t solid_size, std::ifstream& solids_stream);
+};
+
 #endif

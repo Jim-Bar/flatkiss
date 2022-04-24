@@ -2,10 +2,11 @@
 
 import os
 import re
+import sys
 
-with open('indices.bin', 'wb') as indices_file:
+with open('{}.bin'.format(sys.argv[1]), 'wb') as indices_file:
     for file_name in os.listdir():
-        if re.match(r'indices_\d+.txt', file_name):
+        if re.match(r'{}_\d+.txt'.format(sys.argv[1]), file_name):
             with open(file_name) as indices_text_file:
                 action_indices_pairs = indices_text_file.readlines()
 

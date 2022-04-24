@@ -1,14 +1,22 @@
 #include "solid.hpp"
 
 #include <algorithm>
+#include <fstream>
 #include <limits>
 #include <utility>
 #include <vector>
 
+using std::forward_as_tuple;
+using std::ifstream;
+using std::ios;
+using std::istream;
 using std::max;
 using std::min;
 using std::move;
 using std::numeric_limits;
+using std::piecewise_construct;
+using std::string;
+using std::unordered_map;
 using std::vector;
 
 Solid::Solid(vector<PositionedEllipse> positioned_ellipses,
@@ -55,4 +63,50 @@ vector<PositionedEllipse> const& Solid::positionedEllipses() const {
 
 vector<PositionedRectangle> const& Solid::positionedRectangles() const {
   return positioned_rectangles_;
+}
+
+unordered_map<int64_t, Solid const> SolidLoader::load(string const& file_path) {
+  unordered_map<int64_t, Solid const> solids_per_index;
+  ifstream stream;
+  stream.open(file_path, ios::in | ios::binary);
+  if (stream.is_open()) {
+    while (stream.peek() != istream::traits_type::eof()) {
+      uint16_t solid_index{0};
+      uint16_t solid_size{0};
+      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+      stream.read(reinterpret_cast<char*>(&solid_index), 2);
+      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+      stream.read(reinterpret_cast<char*>(&solid_size), 2);
+      solids_per_index.emplace(
+          piecewise_construct, forward_as_tuple(solid_index),
+          forward_as_tuple(move(loadSolid(solid_size, stream))));
+    }
+    stream.close();
+  }  // FIXME: Raise exception.
+
+  return solids_per_index;
+}
+
+Solid SolidLoader::loadSolid(int64_t solid_size, ifstream& solids_stream) {
+  vector<PositionedRectangle> rectangles;
+  vector<PositionedEllipse> ellipses;
+  for (int64_t i{0}; i < solid_size; i++) {
+    uint8_t collision_type{static_cast<uint8_t>(solids_stream.get())};
+    Position position{static_cast<uint8_t>(solids_stream.get()),
+                      static_cast<uint8_t>(solids_stream.get())};
+    switch (collision_type) {
+      case 0:  // The shape is a positioned rectangle.
+        rectangles.emplace_back(
+            position, Rectangle{static_cast<uint8_t>(solids_stream.get()),
+                                static_cast<uint8_t>(solids_stream.get())});
+        break;
+      case 1:  // The shape is a positioned ellipse.
+        ellipses.emplace_back(
+            position, Ellipse{static_cast<uint8_t>(solids_stream.get()),
+                              static_cast<uint8_t>(solids_stream.get())});
+        break;
+    }
+  }
+
+  return Solid{ellipses, rectangles};
 }

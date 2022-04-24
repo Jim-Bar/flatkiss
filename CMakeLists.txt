@@ -30,8 +30,6 @@ add_executable(${PROJECT_NAME}
     src/animation_player.hpp
     src/character.cpp
     src/character.hpp
-    src/collider.cpp
-    src/collider.hpp
     src/configuration.cpp
     src/configuration.hpp
     src/ellipse.cpp

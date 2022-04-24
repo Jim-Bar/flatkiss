@@ -5,7 +5,9 @@
 #include <string>
 #include <unordered_map>
 
-// FIXME: Merge mappers in the same class?
+// FIXME: Merge mappers in the same class? Or make it a TileProperties or
+// something which directly returns solids instead of indices. A level would use
+// a particular set of tile properties.
 /**
  * @brief Maps tile indices to solid indices.
  */

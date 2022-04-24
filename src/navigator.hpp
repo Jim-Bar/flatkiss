@@ -42,7 +42,6 @@ class Navigator {
   Position findNearestPositionToDestination(
       PositionedSolid const& source_positioned_solid,
       Position const& destination) const;
-  // FIXME: Think more about those two methods (improvements?).
   bool solidCollidesWithTileAtPosition(PositionedSolid const& positioned_solid,
                                        uint16_t tile_index,
                                        Position const& position) const;

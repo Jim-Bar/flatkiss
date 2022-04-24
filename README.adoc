@@ -45,7 +45,8 @@ Then come the animations concatenated together.
 
 === Collisions
 
-Collisions are either rectangles or ellipses which cannot be crossed.
+Collisions are either rectangles or ellipses which cannot be crossed. There are gathered in groups making up solids. A
+solid is a collection of those shapes which cannot be crossed.
 
 Rectangle collisions are delimitated by an origin (x, y) at the top left of the sprite, and a size (width, height). They
 are associated with sprites indices. For instance, if sprites are 16x16 pixels, the collision of origin (12, 12) and
@@ -62,18 +63,23 @@ can overflow the sprite. *However*, the portion outside of the sprite will be ig
 
 A collision is stored as:
 
-. First two bytes: sprite index
+. First two bytes: solid index
 . Next byte: collision type (0 for rectangle, 1 for circle)
 . *For a rectangle*: on the four next bytes (each on one byte): x, y, width, height
 . *For an ellipse*: on the four next bytes (each on one byte): x center, y center, x radius, y radius
 
 All of those are interpreted as positive integers.
 
-TIP: Several collisions can be added for a single sprite index. Every one of those will be checked to determine whether
-an object collides with the sprite.
+TIP: Several collisions can be added for a single solid index. Every one of those will be checked to determine whether
+an object collides with the solid.
 
-A group of collisions starts with the index on two bytes. Then the number of collisions making up the group on two
-bytes. Then come the collisions concatenated together.
+A group of solids starts with the index on two bytes. Then the number of solids making up the group on two bytes. Then
+come the solids (meaning all the collisions making up all the solids of that group) concatenated together.
+
+==== Tiles and solids
+
+Either nothing is specified for a tile (it has no solid, i.e. never collides with anything) or it maps to the index of
+the solid to use. This is first the index of the tile on two bytes, followed by the index of the solid on two bytes.
 
 === Characters
 

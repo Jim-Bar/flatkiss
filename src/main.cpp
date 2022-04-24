@@ -13,7 +13,6 @@
 #include "action_sprite_mapper.hpp"
 #include "animation_player.hpp"
 #include "character.hpp"
-#include "collider.hpp"
 #include "configuration.hpp"
 #include "keyboard_state.hpp"
 #include "level.hpp"
@@ -134,8 +133,6 @@ int main(int argc, char* argv[]) {
   // FIXME: Hardcoded path.
   unordered_map<int64_t, TileSolidMapper const> tile_solid_mappers{
       TileSolidMapperLoader::load("assets/tile_solid_map.bin")};
-  unordered_map<int64_t, Collider const> colliders{
-      ColliderLoader::load(configuration.collisionsPath())};
   // FIXME: Hardcoded path.
   unordered_map<int64_t, Solid const> solids{
       SolidLoader::load("assets/solids.bin")};

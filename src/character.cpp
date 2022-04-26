@@ -4,12 +4,15 @@
 #include <set>
 #include <utility>
 
+#include "character_controller.hpp"
+
 using std::ifstream;
 using std::ios;
 using std::istream;
 using std::move;
 using std::set;
 using std::string;
+using std::tuple;
 using std::unordered_map;
 using std::vector;
 
@@ -112,13 +115,15 @@ int64_t Character::x() const { return position().x(); }
 
 int64_t Character::y() const { return position().y(); }
 
-vector<Character> CharacterLoader::load(
+tuple<vector<KeyboardCharacterController>, vector<Character>>
+CharacterLoader::load(
     string const& characters_file_path, vector<Spriteset> const& charactersets,
     unordered_map<int64_t, ActionSpriteMapper const> const&
         action_sprite_mappers,
     unordered_map<int64_t, AnimationPlayer const> const& animation_players,
     unordered_map<int64_t, Solid const> const& solids,
     Navigator const& navigator, int64_t tiles_width, int64_t tiles_height) {
+  vector<KeyboardCharacterController> character_controllers;
   vector<Character> characters;
   ifstream stream;
   stream.open(characters_file_path, ios::in | ios::binary);
@@ -130,7 +135,7 @@ vector<Character> CharacterLoader::load(
       uint16_t action_sprite_mapper_index{0};
       uint16_t animations_index{0};
       uint16_t solid_index{0};
-      uint8_t controller{0};  // FIXME: Make use.
+      uint8_t controller_type{0};
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&x), kXFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -147,15 +152,19 @@ vector<Character> CharacterLoader::load(
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&solid_index), kCollisionFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&controller), kControllerFieldSize);
+      stream.read(reinterpret_cast<char*>(&controller_type),
+                  kControllerFieldSize);
       characters.emplace_back(
           charactersets[characterset_index],
           action_sprite_mappers.at(action_sprite_mapper_index),
           animation_players.at(animations_index), solids.at(solid_index),
           navigator, Position{x * tiles_width, y * tiles_height});
+      if (controller_type == 0) {
+        character_controllers.emplace_back(characters.back());
+      }  // FIXME: Raise exception.
     }
     stream.close();
   }  // FIXME: Raise exception.
 
-  return characters;
+  return {character_controllers, characters};
 }

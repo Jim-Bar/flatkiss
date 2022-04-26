@@ -1,6 +1,7 @@
 #ifndef CHARACTER_HPP_INCLUDED
 #define CHARACTER_HPP_INCLUDED
 
+#include <tuple>
 #include <unordered_map>
 #include <vector>
 
@@ -11,6 +12,10 @@
 #include "positioned_solid.hpp"
 #include "rectangle.hpp"
 #include "spriteset.hpp"
+
+// Forward declaration to break the cycle KeyboardCharacterController /
+// Character;
+class KeyboardCharacterController;
 
 /**
  * @brief A character in the level.
@@ -51,15 +56,16 @@ class Character {
  */
 class CharacterLoader {
  public:
-  static std::vector<Character> load(
-      std::string const& characters_file_path,
-      std::vector<Spriteset> const& charactersets,
-      std::unordered_map<int64_t, ActionSpriteMapper const> const&
-          action_sprite_mappers,
-      std::unordered_map<int64_t, AnimationPlayer const> const&
-          animation_players,
-      std::unordered_map<int64_t, Solid const> const& solids,
-      Navigator const& navigator, int64_t tiles_width, int64_t tiles_height);
+  static std::tuple<std::vector<KeyboardCharacterController>,
+                    std::vector<Character>>
+  load(std::string const& characters_file_path,
+       std::vector<Spriteset> const& charactersets,
+       std::unordered_map<int64_t, ActionSpriteMapper const> const&
+           action_sprite_mappers,
+       std::unordered_map<int64_t, AnimationPlayer const> const&
+           animation_players,
+       std::unordered_map<int64_t, Solid const> const& solids,
+       Navigator const& navigator, int64_t tiles_width, int64_t tiles_height);
 
  private:
   static int64_t constexpr kAnimationFieldSize{2};

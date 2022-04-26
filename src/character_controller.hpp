@@ -1,0 +1,22 @@
+#ifndef CHARACTER_CONTROLLER_HPP_INCLUDED
+#define CHARACTER_CONTROLLER_HPP_INCLUDED
+
+#include <memory>
+
+#include "character.hpp"
+#include "keyboard_state.hpp"
+#include "level.hpp"
+
+class KeyboardCharacterController {
+ public:
+  KeyboardCharacterController(Character& character);
+  Character const& character() const;
+  void handleKeyboardEvent(KeyboardState const& keyboard_state,
+                           std::unique_ptr<Level const>& level);
+
+ private:
+  Character& character_;
+  static int64_t constexpr kSpeedInPixels{1};
+};
+
+#endif

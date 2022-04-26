@@ -30,6 +30,7 @@ class Level {
  */
 class LevelLoader {
  public:
+  // FIXME: return by value.
   static std::unique_ptr<Level const> load(std::string const& file_path,
                                            int64_t width_in_tiles,
                                            int64_t height_in_tiles);

@@ -13,6 +13,7 @@
 #include "action_sprite_mapper.hpp"
 #include "animation_player.hpp"
 #include "character.hpp"
+#include "character_controller.hpp"
 #include "configuration.hpp"
 #include "keyboard_state.hpp"
 #include "level.hpp"
@@ -32,30 +33,11 @@ using std::unordered_map;
 using std::vector;
 
 int64_t const kCharacterSizePixels(16);
-int64_t const kSpeedInPixels(1);
 int64_t const kViewportSize(160);
 
-void handleKeyboardEvent(KeyboardState const& keyboard_state,
-                         Character& character, PositionedRectangle& viewport,
-                         unique_ptr<Level const>& level, int64_t tiles_width,
-                         int64_t tiles_height) {
-  int64_t dx{0};
-  int64_t dy{0};
-  if (keyboard_state.isPressed(SDL_SCANCODE_UP)) {
-    dy -= kSpeedInPixels;
-  }
-  if (keyboard_state.isPressed(SDL_SCANCODE_DOWN)) {
-    dy += kSpeedInPixels;
-  }
-  if (keyboard_state.isPressed(SDL_SCANCODE_LEFT)) {
-    dx -= kSpeedInPixels;
-  }
-  if (keyboard_state.isPressed(SDL_SCANCODE_RIGHT)) {
-    dx += kSpeedInPixels;
-  }
-
-  character.moveBy(Vector{dx, dy});
-
+void updateViewport(Character const& character, PositionedRectangle& viewport,
+                    unique_ptr<Level const>& level, int64_t tiles_width,
+                    int64_t tiles_height) {
   if (character.y() < viewport.rectangle().height() / 2 -
                           character.characterset().spritesHeight() / 2) {
     viewport.y(0);
@@ -141,7 +123,11 @@ int main(int argc, char* argv[]) {
   // FIXME: Hardcoded first mapper.
   Navigator navigator{tile_solid_mappers.at(0), solids, *level,
                       tileset.spritesWidth(), tileset.spritesHeight()};
-  vector<Character> characters{CharacterLoader::load(
+  // FIXME: This makes the program crash later when accessing
+  // character_controllers or characters. Because it seems the memory is
+  // released automatically (probably returning a hidden reference of some
+  // sort).
+  auto [character_controllers, characters]{CharacterLoader::load(
       configuration.charactersPath(), charactersets, action_sprite_mappers,
       animation_players, solids, navigator, tileset.spritesWidth(),
       tileset.spritesHeight())};
@@ -160,10 +146,11 @@ int main(int argc, char* argv[]) {
                               event.key.state == SDL_PRESSED);
       }
     }
-    // FIXME: Not all characters are keyboard-controlled.
-    for (Character& character : characters) {
-      handleKeyboardEvent(keyboard_state, character, viewport, level,
-                          tileset.spritesWidth(), tileset.spritesHeight());
+    for (KeyboardCharacterController& controller : character_controllers) {
+      controller.handleKeyboardEvent(keyboard_state, level);
+      // FIXME: Update the view port for a designated character.
+      updateViewport(controller.character(), viewport, level,
+                     tileset.spritesWidth(), tileset.spritesHeight());
     }
   }
 

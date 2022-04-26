@@ -32,6 +32,8 @@ add_executable(${PROJECT_NAME}
     src/cardinal_direction.hpp
     src/character.cpp
     src/character.hpp
+    src/character_controller.cpp
+    src/character_controller.hpp
     src/configuration.cpp
     src/configuration.hpp
     src/ellipse.cpp

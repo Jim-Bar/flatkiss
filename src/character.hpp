@@ -6,7 +6,7 @@
 
 #include "action_sprite_mapper.hpp"
 #include "animation_player.hpp"
-#include "moving_direction.hpp"
+#include "cardinal_direction.hpp"
 #include "navigator.hpp"
 #include "positioned_solid.hpp"
 #include "rectangle.hpp"
@@ -37,7 +37,7 @@ class Character {
   AnimationPlayer const& animation_player_;
   int64_t animation_tick_{0};
   Spriteset const& characterset_;
-  MovingDirection moving_direction_;
+  CardinalDirection facing_direction_;
   Navigator const& navigator_;
   PositionedSolid positioned_solid_;
   Rectangle const rectangle_;
@@ -45,9 +45,9 @@ class Character {
 
   Action currentAction() const;
   void resetAnimationTick();
-  void updateMovingDirection(Vector const& desired_displacement,
+  void updateFacingDirection(Vector const& desired_displacement,
                              Vector const& actual_displacement);
-  void updateMovingDirectionForDisplacement(Vector const& displacement);
+  void updateFacingDirectionForDisplacement(Vector const& displacement);
 };
 
 /**

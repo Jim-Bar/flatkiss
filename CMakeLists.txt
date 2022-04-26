@@ -28,6 +28,8 @@ add_executable(${PROJECT_NAME}
     src/animation.hpp
     src/animation_player.cpp
     src/animation_player.hpp
+    src/cardinal_direction.cpp
+    src/cardinal_direction.hpp
     src/character.cpp
     src/character.hpp
     src/configuration.cpp
@@ -40,8 +42,6 @@ add_executable(${PROJECT_NAME}
     src/level.hpp
     src/main.cpp
     src/main.hpp
-    src/moving_direction.cpp
-    src/moving_direction.hpp
     src/navigator.cpp
     src/navigator.hpp
     src/position.cpp

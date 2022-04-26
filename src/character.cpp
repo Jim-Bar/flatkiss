@@ -22,7 +22,7 @@ Character::Character(Spriteset const& characterset,
     : characterset_{characterset},
       action_sprite_mapper_{action_sprite_mapper},
       animation_player_{animation_player},
-      moving_direction_{MovingDirection::kDown},
+      facing_direction_{CardinalDirection::kSouth},
       navigator_{navigator},
       positioned_solid_{initialPosition, solid},
       rectangle_{rectangle} {}
@@ -30,15 +30,14 @@ Character::Character(Spriteset const& characterset,
 Spriteset const& Character::characterset() const { return characterset_; }
 
 Action Character::currentAction() const {
-  // FIXME: On the necessity of MovingDirection?
-  switch (moving_direction_) {
-    case kLeft:
+  switch (facing_direction_) {
+    case kWest:
       return Action::kWalkLeft;
-    case kDown:
+    case kSouth:
       return Action::kWalkDown;
-    case kRight:
+    case kEast:
       return Action::kWalkRight;
-    case kUp:
+    case kNorth:
       return Action::kWalkUp;
     default:
       return Action::kWalkLeft;  // FIXME.
@@ -50,7 +49,7 @@ int64_t Character::height() const { return rectangle_.height(); }
 void Character::moveBy(Vector const& desired_displacement) {
   Position final_position{
       navigator_.moveBy(positioned_solid_, desired_displacement)};
-  updateMovingDirection(desired_displacement, final_position - position());
+  updateFacingDirection(desired_displacement, final_position - position());
   positioned_solid_.position(move(final_position));
 }
 
@@ -74,41 +73,41 @@ uint16_t Character::spriteIndex() const {
       animation_tick_);
 }
 
-void Character::updateMovingDirection(Vector const& desired_displacement,
+void Character::updateFacingDirection(Vector const& desired_displacement,
                                       Vector const& actual_displacement) {
   /* Using the desired displacement as fallback ensures that when the character
    * is blocked, it still turns toward the tried direction. */
   if (actual_displacement != Vector::kZero) {
     animation_tick_++;
-    updateMovingDirectionForDisplacement(actual_displacement);
+    updateFacingDirectionForDisplacement(actual_displacement);
   } else {
     resetAnimationTick();
-    updateMovingDirectionForDisplacement(desired_displacement);
+    updateFacingDirectionForDisplacement(desired_displacement);
   }
 }
 
-void Character::updateMovingDirectionForDisplacement(
+void Character::updateFacingDirectionForDisplacement(
     Vector const& displacement) {
-  set<MovingDirection> moving_directions;
+  set<CardinalDirection> facing_directions;
   if (displacement.dx() < 0) {
-    moving_directions.insert(MovingDirection::kLeft);
+    facing_directions.insert(CardinalDirection::kWest);
   } else if (displacement.dx() > 0) {
-    moving_directions.insert(MovingDirection::kRight);
+    facing_directions.insert(CardinalDirection::kEast);
   }
 
   if (displacement.dy() < 0) {
-    moving_directions.insert(MovingDirection::kUp);
+    facing_directions.insert(CardinalDirection::kNorth);
   } else if (displacement.dy() > 0) {
-    moving_directions.insert(MovingDirection::kDown);
+    facing_directions.insert(CardinalDirection::kSouth);
   }
 
   /* Favour the current moving direction if it is still active. Otherwise pick a
    * random direction. Because direction changes are sequential, picking a
    * "random" direction is always right. */
-  if (!moving_directions.empty() &&
-      !moving_directions.contains(moving_direction_)) {
+  if (!facing_directions.empty() &&
+      !facing_directions.contains(facing_direction_)) {
     // The direction changed.
-    moving_direction_ = *moving_directions.begin();
+    facing_direction_ = *facing_directions.begin();
     resetAnimationTick();
   }
 }

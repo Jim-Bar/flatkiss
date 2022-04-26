@@ -14,6 +14,8 @@ Configuration::Configuration(string const& file_path) {
 
   /* The values are retrieved at construction time to fail early if something is
    * wrong. */
+  inipp::get_value(ini.sections["ActionSpriteMaps"], "path",
+                   action_sprite_maps_path_);
   inipp::get_value(ini.sections["Animations"], "path", animations_path_);
   inipp::get_value(ini.sections["Characters"], "characterset_files_directory",
                    characterset_files_directory_);
@@ -24,15 +26,14 @@ Configuration::Configuration(string const& file_path) {
   inipp::get_value(ini.sections["Characters"], "charactersets_path",
                    charactersets_path_);
   inipp::get_value(ini.sections["Characters"], "path", characters_path_);
-  inipp::get_value(ini.sections["Collisions"], "path", collisions_path_);
   inipp::get_value(ini.sections["Engine"], "tick_duration_ms",
                    engine_tick_duration_ms_);
-  inipp::get_value(ini.sections["Indices"], "path", indices_path_);
   inipp::get_value(ini.sections["Level"], "height_in_tiles",
                    level_height_in_tiles_);
   inipp::get_value(ini.sections["Level"], "path", level_path_);
   inipp::get_value(ini.sections["Level"], "width_in_tiles",
                    level_width_in_tiles_);
+  inipp::get_value(ini.sections["Solids"], "path", solids_path_);
   inipp::get_value(ini.sections["Tileset"], "gap", tileset_gap_);
   inipp::get_value(ini.sections["Tileset"], "height_in_tiles",
                    tileset_height_in_tiles_);
@@ -43,6 +44,12 @@ Configuration::Configuration(string const& file_path) {
   inipp::get_value(ini.sections["Tileset"], "top_offset", tileset_top_offset_);
   inipp::get_value(ini.sections["Tileset"], "width_in_tiles",
                    tileset_width_in_tiles_);
+  inipp::get_value(ini.sections["TileSolidMaps"], "path",
+                   tile_solid_maps_path_);
+}
+
+string const& Configuration::actionSpriteMapsPath() const {
+  return action_sprite_maps_path_;
 }
 
 string Configuration::animationsPath() const { return animations_path_; }
@@ -65,13 +72,9 @@ string const& Configuration::charactersetsPath() const {
 
 string const& Configuration::charactersPath() const { return characters_path_; }
 
-string const& Configuration::collisionsPath() const { return collisions_path_; }
-
 int64_t Configuration::engineTickDurationMs() const {
   return engine_tick_duration_ms_;
 }
-
-string const& Configuration::indicesPath() const { return indices_path_; }
 
 int64_t Configuration::levelHeightInTiles() const {
   return level_height_in_tiles_;
@@ -82,6 +85,8 @@ string const& Configuration::levelPath() const { return level_path_; }
 int64_t Configuration::levelWidthInTiles() const {
   return level_width_in_tiles_;
 }
+
+string const& Configuration::solidsPath() const { return solids_path_; }
 
 int64_t Configuration::tilesetGap() const { return tileset_gap_; }
 
@@ -101,4 +106,8 @@ int64_t Configuration::tilesetTopOffset() const { return tileset_top_offset_; }
 
 int64_t Configuration::tilesetWidthInTiles() const {
   return tileset_width_in_tiles_;
+}
+
+string const& Configuration::tileSolidMapsPath() const {
+  return tile_solid_maps_path_;
 }

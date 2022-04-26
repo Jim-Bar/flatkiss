@@ -12,18 +12,18 @@
 class Configuration {
  public:
   Configuration(std::string const& file_path);
+  std::string const& actionSpriteMapsPath() const;
   std::string animationsPath() const;
   std::string charactersetFilesDirectory() const;
   std::string charactersetFilesPrefix() const;
   std::string charactersetFilesSuffix() const;
   std::string const& charactersetsPath() const;
   std::string const& charactersPath() const;
-  std::string const& collisionsPath() const;
   int64_t engineTickDurationMs() const;
-  std::string const& indicesPath() const;
   int64_t levelHeightInTiles() const;
   std::string const& levelPath() const;
   int64_t levelWidthInTiles() const;
+  std::string const& solidsPath() const;
   int64_t tilesetGap() const;
   int64_t tilesetHeightInTiles() const;
   int64_t tilesetLeftOffset() const;
@@ -31,20 +31,21 @@ class Configuration {
   int64_t tilesetTilesSize() const;
   int64_t tilesetTopOffset() const;
   int64_t tilesetWidthInTiles() const;
+  std::string const& tileSolidMapsPath() const;
 
  private:
+  std::string action_sprite_maps_path_{};
   std::string animations_path_{};
   std::string charactersets_path_{};
   std::string characters_path_{};
   std::string characterset_files_directory_{};
   std::string characterset_files_prefix_{};
   std::string characterset_files_suffix_{};
-  std::string collisions_path_{};
   int64_t engine_tick_duration_ms_{0};
-  std::string indices_path_{};
   int64_t level_height_in_tiles_{0};
   std::string level_path_{};
   int64_t level_width_in_tiles_{0};
+  std::string solids_path_{};
   int64_t tileset_gap_{0};
   int64_t tileset_height_in_tiles_{0};
   int64_t tileset_left_offset_{0};
@@ -52,6 +53,7 @@ class Configuration {
   int64_t tileset_tiles_size_{0};
   int64_t tileset_top_offset_{0};
   int64_t tileset_width_in_tiles_{0};
+  std::string tile_solid_maps_path_{};
 };
 
 #endif

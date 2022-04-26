@@ -129,13 +129,11 @@ int main(int argc, char* argv[]) {
   unordered_map<int64_t, AnimationPlayer const> animation_players{
       AnimationPlayerLoader::load(configuration.animationsPath())};
   unordered_map<int64_t, ActionSpriteMapper const> action_sprite_mappers{
-      ActionSpriteMapperLoader::load(configuration.indicesPath())};
-  // FIXME: Hardcoded path.
+      ActionSpriteMapperLoader::load(configuration.actionSpriteMapsPath())};
   unordered_map<int64_t, TileSolidMapper const> tile_solid_mappers{
-      TileSolidMapperLoader::load("assets/tile_solid_map.bin")};
-  // FIXME: Hardcoded path.
+      TileSolidMapperLoader::load(configuration.tileSolidMapsPath())};
   unordered_map<int64_t, Solid const> solids{
-      SolidLoader::load("assets/solids.bin")};
+      SolidLoader::load(configuration.solidsPath())};
 
   bool quit = false;
   SDL_Event event;

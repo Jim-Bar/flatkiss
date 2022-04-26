@@ -17,15 +17,13 @@ Character::Character(Spriteset const& characterset,
                      ActionSpriteMapper const& action_sprite_mapper,
                      AnimationPlayer const& animation_player,
                      Solid const& solid, Navigator const& navigator,
-                     Position const& initialPosition,
-                     Rectangle const& rectangle)
+                     Position const& initial_position)
     : characterset_{characterset},
       action_sprite_mapper_{action_sprite_mapper},
       animation_player_{animation_player},
       facing_direction_{CardinalDirection::kSouth},
       navigator_{navigator},
-      positioned_solid_{initialPosition, solid},
-      rectangle_{rectangle} {}
+      positioned_solid_{initial_position, solid} {}
 
 Spriteset const& Character::characterset() const { return characterset_; }
 
@@ -43,8 +41,6 @@ Action Character::currentAction() const {
       return Action::kWalkLeft;  // FIXME.
   }
 }
-
-int64_t Character::height() const { return rectangle_.height(); }
 
 void Character::moveBy(Vector const& desired_displacement) {
   Position final_position{
@@ -112,8 +108,6 @@ void Character::updateFacingDirectionForDisplacement(
   }
 }
 
-int64_t Character::width() const { return rectangle_.width(); }
-
 int64_t Character::x() const { return position().x(); }
 
 int64_t Character::y() const { return position().y(); }
@@ -158,8 +152,7 @@ vector<Character> CharacterLoader::load(
           charactersets[characterset_index],
           action_sprite_mappers.at(action_sprite_mapper_index),
           animation_players.at(animations_index), solids.at(solid_index),
-          navigator, Position{x * tiles_width, y * tiles_height},
-          Rectangle{16, 16});  // FIXME: From collisions.
+          navigator, Position{x * tiles_width, y * tiles_height});
     }
     stream.close();
   }  // FIXME: Raise exception.

@@ -22,14 +22,11 @@ class Character {
   Character(Spriteset const& characterset,
             ActionSpriteMapper const& action_sprite_mapper,
             AnimationPlayer const& animation_player, Solid const& solid,
-            Navigator const& navigator, Position const& initialPosition,
-            Rectangle const& rectangle);
+            Navigator const& navigator, Position const& initial_position);
   Spriteset const& characterset() const;
-  int64_t height() const;
   void moveBy(Vector const& desired_displacement);
   Position const& position() const;
   uint16_t spriteIndex() const;
-  int64_t width() const;
   int64_t x() const;
   int64_t y() const;
 
@@ -40,7 +37,6 @@ class Character {
   CardinalDirection facing_direction_;
   Navigator const& navigator_;
   PositionedSolid positioned_solid_;
-  Rectangle const rectangle_;
   ActionSpriteMapper const& action_sprite_mapper_;
 
   Action currentAction() const;

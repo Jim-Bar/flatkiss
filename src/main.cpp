@@ -56,29 +56,29 @@ void handleKeyboardEvent(KeyboardState const& keyboard_state,
 
   character.moveBy(Vector{dx, dy});
 
-  if (character.y() <
-      viewport.rectangle().height() / 2 - character.height() / 2) {
+  if (character.y() < viewport.rectangle().height() / 2 -
+                          character.characterset().spritesHeight() / 2) {
     viewport.y(0);
   } else if (character.y() > level->heightInTiles() * tiles_height -
                                  viewport.rectangle().height() / 2 -
-                                 character.height() / 2) {
+                                 character.characterset().spritesHeight() / 2) {
     viewport.y(level->heightInTiles() * tiles_height -
                viewport.rectangle().height());
   } else {
     viewport.y(character.y() - viewport.rectangle().height() / 2 +
-               character.height() / 2);
+               character.characterset().spritesHeight() / 2);
   }
-  if (character.x() <
-      viewport.rectangle().width() / 2 - character.width() / 2) {
+  if (character.x() < viewport.rectangle().width() / 2 -
+                          character.characterset().spritesWidth() / 2) {
     viewport.x(0);
   } else if (character.x() > level->widthInTiles() * tiles_width -
                                  viewport.rectangle().width() / 2 -
-                                 character.width() / 2) {
+                                 character.characterset().spritesWidth() / 2) {
     viewport.x(level->widthInTiles() * tiles_width -
                viewport.rectangle().width());
   } else {
     viewport.x(character.x() - viewport.rectangle().width() / 2 +
-               character.width() / 2);
+               character.characterset().spritesWidth() / 2);
   }
 }
 

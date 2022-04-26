@@ -39,8 +39,8 @@ void Renderer::renderCharacter(PositionedRectangle const& viewport,
   SDL_Rect dest_rect;
   dest_rect.x = static_cast<int>(character.x() - viewport.x());
   dest_rect.y = static_cast<int>(character.y() - viewport.y());
-  dest_rect.w = static_cast<int>(character.width());
-  dest_rect.h = static_cast<int>(character.height());
+  dest_rect.w = static_cast<int>(character.characterset().spritesWidth());
+  dest_rect.h = static_cast<int>(character.characterset().spritesHeight());
 
   SDL_RenderCopy(sdl_renderer_, characterset.texture(), &source_rect,
                  &dest_rect);
@@ -93,7 +93,8 @@ void Renderer::renderLevel(AnimationPlayer const& animation_player,
       dest_rect.w = static_cast<int>(tileset.spritesWidth());
       dest_rect.h = static_cast<int>(tileset.spritesHeight());
       dest_rect.x = static_cast<int>(x * tileset.spritesWidth() - viewport.x());
-      dest_rect.y = static_cast<int>(y * tileset.spritesHeight() - viewport.y());
+      dest_rect.y =
+          static_cast<int>(y * tileset.spritesHeight() - viewport.y());
 
       SDL_RenderCopy(sdl_renderer_, tileset.texture(), &source_rect,
                      &dest_rect);

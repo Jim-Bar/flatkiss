@@ -123,14 +123,12 @@ int main(int argc, char* argv[]) {
   // FIXME: Hardcoded first mapper.
   Navigator navigator{tile_solid_mappers.at(0), solids, *level,
                       tileset.spritesWidth(), tileset.spritesHeight()};
-  // FIXME: This makes the program crash later when accessing
-  // character_controllers or characters. Because it seems the memory is
-  // released automatically (probably returning a hidden reference of some
-  // sort).
-  auto [character_controllers, characters]{CharacterLoader::load(
+  auto [characters_to_controllers, characters]{CharacterLoader::load(
       configuration.charactersPath(), charactersets, action_sprite_mappers,
       animation_players, solids, navigator, tileset.spritesWidth(),
       tileset.spritesHeight())};
+  vector<KeyboardCharacterController> character_controllers{
+      CharacterControllerLoader::load(characters, characters_to_controllers)};
   int64_t tick(0);
   while (!quit) {
     renderer.render(animation_players.at(0), *level, tileset, viewport, tick++,

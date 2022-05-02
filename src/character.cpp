@@ -115,15 +115,14 @@ int64_t Character::x() const { return position().x(); }
 
 int64_t Character::y() const { return position().y(); }
 
-tuple<vector<KeyboardCharacterController>, vector<Character>>
-CharacterLoader::load(
+tuple<vector<int64_t>, vector<Character>> CharacterLoader::load(
     string const& characters_file_path, vector<Spriteset> const& charactersets,
     unordered_map<int64_t, ActionSpriteMapper const> const&
         action_sprite_mappers,
     unordered_map<int64_t, AnimationPlayer const> const& animation_players,
     unordered_map<int64_t, Solid const> const& solids,
     Navigator const& navigator, int64_t tiles_width, int64_t tiles_height) {
-  vector<KeyboardCharacterController> character_controllers;
+  vector<int64_t> characters_to_controllers;
   vector<Character> characters;
   ifstream stream;
   stream.open(characters_file_path, ios::in | ios::binary);
@@ -159,12 +158,10 @@ CharacterLoader::load(
           action_sprite_mappers.at(action_sprite_mapper_index),
           animation_players.at(animations_index), solids.at(solid_index),
           navigator, Position{x * tiles_width, y * tiles_height});
-      if (controller_type == 0) {
-        character_controllers.emplace_back(characters.back());
-      }  // FIXME: Raise exception.
+      characters_to_controllers.emplace_back(controller_type);
     }
     stream.close();
   }  // FIXME: Raise exception.
 
-  return {character_controllers, characters};
+  return {characters_to_controllers, characters};
 }

@@ -12,7 +12,6 @@ class PositionedEllipse {
   ~PositionedEllipse();
   PositionedEllipse& operator=(PositionedEllipse const& other) = delete;
   PositionedEllipse& operator=(PositionedEllipse&& other) = delete;
-  bool contains(Position const& position) const;
   Ellipse const& ellipse() const;
   /**
    * @brief Returns the position of the center of the ellipse.

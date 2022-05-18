@@ -1,12 +1,8 @@
 #include "positioned_ellipse.hpp"
 
-#include <cmath>
 #include <utility>
 
-using std::abs;
 using std::move;
-
-int64_t square(int64_t value) { return value * value; }
 
 PositionedEllipse::PositionedEllipse(Position const& position,
                                      Ellipse const& ellipse)
@@ -19,13 +15,6 @@ PositionedEllipse::PositionedEllipse(PositionedEllipse&& other)
     : position_{move(other.position_)}, ellipse_{move(other.ellipse_)} {}
 
 PositionedEllipse::~PositionedEllipse() {}
-
-bool PositionedEllipse::contains(Position const& Position) const {
-  // https://math.stackexchange.com/a/76463
-  return square(radiusY() * abs(Position.x() - x())) +
-             square(radiusX() * abs(Position.y() - y())) <=
-         square(radiusX() * radiusY());
-}
 
 Ellipse const& PositionedEllipse::ellipse() const { return ellipse_; }
 

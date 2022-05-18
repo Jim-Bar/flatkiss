@@ -2,6 +2,8 @@
 
 #include <utility>
 
+#include "collider.hpp"
+
 using std::move;
 
 PositionedSolid::PositionedSolid(Position const& position, Solid const& solid)
@@ -18,15 +20,12 @@ PositionedRectangle PositionedSolid::boundingBox() const {
 bool PositionedSolid::collidesWith(PositionedSolid const& other) const {
   for (auto const& pos_ell : solid_.positionedEllipses()) {
     for (auto const& other_pos_ell : other.solid_.positionedEllipses()) {
-      /* TODO: implement.
-      if ((position_ + pos_ell)
-              .intersectsWith(other.position_ + other_pos_ell)) {
+      if (Collider::collide(position_ + pos_ell, other.position_ + other_pos_ell)) {
         return true;
-      } */
+      }
     }
     for (auto const& other_pos_rect : other.solid_.positionedRectangles()) {
-      if ((other.position_ + other_pos_rect)
-              .intersectsWith(position_ + pos_ell)) {
+      if (Collider::collide(other.position_ + other_pos_rect, position_ + pos_ell)) {
         return true;
       }
     }
@@ -34,14 +33,12 @@ bool PositionedSolid::collidesWith(PositionedSolid const& other) const {
 
   for (auto const& pos_rect : solid_.positionedRectangles()) {
     for (auto const& other_pos_ell : other.solid_.positionedEllipses()) {
-      if ((position_ + pos_rect)
-              .intersectsWith(other.position_ + other_pos_ell)) {
+      if (Collider::collide(position_ + pos_rect, other.position_ + other_pos_ell)) {
         return true;
       }
     }
     for (auto const& other_pos_rect : other.solid_.positionedRectangles()) {
-      if ((position_ + pos_rect)
-              .intersectsWith(other.position_ + other_pos_rect)) {
+      if (Collider::collide(position_ + pos_rect, other.position_ + other_pos_rect)) {
         return true;
       }
     }

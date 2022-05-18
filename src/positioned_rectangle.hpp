@@ -7,8 +7,6 @@
 
 /**
  * @brief A rectangle with a position.
- *
- * Provides useful routines such as intersection helpers.
  */
 class PositionedRectangle {
  public:
@@ -19,9 +17,6 @@ class PositionedRectangle {
   PositionedRectangle& operator=(PositionedRectangle const& other) = delete;
   PositionedRectangle& operator=(PositionedRectangle&& other) = delete;
   int64_t height() const;
-  bool intersectsWith(
-      PositionedEllipse const& other) const;  // FIXME: Move to Collider?
-  bool intersectsWith(PositionedRectangle const& other) const;
   /**
    * @brief Returns a new positioned rectangle moved by the provided
    * displacement.

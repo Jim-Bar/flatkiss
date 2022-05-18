@@ -10,7 +10,7 @@ Character const& KeyboardCharacterController::character() const {
 }
 
 void KeyboardCharacterController::handleKeyboardEvent(
-    KeyboardState const& keyboard_state, std::unique_ptr<Level const>& level) {
+    KeyboardState const& keyboard_state) {
   int64_t dx{0};
   int64_t dy{0};
   if (keyboard_state.isPressed(SDL_SCANCODE_UP)) {
@@ -30,8 +30,7 @@ void KeyboardCharacterController::handleKeyboardEvent(
 }
 
 vector<KeyboardCharacterController> CharacterControllerLoader::load(
-    vector<Character>& characters,
-    vector<int64_t> characters_to_controllers) {
+    vector<Character>& characters, vector<int64_t> characters_to_controllers) {
   vector<KeyboardCharacterController> controllers{};
   for (int64_t i{0}; i < characters.size(); i++) {
     switch (characters_to_controllers[i]) {

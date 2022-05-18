@@ -36,15 +36,15 @@ int64_t const kCharacterSizePixels(16);
 int64_t const kViewportSize(160);
 
 void updateViewport(Character const& character, PositionedRectangle& viewport,
-                    unique_ptr<Level const>& level, int64_t tiles_width,
+                    Level const& level, int64_t tiles_width,
                     int64_t tiles_height) {
   if (character.y() < viewport.rectangle().height() / 2 -
                           character.characterset().spritesHeight() / 2) {
     viewport.y(0);
-  } else if (character.y() > level->heightInTiles() * tiles_height -
+  } else if (character.y() > level.heightInTiles() * tiles_height -
                                  viewport.rectangle().height() / 2 -
                                  character.characterset().spritesHeight() / 2) {
-    viewport.y(level->heightInTiles() * tiles_height -
+    viewport.y(level.heightInTiles() * tiles_height -
                viewport.rectangle().height());
   } else {
     viewport.y(character.y() - viewport.rectangle().height() / 2 +
@@ -53,10 +53,10 @@ void updateViewport(Character const& character, PositionedRectangle& viewport,
   if (character.x() < viewport.rectangle().width() / 2 -
                           character.characterset().spritesWidth() / 2) {
     viewport.x(0);
-  } else if (character.x() > level->widthInTiles() * tiles_width -
+  } else if (character.x() > level.widthInTiles() * tiles_width -
                                  viewport.rectangle().width() / 2 -
                                  character.characterset().spritesWidth() / 2) {
-    viewport.x(level->widthInTiles() * tiles_width -
+    viewport.x(level.widthInTiles() * tiles_width -
                viewport.rectangle().width());
   } else {
     viewport.x(character.x() - viewport.rectangle().width() / 2 +
@@ -66,7 +66,7 @@ void updateViewport(Character const& character, PositionedRectangle& viewport,
 
 int main(int argc, char* argv[]) {
   Configuration configuration{"configuration.ini"};
-  unique_ptr<Level const> level{move(LevelLoader::load(
+  Level const level{move(LevelLoader::load(
       configuration.levelPath(), configuration.levelWidthInTiles(),
       configuration.levelHeightInTiles()))};
 
@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
   SDL_Event event;
   KeyboardState keyboard_state;
   // FIXME: Hardcoded first mapper.
-  Navigator navigator{tile_solid_mappers.at(0), solids, *level,
+  Navigator navigator{tile_solid_mappers.at(0), solids, level,
                       tileset.spritesWidth(), tileset.spritesHeight()};
   auto [characters_to_controllers, characters]{CharacterLoader::load(
       configuration.charactersPath(), charactersets, action_sprite_mappers,
@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
       CharacterControllerLoader::load(characters, characters_to_controllers)};
   int64_t tick(0);
   while (!quit) {
-    renderer.render(animation_players.at(0), *level, tileset, viewport, tick++,
+    renderer.render(animation_players.at(0), level, tileset, viewport, tick++,
                     charactersets, characters);
     SDL_Delay(configuration.engineTickDurationMs());
     while (SDL_PollEvent(&event)) {
@@ -145,7 +145,7 @@ int main(int argc, char* argv[]) {
       }
     }
     for (KeyboardCharacterController& controller : character_controllers) {
-      controller.handleKeyboardEvent(keyboard_state, level);
+      controller.handleKeyboardEvent(keyboard_state);
       // FIXME: Update the view port for a designated character.
       updateViewport(controller.character(), viewport, level,
                      tileset.spritesWidth(), tileset.spritesHeight());

@@ -1,7 +1,6 @@
 #ifndef LEVEL_HPP_INCLUDED
 #define LEVEL_HPP_INCLUDED
 
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -13,7 +12,7 @@
  */
 class Level {
  public:
-  Level(std::vector<uint16_t> const& tiles, int64_t width_in_tiles,
+  Level(std::vector<uint16_t>&& tiles, int64_t width_in_tiles,
         int64_t height_in_tiles);
   int64_t heightInTiles() const;
   uint16_t tileIndex(int64_t i, int64_t j) const;
@@ -30,10 +29,8 @@ class Level {
  */
 class LevelLoader {
  public:
-  // FIXME: return by value.
-  static std::unique_ptr<Level const> load(std::string const& file_path,
-                                           int64_t width_in_tiles,
-                                           int64_t height_in_tiles);
+  static Level load(std::string const& file_path, int64_t width_in_tiles,
+                    int64_t height_in_tiles);
 };
 
 #endif

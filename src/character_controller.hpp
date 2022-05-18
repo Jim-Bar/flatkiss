@@ -6,14 +6,12 @@
 
 #include "character.hpp"
 #include "keyboard_state.hpp"
-#include "level.hpp"
 
 class KeyboardCharacterController {
  public:
   KeyboardCharacterController(Character& character);
   Character const& character() const;
-  void handleKeyboardEvent(KeyboardState const& keyboard_state,
-                           std::unique_ptr<Level const>& level);
+  void handleKeyboardEvent(KeyboardState const& keyboard_state);
 
  private:
   Character& character_;

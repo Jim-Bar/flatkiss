@@ -146,8 +146,10 @@ int main(int argc, char* argv[]) {
     }
     for (KeyboardCharacterController& controller : character_controllers) {
       controller.handleKeyboardEvent(keyboard_state);
-      // FIXME: Update the view port for a designated character.
-      updateViewport(controller.character(), viewport, level,
+    }
+    // FIXME: Way to define which character is followed by the viewport.
+    if (!character_controllers.empty()) {
+      updateViewport(character_controllers[0].character(), viewport, level,
                      tileset.spritesWidth(), tileset.spritesHeight());
     }
   }

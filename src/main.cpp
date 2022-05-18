@@ -144,7 +144,7 @@ int main(int argc, char* argv[]) {
                               event.key.state == SDL_PRESSED);
       }
     }
-    for (KeyboardCharacterController& controller : character_controllers) {
+    for (auto& controller : character_controllers) {
       controller.handleKeyboardEvent(keyboard_state);
     }
     // FIXME: Way to define which character is followed by the viewport.

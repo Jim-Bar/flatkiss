@@ -37,15 +37,14 @@ PositionedRectangle Solid::computeBoundingBox(
   int64_t min_x{numeric_limits<int64_t>::max()};
   int64_t min_y{numeric_limits<int64_t>::max()};
 
-  for (PositionedEllipse const& positioned_ellipse : positioned_ellipses) {
+  for (auto const& positioned_ellipse : positioned_ellipses) {
     max_x = max(max_x, positioned_ellipse.x() + positioned_ellipse.radiusX());
     max_y = max(max_y, positioned_ellipse.y() + positioned_ellipse.radiusY());
     min_x = min(min_x, positioned_ellipse.x() - positioned_ellipse.radiusX());
     min_y = min(min_y, positioned_ellipse.y() - positioned_ellipse.radiusY());
   }
 
-  for (PositionedRectangle const& positioned_rectangle :
-       positioned_rectangles) {
+  for (auto const& positioned_rectangle : positioned_rectangles) {
     max_x = max(max_x, positioned_rectangle.x() + positioned_rectangle.width());
     max_y =
         max(max_y, positioned_rectangle.y() + positioned_rectangle.height());

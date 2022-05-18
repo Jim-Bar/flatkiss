@@ -16,18 +16,15 @@ PositionedRectangle PositionedSolid::boundingBox() const {
 }
 
 bool PositionedSolid::collidesWith(PositionedSolid const& other) const {
-  // FIXME: Can auto be used (reference)?
-  for (PositionedEllipse const& pos_ell : solid_.positionedEllipses()) {
-    for (PositionedEllipse const& other_pos_ell :
-         other.solid_.positionedEllipses()) {
+  for (auto const& pos_ell : solid_.positionedEllipses()) {
+    for (auto const& other_pos_ell : other.solid_.positionedEllipses()) {
       /* TODO: implement.
       if ((position_ + pos_ell)
               .intersectsWith(other.position_ + other_pos_ell)) {
         return true;
       } */
     }
-    for (PositionedRectangle const& other_pos_rect :
-         other.solid_.positionedRectangles()) {
+    for (auto const& other_pos_rect : other.solid_.positionedRectangles()) {
       if ((other.position_ + other_pos_rect)
               .intersectsWith(position_ + pos_ell)) {
         return true;
@@ -35,17 +32,14 @@ bool PositionedSolid::collidesWith(PositionedSolid const& other) const {
     }
   }
 
-  // FIXME: Can auto be used (reference)?
-  for (PositionedRectangle const& pos_rect : solid_.positionedRectangles()) {
-    for (PositionedEllipse const& other_pos_ell :
-         other.solid_.positionedEllipses()) {
+  for (auto const& pos_rect : solid_.positionedRectangles()) {
+    for (auto const& other_pos_ell : other.solid_.positionedEllipses()) {
       if ((position_ + pos_rect)
               .intersectsWith(other.position_ + other_pos_ell)) {
         return true;
       }
     }
-    for (PositionedRectangle const& other_pos_rect :
-         other.solid_.positionedRectangles()) {
+    for (auto const& other_pos_rect : other.solid_.positionedRectangles()) {
       if ((position_ + pos_rect)
               .intersectsWith(other.position_ + other_pos_rect)) {
         return true;

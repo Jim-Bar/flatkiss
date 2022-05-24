@@ -88,3 +88,34 @@ bool Collider::collide(PositionedEllipse const& e, Position const& p) {
              square(e.radiusX() * abs(p.y() - e.y())) <=
          square(e.radiusX() * e.radiusY());
 }
+
+bool Collider::collide(PositionedSolid const& solid1,
+                       PositionedSolid const& solid2) {
+  for (auto const& pos_ell1 : solid1.positionedEllipses()) {
+    for (auto const& pos_ell2 : solid2.positionedEllipses()) {
+      if (collide(pos_ell1, pos_ell2)) {
+        return true;
+      }
+    }
+    for (auto const& pos_rect2 : solid2.positionedRectangles()) {
+      if (collide(pos_rect2, pos_ell1)) {
+        return true;
+      }
+    }
+  }
+
+  for (auto const& pos_rect1 : solid1.positionedRectangles()) {
+    for (auto const& pos_ell2 : solid2.positionedEllipses()) {
+      if (collide(pos_rect1, pos_ell2)) {
+        return true;
+      }
+    }
+    for (auto const& pos_rect2 : solid2.positionedRectangles()) {
+      if (collide(pos_rect1, pos_rect2)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}

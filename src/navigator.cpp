@@ -154,8 +154,8 @@ bool Navigator::solidCollidesWithTileAtPosition(
     PositionedSolid const& positioned_solid, uint16_t tile_index,
     Position const& position) const {
   if (tile_solid_mapper_.contains(tile_index)) {
-    return positioned_solid.collidesWith(
-        solidForTileIndexAtPosition(tile_index, position));
+    return Collider::collide(positioned_solid,
+                             solidForTileIndexAtPosition(tile_index, position));
   }
 
   return false;

@@ -1,6 +1,9 @@
 #ifndef NAVIGATOR_HPP_INCLUDED
 #define NAVIGATOR_HPP_INCLUDED
 
+#include <vector>
+
+#include "collider.hpp"
 #include "level.hpp"
 #include "positioned_solid.hpp"
 #include "tile_solid_mapper.hpp"

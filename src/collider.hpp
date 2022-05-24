@@ -3,6 +3,7 @@
 
 #include "positioned_ellipse.hpp"
 #include "positioned_rectangle.hpp"
+#include "positioned_solid.hpp"
 
 /**
  * @brief Collides things.
@@ -17,6 +18,8 @@ class Collider {
                       PositionedEllipse const& ellipse);
   static bool collide(PositionedRectangle const& rectangle1,
                       PositionedRectangle const& rectangle2);
+  static bool collide(PositionedSolid const& solid1,
+                      PositionedSolid const& solid2);
 
  private:
   static bool collide(PositionedEllipse const& ellipse,

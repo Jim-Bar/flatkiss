@@ -5,9 +5,13 @@
 #include "collider.hpp"
 
 using std::move;
+using std::vector;
 
 PositionedSolid::PositionedSolid(Position const& position, Solid const& solid)
-    : position_{position}, solid_{solid} {}
+    : position_{position},
+      solid_{solid},
+      positioned_ellipses_{create_positioned_ellipses(position, solid)},
+      positioned_rectangles_{create_positioned_rectangles(position, solid)} {}
 
 PositionedRectangle PositionedSolid::absoluteBoundingBox() const {
   return position_ + solid_.boundingBox();
@@ -17,34 +21,26 @@ PositionedRectangle PositionedSolid::boundingBox() const {
   return solid_.boundingBox();
 }
 
-bool PositionedSolid::collidesWith(PositionedSolid const& other) const {
-  for (auto const& pos_ell : solid_.positionedEllipses()) {
-    for (auto const& other_pos_ell : other.solid_.positionedEllipses()) {
-      if (Collider::collide(position_ + pos_ell, other.position_ + other_pos_ell)) {
-        return true;
-      }
-    }
-    for (auto const& other_pos_rect : other.solid_.positionedRectangles()) {
-      if (Collider::collide(other.position_ + other_pos_rect, position_ + pos_ell)) {
-        return true;
-      }
-    }
+vector<PositionedEllipse> PositionedSolid::create_positioned_ellipses(
+    Position const& position, Solid const& solid) {
+  vector<PositionedEllipse> positioned_ellipses{};
+  for (auto pos_ellipse : solid.positionedEllipses()) {
+    positioned_ellipses.emplace_back(pos_ellipse.position() + position,
+                                     pos_ellipse.ellipse());
   }
 
-  for (auto const& pos_rect : solid_.positionedRectangles()) {
-    for (auto const& other_pos_ell : other.solid_.positionedEllipses()) {
-      if (Collider::collide(position_ + pos_rect, other.position_ + other_pos_ell)) {
-        return true;
-      }
-    }
-    for (auto const& other_pos_rect : other.solid_.positionedRectangles()) {
-      if (Collider::collide(position_ + pos_rect, other.position_ + other_pos_rect)) {
-        return true;
-      }
-    }
+  return positioned_ellipses;
+}
+
+vector<PositionedRectangle> PositionedSolid::create_positioned_rectangles(
+    Position const& position, Solid const& solid) {
+  vector<PositionedRectangle> positioned_rectangles{};
+  for (auto pos_rectangle : solid.positionedRectangles()) {
+    positioned_rectangles.emplace_back(pos_rectangle.position() + position,
+                                       pos_rectangle.rectangle());
   }
 
-  return false;
+  return positioned_rectangles;
 }
 
 PositionedSolid PositionedSolid::operator+(Vector const& vector) const {
@@ -55,6 +51,15 @@ Position const& PositionedSolid::position() const { return position_; }
 
 void PositionedSolid::position(Position&& new_position) {
   position_ = move(new_position);
+}
+
+vector<PositionedEllipse> const& PositionedSolid::positionedEllipses() const {
+  return positioned_ellipses_;
+}
+
+vector<PositionedRectangle> const& PositionedSolid::positionedRectangles()
+    const {
+  return positioned_rectangles_;
 }
 
 Solid const& PositionedSolid::solid() const { return solid_; }

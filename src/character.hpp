@@ -13,10 +13,6 @@
 #include "rectangle.hpp"
 #include "spriteset.hpp"
 
-// Forward declaration to break the cycle KeyboardCharacterController /
-// Character;
-class KeyboardCharacterController;
-
 /**
  * @brief A character in the level.
  *

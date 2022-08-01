@@ -10,6 +10,7 @@
 #include "level.hpp"
 #include "positioned_rectangle.hpp"
 #include "spriteset.hpp"
+#include "texture.hpp"
 
 /**
  * @brief Renders the whole scene.
@@ -31,21 +32,24 @@ class Renderer {
    */
   SDL_Texture* createTextureFromSurface(SDL_Surface* surface) const;
   void render(AnimationPlayer const& animation_player, Level const& level,
-              Spriteset const& tileset, PositionedRectangle const& viewport,
-              int64_t tick, std::vector<Spriteset> const& charactersets,
+              Spriteset const& tileset, Texture const& tileset_texture,
+              PositionedRectangle const& viewport, int64_t tick,
+              std::vector<Texture> const& charactersets_textures,
               std::vector<Character> const& characters) const;
 
  private:
   SDL_Renderer* const sdl_renderer_;
 
   void renderCharacter(PositionedRectangle const& viewport, int64_t tick,
-                       Spriteset const& characterset,
+                       Texture const& characterset_texture,
                        Character const& character) const;
-  void renderCharacters(PositionedRectangle const& viewport, int64_t tick,
-                        std::vector<Character> const& characters) const;
+  void renderCharacters(
+      PositionedRectangle const& viewport, int64_t tick,
+      std::vector<Character> const& characters,
+      std::vector<Texture> const& charactersets_textures) const;
   void renderLevel(AnimationPlayer const& animation_player, Level const& level,
-                   Spriteset const& tileset, PositionedRectangle const& viewport,
-                   int64_t tick) const;
+                   Spriteset const& tileset, Texture const& tileset_texture,
+                   PositionedRectangle const& viewport, int64_t tick) const;
 };
 
 #endif

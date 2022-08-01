@@ -21,6 +21,7 @@
 #include "positioned_rectangle.hpp"
 #include "renderer.hpp"
 #include "spriteset.hpp"
+#include "texture.hpp"
 #include "tile_solid_mapper.hpp"
 #include "vector.hpp"
 
@@ -88,24 +89,20 @@ int main(int argc, char* argv[]) {
 
   Renderer renderer{window};
 
-  Spriteset const tileset{configuration.tilesetPath(),
-                          configuration.tilesetTilesSize(),
-                          configuration.tilesetTilesSize(),
-                          configuration.tilesetWidthInTiles(),
-                          configuration.tilesetHeightInTiles(),
-                          configuration.tilesetLeftOffset(),
-                          configuration.tilesetTopOffset(),
-                          configuration.tilesetGap(),
-                          255,
-                          0,
-                          255,
-                          renderer};
+  Spriteset const tileset{
+      configuration.tilesetTilesSize(),    configuration.tilesetTilesSize(),
+      configuration.tilesetWidthInTiles(), configuration.tilesetHeightInTiles(),
+      configuration.tilesetLeftOffset(),   configuration.tilesetTopOffset(),
+      configuration.tilesetGap()};
+
+  Texture const tileset_texture{configuration.tilesetPath(), 255, 0, 255,
+                                renderer};
 
   CharactersetLoader characterset_loader{
       configuration.charactersetFilesDirectory(),
       configuration.charactersetFilesPrefix(),
       configuration.charactersetFilesSuffix()};
-  vector<Spriteset> charactersets{
+  auto const [charactersets, charactersets_textures]{
       characterset_loader.load(configuration.charactersetsPath(), renderer)};
 
   unordered_map<int64_t, AnimationPlayer const> animation_players{
@@ -131,8 +128,8 @@ int main(int argc, char* argv[]) {
       CharacterControllerLoader::load(characters, characters_to_controllers)};
   int64_t tick(0);
   while (!quit) {
-    renderer.render(animation_players.at(0), level, tileset, viewport, tick++,
-                    charactersets, characters);
+    renderer.render(animation_players.at(0), level, tileset, tileset_texture,
+                    viewport, tick++, charactersets_textures, characters);
     SDL_Delay(configuration.engineTickDurationMs());
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {

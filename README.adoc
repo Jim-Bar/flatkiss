@@ -94,30 +94,35 @@ As many characters can be defined as one like. A character is defined like this:
 
 . Initial X position (eight byte)
 . Initial Y position (eight byte)
-. Index of the characterset to use (two bytes)
-. Index of the group of sprite indices to use with the characterset (two bytes)
-. Index of the character animation to use with the characterset (two bytes)
+. Index of the spriteset to use (two bytes)
+. Index of the group of sprite indices to use with the spriteset (two bytes)
+. Index of the character animation to use with the spriteset (two bytes)
 . Index of the solid to use (two bytes)
 . Index of the controller to use (one byte)
 
 Just append the characters for adding more than one.
 
-==== Charactersets
+==== Spritesets
 
-A characterset is the set of sprites making up a character. All the charactersets are defined in the same file, however
-each have a corresponding picture file containing the index of its matching characterset in its name. A characterset is
-defined by:
+A spriteset is the set of sprites making up a character, a level or both. All the spritesets are defined in the same
+file, however each have a corresponding picture file containing the index of its matching spriteset in its name. A
+spriteset is defined by:
 
 . Width of the sprites in pixels (one byte)
 . Height of the sprites in pixels (one byte)
-. Width of the characterset in sprites (two bytes)
-. Height of the characterset in sprites (two bytes)
-. Number of pixels from the left border of the characterset to the first sprite (two bytes)
-. Number of pixels from the top border of the characterset to the first sprite (two bytes)
+. Width of the spriteset in sprites (two bytes)
+. Height of the spriteset in sprites (two bytes)
+. Number of pixels from the left border of the spriteset to the first sprite (two bytes)
+. Number of pixels from the top border of the spriteset to the first sprite (two bytes)
 . Number of pixels between each sprites, called gap (two bytes)
+. Index of the picture file to use (this matches the actual picture file to load) (two bytes)
 . Red component of the colour which will be turned transparent (one byte)
 . Green component of the colour which will be turned transparent (one byte)
 . Blue component of the colour which will be turned transparent (one byte)
+
+TIP: There are also _charactersets_ and _tilesets_ which are special occurrences of spritesets. The former is a
+spriteset dedicated to sprites of characters while the latter is dedicated to sprites of levels. There are no
+differences with a regular spriteset though, those are just names for convenience.
 
 ==== Sprite indices
 

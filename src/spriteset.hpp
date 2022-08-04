@@ -4,10 +4,7 @@
 #include <SDL2/SDL.h>
 
 #include <string>
-#include <tuple>
 #include <vector>
-
-#include "texture.hpp"
 
 /**
  * @brief Models a spriteset.
@@ -22,48 +19,46 @@ class Spriteset {
  public:
   Spriteset(int64_t sprites_width, int64_t sprites_height,
             int64_t width_in_sprites, int64_t height_in_sprites,
-            int64_t left_offset, int64_t top_offset, int64_t gap);
+            int64_t left_offset, int64_t top_offset, int64_t gap,
+            int64_t texture_index, int64_t alpha_red, int64_t alpha_green,
+            int64_t alpha_blue);
   Spriteset(Spriteset const& other) = delete;
   Spriteset(Spriteset&& other) = default;
   Spriteset& operator=(Spriteset const& other) = delete;
   Spriteset& operator=(Spriteset&& other) = delete;
+  int64_t alpha_blue() const;
+  int64_t alpha_green() const;
+  int64_t alpha_red() const;
   int64_t gap() const;
   int64_t heightInSprites() const;
   int64_t leftOffset() const;
   SDL_Rect rectForSpriteIndex(int64_t sprite_index) const;
   int64_t spritesHeight() const;
   int64_t spritesWidth() const;
+  int64_t textureIndex() const;
   int64_t topOffset() const;
   int64_t widthInSprites() const;
 
  private:
+  int64_t const alpha_blue_;
+  int64_t const alpha_green_;
+  int64_t const alpha_red_;
   int64_t const gap_;
   int64_t const height_in_sprites_;
   int64_t const left_offset_;
   int64_t const sprites_height_;
   int64_t const sprites_width_;
+  int64_t const texture_index_;
   int64_t const top_offset_;
   int64_t const width_in_sprites_;
 };
 
 /**
- * @brief Helper class for loading the charactersets from a file.
+ * @brief Helper class for loading the spritesets from a file.
  */
-class CharactersetLoader {
+class SpritesetLoader {
  public:
-  CharactersetLoader(std::string texture_files_directory,
-                     std::string texture_files_prefix,
-                     std::string texture_files_suffix);
-
-  std::tuple<std::vector<Spriteset>, std::vector<Texture>> load(
-      std::string const& file_path, Renderer const& renderer);
-
- private:
-  std::string const texture_files_directory_;
-  std::string const texture_files_prefix_;
-  std::string const texture_files_suffix_;
-
-  std::string texturePath(int64_t texture_index) const;
+  static std::vector<Spriteset> load(std::string const& file_path);
 };
 
 #endif

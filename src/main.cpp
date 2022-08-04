@@ -40,28 +40,28 @@ void updateViewport(Character const& character, PositionedRectangle& viewport,
                     Level const& level, int64_t tiles_width,
                     int64_t tiles_height) {
   if (character.y() < viewport.rectangle().height() / 2 -
-                          character.characterset().spritesHeight() / 2) {
+                          character.spriteset().spritesHeight() / 2) {
     viewport.y(0);
   } else if (character.y() > level.heightInTiles() * tiles_height -
                                  viewport.rectangle().height() / 2 -
-                                 character.characterset().spritesHeight() / 2) {
+                                 character.spriteset().spritesHeight() / 2) {
     viewport.y(level.heightInTiles() * tiles_height -
                viewport.rectangle().height());
   } else {
     viewport.y(character.y() - viewport.rectangle().height() / 2 +
-               character.characterset().spritesHeight() / 2);
+               character.spriteset().spritesHeight() / 2);
   }
   if (character.x() < viewport.rectangle().width() / 2 -
-                          character.characterset().spritesWidth() / 2) {
+                          character.spriteset().spritesWidth() / 2) {
     viewport.x(0);
   } else if (character.x() > level.widthInTiles() * tiles_width -
                                  viewport.rectangle().width() / 2 -
-                                 character.characterset().spritesWidth() / 2) {
+                                 character.spriteset().spritesWidth() / 2) {
     viewport.x(level.widthInTiles() * tiles_width -
                viewport.rectangle().width());
   } else {
     viewport.x(character.x() - viewport.rectangle().width() / 2 +
-               character.characterset().spritesWidth() / 2);
+               character.spriteset().spritesWidth() / 2);
   }
 }
 
@@ -89,21 +89,13 @@ int main(int argc, char* argv[]) {
 
   Renderer renderer{window};
 
-  Spriteset const tileset{
-      configuration.tilesetTilesSize(),    configuration.tilesetTilesSize(),
-      configuration.tilesetWidthInTiles(), configuration.tilesetHeightInTiles(),
-      configuration.tilesetLeftOffset(),   configuration.tilesetTopOffset(),
-      configuration.tilesetGap()};
-
-  Texture const tileset_texture{configuration.tilesetPath(), 255, 0, 255,
-                                renderer};
-
-  CharactersetLoader characterset_loader{
-      configuration.charactersetFilesDirectory(),
-      configuration.charactersetFilesPrefix(),
-      configuration.charactersetFilesSuffix()};
-  auto const [charactersets, charactersets_textures]{
-      characterset_loader.load(configuration.charactersetsPath(), renderer)};
+  TextureLoader texture_loader{configuration.spritesetFilesDirectory(),
+                               configuration.spritesetFilesPrefix(),
+                               configuration.spritesetFilesSuffix()};
+  vector<Spriteset> const spritesets{
+      SpritesetLoader::load(configuration.spritesetsPath())};
+  unordered_map<int64_t, Texture> const textures{
+      texture_loader.load(spritesets, renderer)};
 
   unordered_map<int64_t, AnimationPlayer const> animation_players{
       AnimationPlayerLoader::load(configuration.animationsPath())};
@@ -117,19 +109,20 @@ int main(int argc, char* argv[]) {
   bool quit = false;
   SDL_Event event;
   KeyboardState keyboard_state;
-  // FIXME: Hardcoded first mapper.
+  // FIXME: Hardcoded first mapper, spritesets[0] and textures[0] everywhere.
   Navigator navigator{tile_solid_mappers.at(0), solids, level,
-                      tileset.spritesWidth(), tileset.spritesHeight()};
+                      spritesets[0].spritesWidth(),
+                      spritesets[0].spritesHeight()};
   auto [characters_to_controllers, characters]{CharacterLoader::load(
-      configuration.charactersPath(), charactersets, action_sprite_mappers,
-      animation_players, solids, navigator, tileset.spritesWidth(),
-      tileset.spritesHeight())};
+      configuration.charactersPath(), spritesets, action_sprite_mappers,
+      animation_players, solids, navigator, spritesets[0].spritesWidth(),
+      spritesets[0].spritesHeight())};
   vector<KeyboardCharacterController> character_controllers{
       CharacterControllerLoader::load(characters, characters_to_controllers)};
   int64_t tick(0);
   while (!quit) {
-    renderer.render(animation_players.at(0), level, tileset, tileset_texture,
-                    viewport, tick++, charactersets_textures, characters);
+    renderer.render(animation_players.at(0), level, spritesets[0],
+                    textures.at(0), viewport, tick++, textures, characters);
     SDL_Delay(configuration.engineTickDurationMs());
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
@@ -147,7 +140,8 @@ int main(int argc, char* argv[]) {
     // FIXME: Way to define which character is followed by the viewport.
     if (!character_controllers.empty()) {
       updateViewport(character_controllers[0].character(), viewport, level,
-                     tileset.spritesWidth(), tileset.spritesHeight());
+                     spritesets[0].spritesWidth(),
+                     spritesets[0].spritesHeight());
     }
   }
 

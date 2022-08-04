@@ -3,6 +3,7 @@
 #include <algorithm>
 
 using std::sort;
+using std::unordered_map;
 using std::vector;
 
 Renderer::Renderer(SDL_Window* sdl_window)
@@ -20,12 +21,12 @@ SDL_Texture* Renderer::createTextureFromSurface(SDL_Surface* surface) const {
   return SDL_CreateTextureFromSurface(sdl_renderer_, surface);
 }
 
-void Renderer::render(AnimationPlayer const& animation_player,
-                      Level const& level, Spriteset const& tileset,
-                      Texture const& tileset_texture,
-                      PositionedRectangle const& viewport, int64_t tick,
-                      vector<Texture> const& charactersets_textures,
-                      vector<Character> const& characters) const {
+void Renderer::render(
+    AnimationPlayer const& animation_player, Level const& level,
+    Spriteset const& tileset, Texture const& tileset_texture,
+    PositionedRectangle const& viewport, int64_t tick,
+    unordered_map<int64_t, Texture> const& charactersets_textures,
+    vector<Character> const& characters) const {
   SDL_RenderClear(sdl_renderer_);
   renderLevel(animation_player, level, tileset, tileset_texture, viewport,
               tick);
@@ -38,12 +39,12 @@ void Renderer::renderCharacter(PositionedRectangle const& viewport,
                                Texture const& characterset_texture,
                                Character const& character) const {
   SDL_Rect source_rect{
-      character.characterset().rectForSpriteIndex(character.spriteIndex())};
+      character.spriteset().rectForSpriteIndex(character.spriteIndex())};
   SDL_Rect dest_rect;
   dest_rect.x = static_cast<int>(character.x() - viewport.x());
   dest_rect.y = static_cast<int>(character.y() - viewport.y());
-  dest_rect.w = static_cast<int>(character.characterset().spritesWidth());
-  dest_rect.h = static_cast<int>(character.characterset().spritesHeight());
+  dest_rect.w = static_cast<int>(character.spriteset().spritesWidth());
+  dest_rect.h = static_cast<int>(character.spriteset().spritesHeight());
 
   SDL_RenderCopy(sdl_renderer_, characterset_texture.texture(), &source_rect,
                  &dest_rect);
@@ -52,7 +53,7 @@ void Renderer::renderCharacter(PositionedRectangle const& viewport,
 void Renderer::renderCharacters(
     PositionedRectangle const& viewport, int64_t tick,
     vector<Character> const& characters,
-    vector<Texture> const& charactersets_textures) const {
+    unordered_map<int64_t, Texture> const& charactersets_textures) const {
   /* The characters with the lower positions on the Y-axis must appear behind
    * the others. Sort them using their Y-positions. However it is better not to
    * modify the input vector (plus it is const). A copy could be made, but then
@@ -76,9 +77,11 @@ void Renderer::renderCharacters(
 
   // Render the characters from top-most to bottom-most.
   for (int64_t character_index : character_indices) {
-    // FIXME: Hardcoded 0 for textures indices.
-    renderCharacter(viewport, tick, charactersets_textures[0],
-                    characters[character_index]);
+    Character const& character = characters[character_index];
+    renderCharacter(
+        viewport, tick,
+        charactersets_textures.at(character.spriteset().textureIndex()),
+        character);
   }
 }
 

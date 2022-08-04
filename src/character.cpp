@@ -16,19 +16,17 @@ using std::tuple;
 using std::unordered_map;
 using std::vector;
 
-Character::Character(Spriteset const& characterset,
+Character::Character(Spriteset const& spriteset,
                      ActionSpriteMapper const& action_sprite_mapper,
                      AnimationPlayer const& animation_player,
                      Solid const& solid, Navigator const& navigator,
                      Position const& initial_position)
-    : characterset_{characterset},
+    : spriteset_{spriteset},
       action_sprite_mapper_{action_sprite_mapper},
       animation_player_{animation_player},
       facing_direction_{CardinalDirection::kSouth},
       navigator_{navigator},
       positioned_solid_{initial_position, solid} {}
-
-Spriteset const& Character::characterset() const { return characterset_; }
 
 Action Character::currentAction() const {
   switch (facing_direction_) {
@@ -71,6 +69,8 @@ uint16_t Character::spriteIndex() const {
       action_sprite_mapper_.spriteIndexForAction(currentAction()),
       animation_tick_);
 }
+
+Spriteset const& Character::spriteset() const { return spriteset_; }
 
 void Character::updateFacingDirection(Vector const& desired_displacement,
                                       Vector const& actual_displacement) {
@@ -116,7 +116,7 @@ int64_t Character::x() const { return position().x(); }
 int64_t Character::y() const { return position().y(); }
 
 tuple<vector<int64_t>, vector<Character>> CharacterLoader::load(
-    string const& characters_file_path, vector<Spriteset> const& charactersets,
+    string const& characters_file_path, vector<Spriteset> const& spritesets,
     unordered_map<int64_t, ActionSpriteMapper const> const&
         action_sprite_mappers,
     unordered_map<int64_t, AnimationPlayer const> const& animation_players,
@@ -130,7 +130,7 @@ tuple<vector<int64_t>, vector<Character>> CharacterLoader::load(
     while (stream.peek() != istream::traits_type::eof()) {
       int64_t x{0};
       int64_t y{0};
-      uint16_t characterset_index{0};
+      uint16_t spriteset_index{0};
       uint16_t action_sprite_mapper_index{0};
       uint16_t animations_index{0};
       uint16_t solid_index{0};
@@ -140,8 +140,8 @@ tuple<vector<int64_t>, vector<Character>> CharacterLoader::load(
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&y), kYFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&characterset_index),
-                  kCharactersetFieldSize);
+      stream.read(reinterpret_cast<char*>(&spriteset_index),
+                  kSpritesetFieldSize);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&action_sprite_mapper_index),
                   kIndicesFieldSize);
@@ -154,7 +154,7 @@ tuple<vector<int64_t>, vector<Character>> CharacterLoader::load(
       stream.read(reinterpret_cast<char*>(&controller_type),
                   kControllerFieldSize);
       characters.emplace_back(
-          charactersets[characterset_index],
+          spritesets[spriteset_index],
           action_sprite_mappers.at(action_sprite_mapper_index),
           animation_players.at(animations_index), solids.at(solid_index),
           navigator, Position{x * tiles_width, y * tiles_height});

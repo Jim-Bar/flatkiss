@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 
+#include <unordered_map>
 #include <vector>
 
 #include "animation_player.hpp"
@@ -31,11 +32,12 @@ class Renderer {
    * nullptr.
    */
   SDL_Texture* createTextureFromSurface(SDL_Surface* surface) const;
-  void render(AnimationPlayer const& animation_player, Level const& level,
-              Spriteset const& tileset, Texture const& tileset_texture,
-              PositionedRectangle const& viewport, int64_t tick,
-              std::vector<Texture> const& charactersets_textures,
-              std::vector<Character> const& characters) const;
+  void render(
+      AnimationPlayer const& animation_player, Level const& level,
+      Spriteset const& tileset, Texture const& tileset_texture,
+      PositionedRectangle const& viewport, int64_t tick,
+      std::unordered_map<int64_t, Texture> const& charactersets_textures,
+      std::vector<Character> const& characters) const;
 
  private:
   SDL_Renderer* const sdl_renderer_;
@@ -46,7 +48,7 @@ class Renderer {
   void renderCharacters(
       PositionedRectangle const& viewport, int64_t tick,
       std::vector<Character> const& characters,
-      std::vector<Texture> const& charactersets_textures) const;
+      std::unordered_map<int64_t, Texture> const& charactersets_textures) const;
   void renderLevel(AnimationPlayer const& animation_player, Level const& level,
                    Spriteset const& tileset, Texture const& tileset_texture,
                    PositionedRectangle const& viewport, int64_t tick) const;

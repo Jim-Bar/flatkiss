@@ -16,9 +16,7 @@ class Configuration {
   std::string animationsPath() const;
   std::string const& charactersPath() const;
   int64_t engineTickDurationMs() const;
-  int64_t levelHeightInTiles() const;
-  std::string const& levelPath() const;
-  int64_t levelWidthInTiles() const;
+  std::string const& levelsPath() const;
   std::string const& solidsPath() const;
   std::string spritesetFilesDirectory() const;
   std::string spritesetFilesPrefix() const;
@@ -31,9 +29,7 @@ class Configuration {
   std::string animations_path_{};
   std::string characters_path_{};
   int64_t engine_tick_duration_ms_{0};
-  int64_t level_height_in_tiles_{0};
-  std::string level_path_{};
-  int64_t level_width_in_tiles_{0};
+  std::string levels_path_{};
   std::string solids_path_{};
   std::string spriteset_files_directory_{};
   std::string spriteset_files_prefix_{};

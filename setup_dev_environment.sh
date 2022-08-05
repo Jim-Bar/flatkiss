@@ -12,7 +12,7 @@ git config user.name "Jean-Marie Baran"
 git config user.email "jeanmarie.baran@gmail.com"
 
 cd levels
-python3 level_to_bin.py
+python3 levels_to_bin.py
 cd ..
 
 cd assets

@@ -20,11 +20,7 @@ Configuration::Configuration(string const& file_path) {
   inipp::get_value(ini.sections["Characters"], "path", characters_path_);
   inipp::get_value(ini.sections["Engine"], "tick_duration_ms",
                    engine_tick_duration_ms_);
-  inipp::get_value(ini.sections["Level"], "height_in_tiles",
-                   level_height_in_tiles_);
-  inipp::get_value(ini.sections["Level"], "path", level_path_);
-  inipp::get_value(ini.sections["Level"], "width_in_tiles",
-                   level_width_in_tiles_);
+  inipp::get_value(ini.sections["Levels"], "path", levels_path_);
   inipp::get_value(ini.sections["Solids"], "path", solids_path_);
   inipp::get_value(ini.sections["Sprites"], "files_directory",
                    spriteset_files_directory_);
@@ -49,15 +45,7 @@ int64_t Configuration::engineTickDurationMs() const {
   return engine_tick_duration_ms_;
 }
 
-int64_t Configuration::levelHeightInTiles() const {
-  return level_height_in_tiles_;
-}
-
-string const& Configuration::levelPath() const { return level_path_; }
-
-int64_t Configuration::levelWidthInTiles() const {
-  return level_width_in_tiles_;
-}
+string const& Configuration::levelsPath() const { return levels_path_; }
 
 string Configuration::spritesetFilesDirectory() const {
   return spriteset_files_directory_;

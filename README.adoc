@@ -183,3 +183,4 @@ Note also that the speed of animations can slightly differ from the engine, depe
 . Editor: synchronize animated tiles when placing them
 . Two layers of tiles
 . Editor: resizable tileset window
+. Tiled: https://www.mapeditor.org

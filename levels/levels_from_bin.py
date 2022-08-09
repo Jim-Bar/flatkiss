@@ -21,6 +21,6 @@ while len(level_bytes) > 0:
         level_file.write('\n'.join([' '.join([str(index).zfill(3) for index in row]) for row in rows]))
 
         # Prepare for next level.
-        level_bytes = level_bytes[3 * 2 + width * height * 2:]
         if len(level_bytes) > 0:
+            level_bytes = level_bytes[3 * 2 + width * height * 2:]
             level_file.write('\n')

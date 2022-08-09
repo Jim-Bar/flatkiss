@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
+import argparse
 import configparser
 import pyglet
 import struct
 
+from io import FileIO
 from typing import Any, Callable, Dict, List, Tuple
 
 # Important note: pyglet's origin is located in the bottom left of images, unlike SDL which is top left. So for every
@@ -93,8 +95,11 @@ class _AnimationLoader(object):
     Import animations from a file.
     """
 
+    # FIXME: This is completely broken. Only the animations for the tileset must be loaded (not the characterset).
     @staticmethod
     def load_from_file(path: str, tileset: '_Tileset', tick_duration_ms: int) -> Dict[int, pyglet.image.Animation]:
+        # FIXME: Unhardcode this index.
+        group_index = 0
         animations = dict()
         with open(path, 'rb') as animations_file:
             byte_array = animations_file.read(1)
@@ -112,12 +117,26 @@ class _AnimationLoader(object):
         return animations
 
 
+class _CommandLineInterface(object):
+    """
+    Parses the command line.
+    """
+
+    def __init__(self) -> None:
+        parser = argparse.ArgumentParser(description='Edit levels')
+        parser.add_argument('index', type=int, help='the index of the level to edit, starting at zero')
+        self._level_index = parser.parse_args().index
+
+    def level_index(self) -> int:
+        return self._level_index
+
+
 class _Configuration(configparser.ConfigParser):
 
     _ANIMATIONS = 'Animations'
     _EDITOR = 'Editor'
     _ENGINE = 'Engine'
-    _LEVEL = 'Level'
+    _LEVEL = 'Levels'
     _TILESET = 'Tileset'
 
     def __init__(self, path: str) -> None:
@@ -136,35 +155,8 @@ class _Configuration(configparser.ConfigParser):
     def engine_tick_duration_ms(self) -> int:
         return self.getint(_Configuration._ENGINE, 'tick_duration_ms')
 
-    def level_height_in_tiles(self) -> int:
-        return self.getint(_Configuration._LEVEL, 'height_in_tiles')
-
     def level_path(self) -> str:
         return self.get(_Configuration._LEVEL, 'path')
-
-    def level_width_in_tiles(self) -> int:
-        return self.getint(_Configuration._LEVEL, 'width_in_tiles')
-
-    def tiles_size(self) -> int:
-        return self.getint(_Configuration._TILESET, 'tiles_size')
-
-    def tileset_gap(self) -> int:
-        return self.getint(_Configuration._TILESET, 'gap')
-
-    def tileset_height_in_tiles(self) -> int:
-        return self.getint(_Configuration._TILESET, 'height_in_tiles')
-
-    def tileset_left_offset(self) -> int:
-        return self.getint(_Configuration._TILESET, 'left_offset')
-
-    def tileset_path(self) -> str:
-        return self.get(_Configuration._TILESET, 'path')
-
-    def tileset_top_offset(self) -> int:
-        return self.getint(_Configuration._TILESET, 'top_offset')
-
-    def tileset_width_in_tiles(self) -> int:
-        return self.getint(_Configuration._TILESET, 'width_in_tiles')
 
 
 class _Controller(object):
@@ -172,14 +164,11 @@ class _Controller(object):
     Windows and events handling. Does not manage rendering, this is left for the windows classes.
     """
 
-    def __init__(self, configuration: _Configuration) -> None:
+    def __init__(self, configuration: _Configuration, level_index: int) -> None:
         self._configuration = configuration
-        self._tileset = _Tileset(configuration.tileset_path(), configuration.tiles_size(),
-                                 configuration.tileset_width_in_tiles(), configuration.tileset_height_in_tiles(),
-                                 configuration.tileset_left_offset(), configuration.tileset_top_offset(),
-                                 configuration.tileset_gap())
-        self._level = _LevelLoader.load(configuration.level_path(), configuration.level_width_in_tiles(),
-                                        configuration.level_height_in_tiles(), self._tileset)
+        # FIXME: Unhardcode those values.
+        self._tileset = _Tileset('assets/spriteset_0.bmp', 16, 24, 25, 1, 1, 1)
+        self._level = _LevelLoader.load(configuration.level_path(), level_index, self._tileset)
         # Default to the first index in SDL's coordinate system.
         self._current_selected_tile_index = _reverse_tile_index(0, self._tileset)
         self._level_window, self._tileset_window = self._create_windows(configuration, self._level, self._tileset)
@@ -234,26 +223,46 @@ class _Controller(object):
     def run() -> None:
         pyglet.app.run()
 
+
 class _LevelLoader(object):
     """
     Load / save a level from / to disk.
     """
 
     @staticmethod
-    def load(path: str, width_in_tiles: int, height_in_tiles: int, tileset: '_Tileset') -> '_Level':
+    def load(path: str, level_index: int, tileset: '_Tileset') -> '_Level':
+        # The width and height are in tiles.
+        tiles = tuple()
+        width = 0
+        height = 0
+
         with open(path, 'rb') as level_file:
             level_bytes = level_file.read()
-        # Convert each two bytes to an unsigned int.
-        tiles = struct.unpack('H' * (len(level_bytes) // 2), level_bytes)
+
+        # Read all the levels until the right one.
+        for _ in range(level_index + 1):
+
+            # Level header length in bytes.
+            header = 3 * 2
+
+            # Convert each two bytes to an unsigned int.
+            width, height, spriteset_index = struct.unpack('HHH', level_bytes[:header])
+            length = width * height * 2
+            tiles = struct.unpack('H' * width * height, level_bytes[header:header + length])
+
+            # Prepare for next level.
+            if len(level_bytes) > 0:
+                level_bytes = level_bytes[header + length:]
 
         # Convert tiles indices in pyglet's coordinate system and invert the rows of the level. Inverting rows is done
         # by cutting the level in lines of length ``level's width``, reverting it, then flattening it.
         tiles = [_reverse_tile_index(index, tileset)
-                 for line in reversed([tiles[i:i + width_in_tiles] for i in range(0, len(tiles), width_in_tiles)])
+                 for line in reversed([tiles[i:i + width] for i in range(0, len(tiles), width)])
                  for index in line]
 
-        return _Level(tiles, width_in_tiles, height_in_tiles)
+        return _Level(tiles, width, height)
 
+    # FIXME: This is broken due to several levels in a single file now.
     @staticmethod
     def save(level: '_Level', path: str, tileset: '_Tileset') -> None:
         # Organize the level in rows of tiles, and at the same time convert tiles indices in SDL's coordinate system.
@@ -492,7 +501,7 @@ class _TilesetWindow(pyglet.window.Window):
 
 
 def main():
-    _Controller(_Configuration('configuration.ini')).run()
+    _Controller(_Configuration('configuration.ini'), _CommandLineInterface().level_index()).run()
 
 
 if __name__ == '__main__':

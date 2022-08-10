@@ -6,7 +6,7 @@ import pyglet
 import struct
 
 from io import FileIO
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Any, BinaryIO, Callable, Dict, List, Tuple
 
 # Important note: pyglet's origin is located in the bottom left of images, unlike SDL which is top left. So for every
 # link with the outside of the editor (e.g. when loading), the indices of the tiles are reversed to migrate between the
@@ -95,24 +95,34 @@ class _AnimationLoader(object):
     Import animations from a file.
     """
 
-    # FIXME: This is completely broken. Only the animations for the tileset must be loaded (not the characterset).
     @staticmethod
     def load_from_file(path: str, tileset: '_Tileset', tick_duration_ms: int) -> Dict[int, pyglet.image.Animation]:
         # FIXME: Unhardcode this index.
-        group_index = 0
+        target_group_index = 0
         animations = dict()
         with open(path, 'rb') as animations_file:
-            byte_array = animations_file.read(1)
-            while len(byte_array) > 0:
-                period = byte_array[0]
-                duration = (tick_duration_ms * animations_file.read(1)[0]) / 1000
-                # Convert each two bytes to an unsigned int.
-                tiles_indices = struct.unpack('H' * period, animations_file.read(period * 2))
-                # Convert tiles indices in pyglet's coordinate system.
-                tiles_indices = tuple(_reverse_tile_index(tile_index, tileset) for tile_index in tiles_indices)
-                tiles_images = (tileset.tile(tile_index) for tile_index in tiles_indices)
-                animations[tiles_indices[0]] = pyglet.image.Animation.from_image_sequence(tiles_images, duration)
-                byte_array = animations_file.read(1)
+
+            current_group_index = target_group_index - 1  # Something not equals to the wanted group index.
+            while current_group_index != target_group_index:
+                current_group_index, num_animations = struct.unpack('HH', animations_file.read(2 + 2))
+                animations = _AnimationLoader._read_group_of_animations(animations_file, num_animations, tileset,
+                                                                        tick_duration_ms)
+
+        return animations
+
+    @staticmethod
+    def _read_group_of_animations(animations_file: BinaryIO, num_animations: int, tileset: '_Tileset',
+                                  tick_duration_ms: int) -> Dict[int, pyglet.image.Animation]:
+        animations = dict()
+        for _ in range(num_animations):
+            period = animations_file.read(1)[0]
+            duration = (tick_duration_ms * animations_file.read(1)[0]) / 1000
+            # Convert each two bytes to an unsigned int.
+            tiles_indices = struct.unpack('H' * period, animations_file.read(period * 2))
+            # Convert tiles indices in pyglet's coordinate system.
+            tiles_indices = tuple(_reverse_tile_index(tile_index, tileset) for tile_index in tiles_indices)
+            tiles_images = (tileset.tile(tile_index) for tile_index in tiles_indices)
+            animations[tiles_indices[0]] = pyglet.image.Animation.from_image_sequence(tiles_images, duration)
 
         return animations
 

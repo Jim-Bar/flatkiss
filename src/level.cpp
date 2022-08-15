@@ -34,6 +34,8 @@ vector<Level> LevelLoader::load(string const& file_path) {
   stream.open(file_path, ios::in | ios::binary);
   if (stream.is_open()) {
     while (stream.peek() != istream::traits_type::eof()) {
+      /* TODO: To be consistent with the rest, also store the index of the level
+       * in the binary file? */
       uint16_t width_in_tiles{0};
       uint16_t height_in_tiles{0};
       uint16_t spriteset_index{0};

@@ -181,6 +181,7 @@ Note also that the speed of animations can slightly differ from the engine, depe
 . Check whether the built binary can run on a system without libsdl2
 . Replace "pixel" by "point" in the code that does not deal with graphics
 . Editor: synchronize animated tiles when placing them
-. Objects or entities or whatever (including characters): each tile has a z-order sorted list of objects. Each tile draws its objects respecting the z-order, **clipped** to the tile. So that multi-tiles objects are not a problem.
+. Objects or entities or whatever (including characters): each tile has a z-order sorted list of objects. Each tile
+draws its objects respecting the z-order, **clipped** to the tile. So that multi-tiles objects are not a problem.
 . Editor: resizable tileset window
 . Tiled: https://www.mapeditor.org

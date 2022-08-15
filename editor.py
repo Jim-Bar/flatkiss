@@ -6,7 +6,7 @@ import pyglet
 import struct
 
 from io import FileIO
-from typing import Any, BinaryIO, Callable, Dict, List, Tuple
+from typing import Any, Callable, Dict, List, Tuple
 
 # Important note: pyglet's origin is located in the bottom left of images, unlike SDL which is top left. So for every
 # link with the outside of the editor (e.g. when loading), the indices of the tiles are reversed to migrate between the
@@ -100,9 +100,8 @@ class _AnimationLoader(object):
         # FIXME: Unhardcode this index.
         target_group_index = 0
         animations = dict()
+        current_group_index = target_group_index - 1  # Something not equals to the wanted group index.
         with open(path, 'rb') as animations_file:
-
-            current_group_index = target_group_index - 1  # Something not equals to the wanted group index.
             while current_group_index != target_group_index:
                 current_group_index, num_animations = struct.unpack('HH', animations_file.read(2 + 2))
                 animations = _AnimationLoader._read_group_of_animations(animations_file, num_animations, tileset,
@@ -111,7 +110,7 @@ class _AnimationLoader(object):
         return animations
 
     @staticmethod
-    def _read_group_of_animations(animations_file: BinaryIO, num_animations: int, tileset: '_Tileset',
+    def _read_group_of_animations(animations_file: FileIO, num_animations: int, tileset: '_Tileset',
                                   tick_duration_ms: int) -> Dict[int, pyglet.image.Animation]:
         animations = dict()
         for _ in range(num_animations):
@@ -241,28 +240,25 @@ class _LevelLoader(object):
 
     @staticmethod
     def load(path: str, level_index: int, tileset: '_Tileset') -> '_Level':
+        with open(path, 'rb') as level_file:
+            return _LevelLoader._read_level_with_index(level_index, level_file, tileset)
+
+    @staticmethod
+    def _read_level_with_index(level_index: int, level_file: FileIO, tileset: '_Tileset') -> '_Level':
         # The width and height are in tiles.
         tiles = tuple()
         width = 0
         height = 0
 
-        with open(path, 'rb') as level_file:
-            level_bytes = level_file.read()
-
         # Read all the levels until the right one.
         for _ in range(level_index + 1):
-
             # Level header length in bytes.
             header = 3 * 2
 
             # Convert each two bytes to an unsigned int.
-            width, height, spriteset_index = struct.unpack('HHH', level_bytes[:header])
+            width, height, spriteset_index = struct.unpack('HHH', level_file.read(header))
             length = width * height * 2
-            tiles = struct.unpack('H' * width * height, level_bytes[header:header + length])
-
-            # Prepare for next level.
-            if len(level_bytes) > 0:
-                level_bytes = level_bytes[header + length:]
+            tiles = struct.unpack('H' * width * height, level_file.read(length))
 
         # Convert tiles indices in pyglet's coordinate system and invert the rows of the level. Inverting rows is done
         # by cutting the level in lines of length ``level's width``, reverting it, then flattening it.
@@ -270,7 +266,7 @@ class _LevelLoader(object):
                  for line in reversed([tiles[i:i + width] for i in range(0, len(tiles), width)])
                  for index in line]
 
-        return _Level(tiles, width, height)
+        return _Level(tiles, width, height, level_index)
 
     # FIXME: This is broken due to several levels in a single file now.
     @staticmethod
@@ -286,7 +282,15 @@ class _LevelLoader(object):
         # Invert rows of the level and flatten.
         tiles = [tile_index for row in reversed(rows) for tile_index in row]
 
-        with open(path, 'wb') as level_file:
+        with open(path, 'rb+') as level_file:
+            if level.index() > 0:
+                # Move to the right location in the file where to write the level.
+                _LevelLoader._read_level_with_index(level.index() - 1, level_file, tileset)
+            level_file.write(level.width_in_tiles().to_bytes(2, 'little'))
+            level_file.write(level.height_in_tiles().to_bytes(2, 'little'))
+            # FIXME: Unhardcode 0 (spriteset index)
+            level_file.write(int(0).to_bytes(2, 'little'))
+
             for i in tiles:
                 level_file.write(i.to_bytes(2, 'little'))
 
@@ -296,13 +300,17 @@ class _Level(object):
     Model for a level.
     """
 
-    def __init__(self, tiles: List[int], width_in_tiles: int, height_in_tiles: int) -> None:
+    def __init__(self, tiles: List[int], width_in_tiles: int, height_in_tiles: int, index: int) -> None:
         self._width_in_tiles = width_in_tiles
         self._height_in_tiles = height_in_tiles
+        self._index = index
         self._tiles = tiles
 
     def height_in_tiles(self) -> int:
         return self._height_in_tiles
+
+    def index(self) -> int:
+        return self._index
 
     def set_tile_index(self, i: int, j: int, tile_index: int) -> None:
         self._tiles[j * self._width_in_tiles + i] = tile_index

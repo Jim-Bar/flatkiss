@@ -121,6 +121,7 @@ int main(int argc, char* argv[]) {
       CharacterControllerLoader::load(characters, characters_to_controllers)};
   int64_t tick(0);
   while (!quit) {
+    // FIXME: Unhardcode zero (and in editor too).
     renderer.render(animation_players.at(0), level,
                     spritesets[level.spritesetIndex()], textures.at(0),
                     viewport, tick++, textures, characters);

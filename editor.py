@@ -6,7 +6,7 @@ import pyglet
 import struct
 
 from io import FileIO
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Any, Callable, Dict, Generator, List, Tuple
 
 # Important note: pyglet's origin is located in the bottom left of images, unlike SDL which is top left. So for every
 # link with the outside of the editor (e.g. when loading), the indices of the tiles are reversed to migrate between the
@@ -40,18 +40,19 @@ from typing import Any, Callable, Dict, List, Tuple
 # 2 1 8 6 | 4 8 6 1
 
 
-def _reverse_tile_index(tile_index: int, tileset: '_Tileset') -> int:
+def _reverse_tile_index(tile_index: int, tileset_width_in_tiles: int, tileset_height_in_tiles) -> int:
     """
     Convert a tile index from SDL's (respectively pyglet's) coordinate system (top left) to pyglet's (respectively
     SDL's) coordinate system (bottom left), and vice-versa.
 
     :param tile_index: index of the tile in one or another of the coordinate systems.
-    :param tileset: tileset that will be used with the level.
+    :param tileset_width_in_tiles: width in tiles of the tileset that will be used with the level.
+    :param tileset_height_in_tiles: height in tiles of the tileset that will be used with the level.
     :return: index of the tile in the other coordinate system.
     """
-    i = tile_index % tileset.width_in_tiles()
-    j = tileset.height_in_tiles() - 1 - tile_index // tileset.width_in_tiles()
-    return j * tileset.width_in_tiles() + i
+    i = tile_index % tileset_width_in_tiles
+    j = tileset_height_in_tiles - 1 - tile_index // tileset_width_in_tiles
+    return j * tileset_width_in_tiles + i
 
 
 class _Location(object):
@@ -119,7 +120,8 @@ class _AnimationLoader(object):
             # Convert each two bytes to an unsigned int.
             tiles_indices = struct.unpack('H' * period, animations_file.read(period * 2))
             # Convert tiles indices in pyglet's coordinate system.
-            tiles_indices = tuple(_reverse_tile_index(tile_index, tileset) for tile_index in tiles_indices)
+            tiles_indices = tuple(_reverse_tile_index(tile_index, tileset.width_in_tiles(), tileset.height_in_tiles())
+                                  for tile_index in tiles_indices)
             tiles_images = (tileset.tile(tile_index) for tile_index in tiles_indices)
             animations[tiles_indices[0]] = pyglet.image.Animation.from_image_sequence(tiles_images, duration)
 
@@ -145,8 +147,8 @@ class _Configuration(configparser.ConfigParser):
     _ANIMATIONS = 'Animations'
     _EDITOR = 'Editor'
     _ENGINE = 'Engine'
-    _LEVEL = 'Levels'
-    _TILESET = 'Tileset'
+    _LEVELS = 'Levels'
+    _SPRITES = 'Sprites'
 
     def __init__(self, path: str) -> None:
         super().__init__()
@@ -165,7 +167,19 @@ class _Configuration(configparser.ConfigParser):
         return self.getint(_Configuration._ENGINE, 'tick_duration_ms')
 
     def level_path(self) -> str:
-        return self.get(_Configuration._LEVEL, 'path')
+        return self.get(_Configuration._LEVELS, 'path')
+
+    def sprites_files_directory(self) -> str:
+        return self.get(_Configuration._SPRITES, 'files_directory')
+
+    def sprites_files_prefix(self) -> str:
+        return self.get(_Configuration._SPRITES, 'files_prefix')
+
+    def sprites_files_suffix(self) -> str:
+        return self.get(_Configuration._SPRITES, 'files_suffix')
+
+    def sprites_path(self) -> str:
+        return self.get(_Configuration._SPRITES, 'path')
 
 
 class _Controller(object):
@@ -175,11 +189,14 @@ class _Controller(object):
 
     def __init__(self, configuration: _Configuration, level_index: int) -> None:
         self._configuration = configuration
-        # FIXME: Unhardcode those values.
-        self._tileset = _Tileset('assets/spriteset_0.bmp', 16, 24, 25, 1, 1, 1)
-        self._level = _LevelLoader.load(configuration.level_path(), level_index, self._tileset)
+        self._level = _LevelLoader.load(configuration.level_path(), level_index)
+        self._tileset = _TilesetLoader.load(configuration.sprites_path(), self._level.tileset_index(),
+                                            configuration.sprites_files_directory(),
+                                            configuration.sprites_files_prefix(), configuration.sprites_files_suffix())
+        self._level.reverse(self._tileset)
         # Default to the first index in SDL's coordinate system.
-        self._current_selected_tile_index = _reverse_tile_index(0, self._tileset)
+        self._current_selected_tile_index = _reverse_tile_index(0, self._tileset.width_in_tiles(),
+                                                                self._tileset.height_in_tiles())
         self._level_window, self._tileset_window = self._create_windows(configuration, self._level, self._tileset)
         self._update_windows_captions(True)
 
@@ -207,7 +224,8 @@ class _Controller(object):
 
     def _update_windows_captions(self, saved: bool) -> None:
         # Display the tile index in SDL's coordinate system.
-        reversed_tile_index = _reverse_tile_index(self._current_selected_tile_index, self._tileset)
+        reversed_tile_index = _reverse_tile_index(self._current_selected_tile_index, self._tileset.width_in_tiles(),
+                                                  self._tileset.height_in_tiles())
         suffix = '({}){}'.format(reversed_tile_index, '' if saved else '*')
         self._level_window.set_caption('{} {}'.format(self._configuration.editor_caption_level_window(), suffix))
         self._tileset_window.set_caption('{} {}'.format(self._configuration.editor_caption_tileset_window(), suffix))
@@ -239,16 +257,17 @@ class _LevelLoader(object):
     """
 
     @staticmethod
-    def load(path: str, level_index: int, tileset: '_Tileset') -> '_Level':
+    def load(path: str, level_index: int) -> '_Level':
         with open(path, 'rb') as level_file:
-            return _LevelLoader._read_level_with_index(level_index, level_file, tileset)
+            return _LevelLoader._read_level_with_index(level_index, level_file)
 
     @staticmethod
-    def _read_level_with_index(level_index: int, level_file: FileIO, tileset: '_Tileset') -> '_Level':
+    def _read_level_with_index(level_index: int, level_file: FileIO) -> '_Level':
         # The width and height are in tiles.
         tiles = tuple()
         width = 0
         height = 0
+        tileset_index = 0
 
         # Read all the levels until the right one.
         for _ in range(level_index + 1):
@@ -256,43 +275,30 @@ class _LevelLoader(object):
             header = 3 * 2
 
             # Convert each two bytes to an unsigned int.
-            width, height, spriteset_index = struct.unpack('HHH', level_file.read(header))
+            width, height, tileset_index = struct.unpack('HHH', level_file.read(header))
             length = width * height * 2
-            tiles = struct.unpack('H' * width * height, level_file.read(length))
+            tiles = list(struct.unpack('H' * width * height, level_file.read(length)))
 
-        # Convert tiles indices in pyglet's coordinate system and invert the rows of the level. Inverting rows is done
-        # by cutting the level in lines of length ``level's width``, reverting it, then flattening it.
-        tiles = [_reverse_tile_index(index, tileset)
-                 for line in reversed([tiles[i:i + width] for i in range(0, len(tiles), width)])
-                 for index in line]
+        return _Level(level_index, tiles, width, height, tileset_index)
 
-        return _Level(tiles, width, height, level_index)
-
-    # FIXME: This is broken due to several levels in a single file now.
     @staticmethod
     def save(level: '_Level', path: str, tileset: '_Tileset') -> None:
-        # Organize the level in rows of tiles, and at the same time convert tiles indices in SDL's coordinate system.
-        rows = list()
-        for j in range(0, level.height_in_tiles()):
-            row = list()
-            for i in range(0, level.width_in_tiles()):
-                row.append(_reverse_tile_index(level.tile_index(i, j), tileset))
-            rows.append(row)
-
-        # Invert rows of the level and flatten.
-        tiles = [tile_index for row in reversed(rows) for tile_index in row]
+        # Convert tiles indices in SDL's coordinate system.
+        level.reverse(tileset)
 
         with open(path, 'rb+') as level_file:
             if level.index() > 0:
                 # Move to the right location in the file where to write the level.
-                _LevelLoader._read_level_with_index(level.index() - 1, level_file, tileset)
+                _LevelLoader._read_level_with_index(level.index() - 1, level_file)
             level_file.write(level.width_in_tiles().to_bytes(2, 'little'))
             level_file.write(level.height_in_tiles().to_bytes(2, 'little'))
-            # FIXME: Unhardcode 0 (spriteset index)
-            level_file.write(int(0).to_bytes(2, 'little'))
+            level_file.write(level.tileset_index().to_bytes(2, 'little'))
 
-            for i in tiles:
+            for i in level.tiles_generator():
                 level_file.write(i.to_bytes(2, 'little'))
+
+        # Convert tiles indices back to pyglet's coordinate system.
+        level.reverse(tileset)
 
 
 class _Level(object):
@@ -300,11 +306,13 @@ class _Level(object):
     Model for a level.
     """
 
-    def __init__(self, tiles: List[int], width_in_tiles: int, height_in_tiles: int, index: int) -> None:
-        self._width_in_tiles = width_in_tiles
-        self._height_in_tiles = height_in_tiles
+    def __init__(self, index: int, tiles: List[int], width_in_tiles: int, height_in_tiles: int,
+                 tileset_index: int) -> None:
         self._index = index
         self._tiles = tiles
+        self._width_in_tiles = width_in_tiles
+        self._height_in_tiles = height_in_tiles
+        self._tileset_index = tileset_index
 
     def height_in_tiles(self) -> int:
         return self._height_in_tiles
@@ -312,14 +320,52 @@ class _Level(object):
     def index(self) -> int:
         return self._index
 
+    def reverse(self, tileset: '_Tileset') -> None:
+        # Convert tiles indices from SDL's coordinate system to pyglet's coordinate system or vice-versa, and invert the
+        # rows of the level. Inverting rows is done by cutting the level in lines of length ``level's width``, reverting
+        # it, then flattening it.
+        self._tiles = [_reverse_tile_index(index, tileset.width_in_tiles(), tileset.height_in_tiles())
+                       for line in reversed([self._tiles[i:i + self._width_in_tiles]
+                                             for i in range(0, len(self._tiles), self._height_in_tiles)])
+                       for index in line]
+
     def set_tile_index(self, i: int, j: int, tile_index: int) -> None:
         self._tiles[j * self._width_in_tiles + i] = tile_index
+
+    def tiles_generator(self) -> Generator[int, None, None]:
+        for tile_index in self._tiles:
+            yield tile_index
+
+    def tileset_index(self) -> int:
+        return self._tileset_index
 
     def tile_index(self, i: int, j: int) -> int:
         return self._tiles[j * self._width_in_tiles + i]
 
     def width_in_tiles(self) -> int:
         return self._width_in_tiles
+
+
+class _TilesetLoader(object):
+    """
+    Load a tileset from disk.
+    """
+
+    @staticmethod
+    def load(path: str, tileset_index: int, files_directory: str, files_prefix: str, files_suffix: str) -> '_Tileset':
+        with open(path, 'rb') as tileset_file:
+            # Tileset description length in bytes
+            tileset_length = 1 + 1 + 2 + 2 + 2 + 2 + 2 + 2 + 1 + 1 + 1
+
+            tileset = None
+            for _ in range(tileset_index + 1):
+                tiles_width, _, width_in_tiles, height_in_tiles, left_offset, top_offset, gap, picture_file, _, _, _ = \
+                    struct.unpack('BBHHHHHHBBB', tileset_file.read(tileset_length))
+
+                tileset = _Tileset('{}/{}{}{}'.format(files_directory, files_prefix, picture_file, files_suffix),
+                                   tiles_width, width_in_tiles, height_in_tiles, left_offset, top_offset, gap)
+
+            return tileset
 
 
 class _Tileset(object):

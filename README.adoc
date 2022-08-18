@@ -2,7 +2,7 @@
 :1: https://en.wikipedia.org/wiki/KISS_principle
 :2: https://google.github.io/styleguide/cppguide.html
 
-FlatKiss is a 2D tile based demo game engine.
+FlatKiss is a 2D tile based toy game engine.
 
 == Paradigm
 

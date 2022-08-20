@@ -97,13 +97,12 @@ class _AnimationLoader(object):
     """
 
     @staticmethod
-    def load_from_file(path: str, tileset: '_Tileset', tick_duration_ms: int) -> Dict[int, pyglet.image.Animation]:
-        # FIXME: Unhardcode this index.
-        target_group_index = 0
+    def load_from_file(path: str, tileset: '_Tileset', animation_group_index: int,
+                       tick_duration_ms: int) -> Dict[int, pyglet.image.Animation]:
         animations = dict()
-        current_group_index = target_group_index - 1  # Something not equals to the wanted group index.
+        current_group_index = animation_group_index - 1  # Something not equals to the wanted group index.
         with open(path, 'rb') as animations_file:
-            while current_group_index != target_group_index:
+            while current_group_index != animation_group_index:
                 current_group_index, num_animations = struct.unpack('HH', animations_file.read(2 + 2))
                 animations = _AnimationLoader._read_group_of_animations(animations_file, num_animations, tileset,
                                                                         tick_duration_ms)
@@ -208,7 +207,7 @@ class _Controller(object):
 
         screen = pyglet.canvas.get_display().get_default_screen()
 
-        animations = _AnimationLoader.load_from_file(configuration.animations_path(), tileset,
+        animations = _AnimationLoader.load_from_file(configuration.animations_path(), tileset, level.animation_index(),
                                                      configuration.engine_tick_duration_ms())
 
         level_window_width = min(level.width_in_tiles() * tileset.tiles_size_in_pixels(),
@@ -268,18 +267,19 @@ class _LevelLoader(object):
         width = 0
         height = 0
         tileset_index = 0
+        animation_index = 0
 
         # Read all the levels until the right one.
         for _ in range(level_index + 1):
             # Level header length in bytes.
-            header = 3 * 2
+            header = 4 * 2
 
             # Convert each two bytes to an unsigned int.
-            width, height, tileset_index = struct.unpack('HHH', level_file.read(header))
+            width, height, tileset_index, animation_index = struct.unpack('HHHH', level_file.read(header))
             length = width * height * 2
             tiles = list(struct.unpack('H' * width * height, level_file.read(length)))
 
-        return _Level(level_index, tiles, width, height, tileset_index)
+        return _Level(level_index, tiles, width, height, tileset_index, animation_index)
 
     @staticmethod
     def save(level: '_Level', path: str, tileset: '_Tileset') -> None:
@@ -293,6 +293,7 @@ class _LevelLoader(object):
             level_file.write(level.width_in_tiles().to_bytes(2, 'little'))
             level_file.write(level.height_in_tiles().to_bytes(2, 'little'))
             level_file.write(level.tileset_index().to_bytes(2, 'little'))
+            level_file.write(level.animation_index().to_bytes(2, 'little'))
 
             for i in level.tiles_generator():
                 level_file.write(i.to_bytes(2, 'little'))
@@ -307,12 +308,16 @@ class _Level(object):
     """
 
     def __init__(self, index: int, tiles: List[int], width_in_tiles: int, height_in_tiles: int,
-                 tileset_index: int) -> None:
+                 tileset_index: int, animation_index: int) -> None:
         self._index = index
         self._tiles = tiles
         self._width_in_tiles = width_in_tiles
         self._height_in_tiles = height_in_tiles
         self._tileset_index = tileset_index
+        self._animation_index = animation_index
+
+    def animation_index(self) -> int:
+        return self._animation_index
 
     def height_in_tiles(self) -> int:
         return self._height_in_tiles

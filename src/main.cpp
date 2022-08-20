@@ -93,9 +93,6 @@ int main(int argc, char* argv[]) {
       SpritesetLoader::load(configuration.spritesetsPath())};
   unordered_map<int64_t, Texture> const textures{
       texture_loader.load(spritesets, renderer)};
-  vector<Level> const levels{
-      LevelLoader::load(configuration.levelsPath(), spritesets)};
-  Level const& level{levels[0]};
 
   unordered_map<int64_t, AnimationPlayer const> animation_players{
       AnimationPlayerLoader::load(configuration.animationsPath())};
@@ -105,6 +102,9 @@ int main(int argc, char* argv[]) {
       TileSolidMapperLoader::load(configuration.tileSolidMapsPath())};
   unordered_map<int64_t, Solid const> solids{
       SolidLoader::load(configuration.solidsPath())};
+  vector<Level> const levels{LevelLoader::load(configuration.levelsPath(),
+                                               spritesets, animation_players)};
+  Level const& level{levels[0]};
 
   bool quit = false;
   SDL_Event event;
@@ -121,9 +121,7 @@ int main(int argc, char* argv[]) {
       CharacterControllerLoader::load(characters, characters_to_controllers)};
   int64_t tick(0);
   while (!quit) {
-    // FIXME: Unhardcode zero (and in editor too).
-    renderer.render(animation_players.at(0), level, viewport, tick++, textures,
-                    characters);
+    renderer.render(level, viewport, tick++, textures, characters);
     SDL_Delay(configuration.engineTickDurationMs());
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {

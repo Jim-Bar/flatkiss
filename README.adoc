@@ -38,8 +38,9 @@ be ran from the project's root directory in order to find the assets).
 
 === Level
 
-Width and height of the level in tiles on two bytes each, followed by the spriteset index to use on two bytes, followed
-by the list of tiles indices (in the tileset) as shorts (two bytes per index, little endian).
+Width and height of the level in tiles on two bytes each, followed by the spriteset index to use on two bytes, then the
+tile animation on two bytes, followed by the list of tiles indices (in the tileset) as shorts (two bytes per index,
+little endian).
 
 === Animations
 

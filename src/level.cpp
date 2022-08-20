@@ -9,14 +9,21 @@ using std::istream;
 using std::move;
 using std::streamsize;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 Level::Level(vector<uint16_t>&& tiles, int64_t width_in_tiles,
-             int64_t height_in_tiles, Spriteset const& spriteset)
-    : tiles_{move(tiles)},
+             int64_t height_in_tiles, Spriteset const& spriteset,
+             AnimationPlayer const& animation_player)
+    : animation_player_{animation_player},
+      tiles_{move(tiles)},
       width_in_tiles_{width_in_tiles},
       height_in_tiles_{height_in_tiles},
       spriteset_{spriteset} {}
+
+AnimationPlayer const& Level::animationPlayer() const {
+  return animation_player_;
+}
 
 int64_t Level::heightInTiles() const { return height_in_tiles_; }
 
@@ -28,8 +35,9 @@ uint16_t Level::tileIndex(int64_t i, int64_t j) const {
 
 int64_t Level::widthInTiles() const { return width_in_tiles_; }
 
-vector<Level> LevelLoader::load(string const& file_path,
-                                vector<Spriteset> const& spritesets) {
+vector<Level> LevelLoader::load(
+    string const& file_path, vector<Spriteset> const& spritesets,
+    unordered_map<int64_t, AnimationPlayer const>& animation_players) {
   vector<Level> levels;
   ifstream stream;
   stream.open(file_path, ios::in | ios::binary);
@@ -40,12 +48,15 @@ vector<Level> LevelLoader::load(string const& file_path,
       uint16_t width_in_tiles{0};
       uint16_t height_in_tiles{0};
       uint16_t spriteset_index{0};
+      uint16_t animation_player_index{0};
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&width_in_tiles), 2);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&height_in_tiles), 2);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&spriteset_index), 2);
+      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+      stream.read(reinterpret_cast<char*>(&animation_player_index), 2);
       // Two bytes per tile.
       int64_t const size_in_bytes{width_in_tiles * height_in_tiles * 2};
       auto tiles{vector<uint16_t>(size_in_bytes, 0)};
@@ -53,7 +64,8 @@ vector<Level> LevelLoader::load(string const& file_path,
       stream.read(reinterpret_cast<char*>(tiles.data()),
                   static_cast<streamsize>(size_in_bytes));
       levels.emplace_back(move(tiles), width_in_tiles, height_in_tiles,
-                          spritesets[spriteset_index]);
+                          spritesets[spriteset_index],
+                          animation_players.at(animation_player_index));
     }
     stream.close();
   }  // FIXME: fail.

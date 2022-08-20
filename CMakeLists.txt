@@ -16,10 +16,15 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
-# Including header files because from Modern CMake: "The headers will be, for most intents and purposes, ignored; the
-# only reason to list them is to get them to show up in IDEs". Refer to:
+# List of the targets to build.
+set(EXECUTABLE_NAME ${PROJECT_NAME})
+set(RENDERER_NAME ${EXECUTABLE_NAME}-renderer)
+
+# Including header files in the targets because from Modern CMake: "The headers will be, for most intents and purposes,
+# ignored; the only reason to list them is to get them to show up in IDEs". Refer to:
 # https://cliutils.gitlab.io/modern-cmake/chapters/basics.html
-add_executable(${PROJECT_NAME}
+
+add_executable(${EXECUTABLE_NAME}
     src/action.cpp
     src/action.hpp
     src/action_sprite_mapper.cpp
@@ -40,8 +45,6 @@ add_executable(${PROJECT_NAME}
     src/configuration.hpp
     src/ellipse.cpp
     src/ellipse.hpp
-    src/keyboard_state.cpp
-    src/keyboard_state.hpp
     src/level.cpp
     src/level.hpp
     src/main.cpp
@@ -58,22 +61,30 @@ add_executable(${PROJECT_NAME}
     src/positioned_solid.hpp
     src/rectangle.cpp
     src/rectangle.hpp
-    src/renderer.cpp
-    src/renderer.hpp
     src/solid.cpp
     src/solid.hpp
     src/spriteset.cpp
     src/spriteset.hpp
-    src/texture.cpp
-    src/texture.hpp
     src/tile_solid_mapper.cpp
     src/tile_solid_mapper.hpp
     src/vector.cpp
     src/vector.hpp
 )
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
+target_link_libraries(${EXECUTABLE_NAME} ${RENDERER_NAME})
 
-# Setting the C++ version, from Moder CMake:
+add_library(${RENDERER_NAME} STATIC
+    src/keyboard_state.cpp
+    src/keyboard_state.hpp
+    src/renderer.cpp
+    src/renderer.hpp
+    src/texture.cpp
+    src/texture.hpp
+)
+target_link_libraries(${RENDERER_NAME} ${SDL2_LIBRARIES})
+
+# Setting the C++ version, from Modern CMake:
 # https://cliutils.gitlab.io/modern-cmake/chapters/features/cpp11.html
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(${EXECUTABLE_NAME} PUBLIC cxx_std_20)
+set_target_properties(${EXECUTABLE_NAME} PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(${RENDERER_NAME} PUBLIC cxx_std_20)
+set_target_properties(${RENDERER_NAME} PROPERTIES CXX_EXTENSIONS OFF)

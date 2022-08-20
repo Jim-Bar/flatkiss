@@ -20,8 +20,6 @@
 #ifndef SPRITESET_HPP_INCLUDED
 #define SPRITESET_HPP_INCLUDED
 
-#include <SDL2/SDL.h>
-
 #include <string>
 #include <vector>
 
@@ -51,7 +49,6 @@ class Spriteset {
   int64_t gap() const;
   int64_t heightInSprites() const;
   int64_t leftOffset() const;
-  SDL_Rect rectForSpriteIndex(int64_t sprite_index) const;
   int64_t spritesHeight() const;
   int64_t spritesWidth() const;
   int64_t textureIndex() const;

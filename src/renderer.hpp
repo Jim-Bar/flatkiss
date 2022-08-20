@@ -57,6 +57,8 @@ class Renderer {
  private:
   SDL_Renderer* const sdl_renderer_;
 
+  static SDL_Rect rectForSpriteIndex(int64_t sprite_index,
+                                     Spriteset const& spriteset);
   void renderCharacter(PositionedRectangle const& viewport,
                        Texture const& characterset_texture,
                        Character const& character) const;

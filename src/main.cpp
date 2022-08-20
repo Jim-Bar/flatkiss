@@ -19,8 +19,6 @@
 
 #include "main.hpp"
 
-#include <SDL2/SDL.h>
-
 #include <cstdlib>
 #include <fstream>
 #include <iostream>

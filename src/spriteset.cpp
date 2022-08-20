@@ -60,21 +60,6 @@ int64_t Spriteset::heightInSprites() const { return height_in_sprites_; }
 
 int64_t Spriteset::leftOffset() const { return left_offset_; }
 
-SDL_Rect Spriteset::rectForSpriteIndex(int64_t sprite_index) const {
-  SDL_Rect source_rect;
-  source_rect.w = static_cast<int>(spritesWidth());
-  source_rect.h = static_cast<int>(spritesHeight());
-
-  source_rect.x = static_cast<int>((sprite_index % widthInSprites()) *
-                                       (source_rect.w + gap()) +
-                                   leftOffset());
-  source_rect.y = static_cast<int>((sprite_index / widthInSprites()) *
-                                       (source_rect.h + gap()) +
-                                   topOffset());
-
-  return source_rect;
-}
-
 int64_t Spriteset::spritesHeight() const { return sprites_height_; }
 
 int64_t Spriteset::spritesWidth() const { return sprites_width_; }

@@ -37,9 +37,9 @@ class Texture {
           uint8_t alpha_blue, Renderer const& renderer);
   Texture(Texture const& other) = delete;
   Texture(Texture&& other) = default;
+  ~Texture();
   Texture& operator=(Texture const& other) = delete;
   Texture& operator=(Texture&& other) = delete;
-  ~Texture();
   SDL_Texture* texture() const;
 
  private:

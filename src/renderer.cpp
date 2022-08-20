@@ -29,12 +29,11 @@ void Renderer::render(AnimationPlayer const& animation_player,
   SDL_RenderClear(sdl_renderer_);
   renderLevel(animation_player, level,
               textures.at(level.spriteset().textureIndex()), viewport, tick);
-  renderCharacters(viewport, tick, characters, textures);
+  renderCharacters(viewport, characters, textures);
   SDL_RenderPresent(sdl_renderer_);
 }
 
 void Renderer::renderCharacter(PositionedRectangle const& viewport,
-                               int64_t tick,
                                Texture const& characterset_texture,
                                Character const& character) const {
   SDL_Rect source_rect{
@@ -50,8 +49,7 @@ void Renderer::renderCharacter(PositionedRectangle const& viewport,
 }
 
 void Renderer::renderCharacters(
-    PositionedRectangle const& viewport, int64_t tick,
-    vector<Character> const& characters,
+    PositionedRectangle const& viewport, vector<Character> const& characters,
     unordered_map<int64_t, Texture> const& charactersets_textures) const {
   /* The characters with the lower positions on the Y-axis must appear behind
    * the others. Sort them using their Y-positions. However it is better not to
@@ -78,7 +76,7 @@ void Renderer::renderCharacters(
   for (int64_t character_index : character_indices) {
     Character const& character = characters[character_index];
     renderCharacter(
-        viewport, tick,
+        viewport,
         charactersets_textures.at(character.spriteset().textureIndex()),
         character);
   }

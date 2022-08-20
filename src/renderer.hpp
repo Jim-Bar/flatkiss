@@ -40,11 +40,11 @@ class Renderer {
  private:
   SDL_Renderer* const sdl_renderer_;
 
-  void renderCharacter(PositionedRectangle const& viewport, int64_t tick,
+  void renderCharacter(PositionedRectangle const& viewport,
                        Texture const& characterset_texture,
                        Character const& character) const;
   void renderCharacters(
-      PositionedRectangle const& viewport, int64_t tick,
+      PositionedRectangle const& viewport,
       std::vector<Character> const& characters,
       std::unordered_map<int64_t, Texture> const& charactersets_textures) const;
   void renderLevel(AnimationPlayer const& animation_player, Level const& level,

@@ -14,8 +14,7 @@
  */
 class Navigator {
  public:
-  Navigator(TileSolidMapper const& tile_solid_mapper,
-            std::unordered_map<int64_t, Solid const>& solids,
+  Navigator(std::unordered_map<int64_t, Solid const>& solids,
             Level const& level, int64_t tiles_width, int64_t tiles_height);
   Position moveBy(PositionedSolid const& source_positioned_solid,
                   Vector const& desired_displacement) const;
@@ -23,7 +22,6 @@ class Navigator {
  private:
   Level const& level_;
   std::unordered_map<int64_t, Solid const>& solids_;
-  TileSolidMapper const& tile_solid_mapper_;
   int64_t const tiles_height_;
   int64_t const tiles_width_;
 

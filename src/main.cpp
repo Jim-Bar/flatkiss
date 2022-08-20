@@ -103,15 +103,14 @@ int main(int argc, char* argv[]) {
   unordered_map<int64_t, Solid const> solids{
       SolidLoader::load(configuration.solidsPath())};
   vector<Level> const levels{LevelLoader::load(configuration.levelsPath(),
-                                               spritesets, animation_players)};
+                                               spritesets, animation_players,
+                                               tile_solid_mappers)};
   Level const& level{levels[0]};
 
   bool quit = false;
   SDL_Event event;
   KeyboardState keyboard_state;
-  // FIXME: Hardcoded first mapper.
-  Navigator navigator{tile_solid_mappers.at(0), solids, level,
-                      level.spriteset().spritesWidth(),
+  Navigator navigator{solids, level, level.spriteset().spritesWidth(),
                       level.spriteset().spritesHeight()};
   auto [characters_to_controllers, characters]{CharacterLoader::load(
       configuration.charactersPath(), spritesets, action_sprite_mappers,

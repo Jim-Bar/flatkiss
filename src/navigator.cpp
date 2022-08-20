@@ -6,12 +6,10 @@ using std::abs;
 using std::max;
 using std::unordered_map;
 
-Navigator::Navigator(TileSolidMapper const& tile_solid_mapper,
-                     unordered_map<int64_t, Solid const>& solids,
+Navigator::Navigator(unordered_map<int64_t, Solid const>& solids,
                      Level const& level, int64_t tiles_width,
                      int64_t tiles_height)
-    : tile_solid_mapper_{tile_solid_mapper},
-      solids_{solids},
+    : solids_{solids},
       level_{level},
       tiles_width_{tiles_width},
       tiles_height_{tiles_height} {}
@@ -153,7 +151,7 @@ Position Navigator::moveBy(PositionedSolid const& source_positioned_solid,
 bool Navigator::solidCollidesWithTileAtPosition(
     PositionedSolid const& positioned_solid, uint16_t tile_index,
     Position const& position) const {
-  if (tile_solid_mapper_.contains(tile_index)) {
+  if (level_.tileSolidMapper().contains(tile_index)) {
     return Collider::collide(positioned_solid,
                              solidForTileIndexAtPosition(tile_index, position));
   }
@@ -165,5 +163,5 @@ PositionedSolid Navigator::solidForTileIndexAtPosition(
     uint16_t tile_index, Position const& position) const {
   return PositionedSolid{
       position,
-      solids_.at(tile_solid_mapper_.solidIndexForTileIndex(tile_index))};
+      solids_.at(level_.tileSolidMapper().solidIndexForTileIndex(tile_index))};
 }

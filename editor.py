@@ -272,10 +272,10 @@ class _LevelLoader(object):
         # Read all the levels until the right one.
         for _ in range(level_index + 1):
             # Level header length in bytes.
-            header = 4 * 2
+            header = 5 * 2
 
-            # Convert each two bytes to an unsigned int.
-            width, height, tileset_index, animation_index = struct.unpack('HHHH', level_file.read(header))
+            # Convert each two bytes to an unsigned int (last field is the tile to solid map, unused by the editor).
+            width, height, tileset_index, animation_index, _ = struct.unpack('HHHHH', level_file.read(header))
             length = width * height * 2
             tiles = list(struct.unpack('H' * width * height, level_file.read(length)))
 
@@ -294,6 +294,7 @@ class _LevelLoader(object):
             level_file.write(level.height_in_tiles().to_bytes(2, 'little'))
             level_file.write(level.tileset_index().to_bytes(2, 'little'))
             level_file.write(level.animation_index().to_bytes(2, 'little'))
+            level_file.read(2)  # Skip to bytes of the tile to solid map (unused by the editor).
 
             for i in level.tiles_generator():
                 level_file.write(i.to_bytes(2, 'little'))

@@ -32,12 +32,10 @@ class Renderer {
    * nullptr.
    */
   SDL_Texture* createTextureFromSurface(SDL_Surface* surface) const;
-  void render(
-      AnimationPlayer const& animation_player, Level const& level,
-      Spriteset const& tileset, Texture const& tileset_texture,
-      PositionedRectangle const& viewport, int64_t tick,
-      std::unordered_map<int64_t, Texture> const& charactersets_textures,
-      std::vector<Character> const& characters) const;
+  void render(AnimationPlayer const& animation_player, Level const& level,
+              PositionedRectangle const& viewport, int64_t tick,
+              std::unordered_map<int64_t, Texture> const& textures,
+              std::vector<Character> const& characters) const;
 
  private:
   SDL_Renderer* const sdl_renderer_;
@@ -50,7 +48,7 @@ class Renderer {
       std::vector<Character> const& characters,
       std::unordered_map<int64_t, Texture> const& charactersets_textures) const;
   void renderLevel(AnimationPlayer const& animation_player, Level const& level,
-                   Spriteset const& tileset, Texture const& tileset_texture,
+                   Texture const& tileset_texture,
                    PositionedRectangle const& viewport, int64_t tick) const;
 };
 

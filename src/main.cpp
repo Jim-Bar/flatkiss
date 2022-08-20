@@ -67,8 +67,6 @@ void updateViewport(Character const& character, PositionedRectangle& viewport,
 
 int main(int argc, char* argv[]) {
   Configuration configuration{"configuration.ini"};
-  vector<Level> const levels{LevelLoader::load(configuration.levelsPath())};
-  Level const& level{levels[0]};
 
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
     cerr << "SDL_Init Error: " << SDL_GetError() << endl;
@@ -95,6 +93,9 @@ int main(int argc, char* argv[]) {
       SpritesetLoader::load(configuration.spritesetsPath())};
   unordered_map<int64_t, Texture> const textures{
       texture_loader.load(spritesets, renderer)};
+  vector<Level> const levels{
+      LevelLoader::load(configuration.levelsPath(), spritesets)};
+  Level const& level{levels[0]};
 
   unordered_map<int64_t, AnimationPlayer const> animation_players{
       AnimationPlayerLoader::load(configuration.animationsPath())};
@@ -108,23 +109,21 @@ int main(int argc, char* argv[]) {
   bool quit = false;
   SDL_Event event;
   KeyboardState keyboard_state;
-  // FIXME: Hardcoded first mapper, spritesets[0] and textures[0] everywhere.
+  // FIXME: Hardcoded first mapper.
   Navigator navigator{tile_solid_mappers.at(0), solids, level,
-                      spritesets[level.spritesetIndex()].spritesWidth(),
-                      spritesets[level.spritesetIndex()].spritesHeight()};
+                      level.spriteset().spritesWidth(),
+                      level.spriteset().spritesHeight()};
   auto [characters_to_controllers, characters]{CharacterLoader::load(
       configuration.charactersPath(), spritesets, action_sprite_mappers,
-      animation_players, solids, navigator,
-      spritesets[level.spritesetIndex()].spritesWidth(),
-      spritesets[level.spritesetIndex()].spritesHeight())};
+      animation_players, solids, navigator, level.spriteset().spritesWidth(),
+      level.spriteset().spritesHeight())};
   vector<KeyboardCharacterController> character_controllers{
       CharacterControllerLoader::load(characters, characters_to_controllers)};
   int64_t tick(0);
   while (!quit) {
     // FIXME: Unhardcode zero (and in editor too).
-    renderer.render(animation_players.at(0), level,
-                    spritesets[level.spritesetIndex()], textures.at(0),
-                    viewport, tick++, textures, characters);
+    renderer.render(animation_players.at(0), level, viewport, tick++, textures,
+                    characters);
     SDL_Delay(configuration.engineTickDurationMs());
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
@@ -142,8 +141,8 @@ int main(int argc, char* argv[]) {
     // FIXME: Way to define which character is followed by the viewport.
     if (!character_controllers.empty()) {
       updateViewport(character_controllers[0].character(), viewport, level,
-                     spritesets[level.spritesetIndex()].spritesWidth(),
-                     spritesets[level.spritesetIndex()].spritesHeight());
+                     level.spriteset().spritesWidth(),
+                     level.spriteset().spritesHeight());
     }
   }
 

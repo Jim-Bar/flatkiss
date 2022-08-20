@@ -21,16 +21,15 @@ SDL_Texture* Renderer::createTextureFromSurface(SDL_Surface* surface) const {
   return SDL_CreateTextureFromSurface(sdl_renderer_, surface);
 }
 
-void Renderer::render(
-    AnimationPlayer const& animation_player, Level const& level,
-    Spriteset const& tileset, Texture const& tileset_texture,
-    PositionedRectangle const& viewport, int64_t tick,
-    unordered_map<int64_t, Texture> const& charactersets_textures,
-    vector<Character> const& characters) const {
+void Renderer::render(AnimationPlayer const& animation_player,
+                      Level const& level, PositionedRectangle const& viewport,
+                      int64_t tick,
+                      unordered_map<int64_t, Texture> const& textures,
+                      vector<Character> const& characters) const {
   SDL_RenderClear(sdl_renderer_);
-  renderLevel(animation_player, level, tileset, tileset_texture, viewport,
-              tick);
-  renderCharacters(viewport, tick, characters, charactersets_textures);
+  renderLevel(animation_player, level,
+              textures.at(level.spriteset().textureIndex()), viewport, tick);
+  renderCharacters(viewport, tick, characters, textures);
   SDL_RenderPresent(sdl_renderer_);
 }
 
@@ -86,10 +85,10 @@ void Renderer::renderCharacters(
 }
 
 void Renderer::renderLevel(AnimationPlayer const& animation_player,
-                           Level const& level, Spriteset const& tileset,
-                           Texture const& tileset_texture,
+                           Level const& level, Texture const& tileset_texture,
                            PositionedRectangle const& viewport,
                            int64_t tick) const {
+  Spriteset const& tileset = level.spriteset();
   for (int64_t y(viewport.y() / tileset.spritesHeight());
        y <= (viewport.y() + viewport.height()) / tileset.spritesHeight(); y++) {
     for (int64_t x(viewport.x() / tileset.spritesWidth());

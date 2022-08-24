@@ -18,10 +18,10 @@ include_directories(${SDL2_INCLUDE_DIRS})
 
 # List of the targets to build.
 set(EXECUTABLE ${PROJECT_NAME})
-set(NAME_MODEL model)
-set(LIBRARY_MODEL ${EXECUTABLE}-${NAME_MODEL})
 set(NAME_MEDIA media)
 set(LIBRARY_MEDIA ${EXECUTABLE}-${NAME_MEDIA})
+set(NAME_MODEL model)
+set(LIBRARY_MODEL ${EXECUTABLE}-${NAME_MODEL})
 
 # Including header files in the targets because from Modern CMake: "The headers will be, for most intents and purposes,
 # ignored; the only reason to list them is to get them to show up in IDEs". Refer to:
@@ -37,6 +37,20 @@ add_executable(${EXECUTABLE}
 )
 target_link_libraries(${EXECUTABLE} ${LIBRARY_MODEL})
 target_link_libraries(${EXECUTABLE} ${LIBRARY_MEDIA})
+
+add_library(${LIBRARY_MEDIA} STATIC
+    src/${NAME_MEDIA}/keyboard_state.cpp
+    src/${NAME_MEDIA}/keyboard_state.hpp
+    src/${NAME_MEDIA}/renderer.cpp
+    src/${NAME_MEDIA}/renderer.hpp
+    src/${NAME_MEDIA}/texture.cpp
+    src/${NAME_MEDIA}/texture.hpp
+)
+target_include_directories(${LIBRARY_MEDIA} PUBLIC
+    src/${NAME_MEDIA}/include
+)
+target_link_libraries(${LIBRARY_MEDIA} ${LIBRARY_MODEL})
+target_link_libraries(${LIBRARY_MEDIA} ${SDL2_LIBRARIES})
 
 add_library(${LIBRARY_MODEL} STATIC
     src/${NAME_MODEL}/action.cpp
@@ -81,20 +95,6 @@ add_library(${LIBRARY_MODEL} STATIC
 target_include_directories(${LIBRARY_MODEL} PUBLIC
     src/${NAME_MODEL}/include
 )
-
-add_library(${LIBRARY_MEDIA} STATIC
-    src/${NAME_MEDIA}/keyboard_state.cpp
-    src/${NAME_MEDIA}/keyboard_state.hpp
-    src/${NAME_MEDIA}/renderer.cpp
-    src/${NAME_MEDIA}/renderer.hpp
-    src/${NAME_MEDIA}/texture.cpp
-    src/${NAME_MEDIA}/texture.hpp
-)
-target_include_directories(${LIBRARY_MEDIA} PUBLIC
-    src/${NAME_MEDIA}/include
-)
-target_link_libraries(${LIBRARY_MEDIA} ${LIBRARY_MODEL})
-target_link_libraries(${LIBRARY_MEDIA} ${SDL2_LIBRARIES})
 
 # Setting the C++ version, from Modern CMake:
 # https://cliutils.gitlab.io/modern-cmake/chapters/features/cpp11.html

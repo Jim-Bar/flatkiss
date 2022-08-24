@@ -174,6 +174,7 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
+. Use standard project structure: https://medium.com/swlh/c-project-structure-for-cmake-67d60135f6f5
 . Characters are updated every ticks. Add a parameter for updating them every N ticks instead (allows lower speeds)?
 . Use struct when reading files
 . Dedicated type for tiles / sprites instead of `uint16_t`

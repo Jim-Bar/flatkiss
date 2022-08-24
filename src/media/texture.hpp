@@ -26,7 +26,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "spriteset.hpp"
+#include "model.hpp"
 
 // Forward declaration to break the cycle Spriteset / Renderer.
 class Renderer;

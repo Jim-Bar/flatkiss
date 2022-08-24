@@ -25,9 +25,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "character.hpp"
-#include "level.hpp"
-#include "positioned_rectangle.hpp"
+#include "model.hpp"
 #include "texture.hpp"
 
 /**

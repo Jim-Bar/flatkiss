@@ -17,74 +17,90 @@ find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
 # List of the targets to build.
-set(EXECUTABLE_NAME ${PROJECT_NAME})
-set(RENDERER_NAME ${EXECUTABLE_NAME}-renderer)
+set(EXECUTABLE ${PROJECT_NAME})
+set(NAME_MODEL model)
+set(LIBRARY_MODEL ${EXECUTABLE}-${NAME_MODEL})
+set(NAME_MEDIA media)
+set(LIBRARY_MEDIA ${EXECUTABLE}-${NAME_MEDIA})
 
 # Including header files in the targets because from Modern CMake: "The headers will be, for most intents and purposes,
 # ignored; the only reason to list them is to get them to show up in IDEs". Refer to:
 # https://cliutils.gitlab.io/modern-cmake/chapters/basics.html
 
-add_executable(${EXECUTABLE_NAME}
-    src/action.cpp
-    src/action.hpp
-    src/action_sprite_mapper.cpp
-    src/action_sprite_mapper.hpp
-    src/animation.cpp
-    src/animation.hpp
-    src/animation_player.cpp
-    src/animation_player.hpp
-    src/cardinal_direction.cpp
-    src/cardinal_direction.hpp
-    src/character.cpp
-    src/character.hpp
+add_executable(${EXECUTABLE}
     src/character_controller.cpp
     src/character_controller.hpp
-    src/collider.cpp
-    src/collider.hpp
     src/configuration.cpp
     src/configuration.hpp
-    src/ellipse.cpp
-    src/ellipse.hpp
-    src/level.cpp
-    src/level.hpp
     src/main.cpp
     src/main.hpp
-    src/navigator.cpp
-    src/navigator.hpp
-    src/position.cpp
-    src/position.hpp
-    src/positioned_ellipse.cpp
-    src/positioned_ellipse.hpp
-    src/positioned_rectangle.cpp
-    src/positioned_rectangle.hpp
-    src/positioned_solid.cpp
-    src/positioned_solid.hpp
-    src/rectangle.cpp
-    src/rectangle.hpp
-    src/solid.cpp
-    src/solid.hpp
-    src/spriteset.cpp
-    src/spriteset.hpp
-    src/tile_solid_mapper.cpp
-    src/tile_solid_mapper.hpp
-    src/vector.cpp
-    src/vector.hpp
 )
-target_link_libraries(${EXECUTABLE_NAME} ${RENDERER_NAME})
+target_link_libraries(${EXECUTABLE} ${LIBRARY_MODEL})
+target_link_libraries(${EXECUTABLE} ${LIBRARY_MEDIA})
 
-add_library(${RENDERER_NAME} STATIC
-    src/keyboard_state.cpp
-    src/keyboard_state.hpp
-    src/renderer.cpp
-    src/renderer.hpp
-    src/texture.cpp
-    src/texture.hpp
+add_library(${LIBRARY_MODEL} STATIC
+    src/${NAME_MODEL}/action.cpp
+    src/${NAME_MODEL}/action.hpp
+    src/${NAME_MODEL}/action_sprite_mapper.cpp
+    src/${NAME_MODEL}/action_sprite_mapper.hpp
+    src/${NAME_MODEL}/animation.cpp
+    src/${NAME_MODEL}/animation.hpp
+    src/${NAME_MODEL}/animation_player.cpp
+    src/${NAME_MODEL}/animation_player.hpp
+    src/${NAME_MODEL}/cardinal_direction.cpp
+    src/${NAME_MODEL}/cardinal_direction.hpp
+    src/${NAME_MODEL}/character.cpp
+    src/${NAME_MODEL}/character.hpp
+    src/${NAME_MODEL}/collider.cpp
+    src/${NAME_MODEL}/collider.hpp
+    src/${NAME_MODEL}/ellipse.cpp
+    src/${NAME_MODEL}/ellipse.hpp
+    src/${NAME_MODEL}/level.cpp
+    src/${NAME_MODEL}/level.hpp
+    src/${NAME_MODEL}/navigator.cpp
+    src/${NAME_MODEL}/navigator.hpp
+    src/${NAME_MODEL}/position.cpp
+    src/${NAME_MODEL}/position.hpp
+    src/${NAME_MODEL}/positioned_ellipse.cpp
+    src/${NAME_MODEL}/positioned_ellipse.hpp
+    src/${NAME_MODEL}/positioned_rectangle.cpp
+    src/${NAME_MODEL}/positioned_rectangle.hpp
+    src/${NAME_MODEL}/positioned_solid.cpp
+    src/${NAME_MODEL}/positioned_solid.hpp
+    src/${NAME_MODEL}/rectangle.cpp
+    src/${NAME_MODEL}/rectangle.hpp
+    src/${NAME_MODEL}/solid.cpp
+    src/${NAME_MODEL}/solid.hpp
+    src/${NAME_MODEL}/spriteset.cpp
+    src/${NAME_MODEL}/spriteset.hpp
+    src/${NAME_MODEL}/tile_solid_mapper.cpp
+    src/${NAME_MODEL}/tile_solid_mapper.hpp
+    src/${NAME_MODEL}/vector.cpp
+    src/${NAME_MODEL}/vector.hpp
 )
-target_link_libraries(${RENDERER_NAME} ${SDL2_LIBRARIES})
+target_include_directories(${LIBRARY_MODEL} PUBLIC
+    src/${NAME_MODEL}/include
+)
+
+add_library(${LIBRARY_MEDIA} STATIC
+    src/${NAME_MEDIA}/keyboard_state.cpp
+    src/${NAME_MEDIA}/keyboard_state.hpp
+    src/${NAME_MEDIA}/renderer.cpp
+    src/${NAME_MEDIA}/renderer.hpp
+    src/${NAME_MEDIA}/texture.cpp
+    src/${NAME_MEDIA}/texture.hpp
+)
+target_include_directories(${LIBRARY_MEDIA} PUBLIC
+    src/${NAME_MEDIA}/include
+)
+target_link_libraries(${LIBRARY_MEDIA} ${LIBRARY_MODEL})
+target_link_libraries(${LIBRARY_MEDIA} ${SDL2_LIBRARIES})
 
 # Setting the C++ version, from Modern CMake:
 # https://cliutils.gitlab.io/modern-cmake/chapters/features/cpp11.html
-target_compile_features(${EXECUTABLE_NAME} PUBLIC cxx_std_20)
-set_target_properties(${EXECUTABLE_NAME} PROPERTIES CXX_EXTENSIONS OFF)
-target_compile_features(${RENDERER_NAME} PUBLIC cxx_std_20)
-set_target_properties(${RENDERER_NAME} PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(${EXECUTABLE} PUBLIC cxx_std_20)
+set_target_properties(${EXECUTABLE} PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(${LIBRARY_MODEL} PUBLIC cxx_std_20)
+set_target_properties(${LIBRARY_MODEL} PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(${LIBRARY_MEDIA} PUBLIC cxx_std_20)
+set_target_properties(${LIBRARY_MEDIA} PROPERTIES CXX_EXTENSIONS OFF)

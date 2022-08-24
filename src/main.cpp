@@ -27,20 +27,10 @@
 #include <unordered_map>
 #include <vector>
 
-#include "action_sprite_mapper.hpp"
-#include "animation_player.hpp"
-#include "character.hpp"
 #include "character_controller.hpp"
 #include "configuration.hpp"
-#include "keyboard_state.hpp"
-#include "level.hpp"
-#include "navigator.hpp"
-#include "positioned_rectangle.hpp"
-#include "renderer.hpp"
-#include "spriteset.hpp"
-#include "texture.hpp"
-#include "tile_solid_mapper.hpp"
-#include "vector.hpp"
+#include "media.hpp"
+#include "model.hpp"
 
 using std::cerr;
 using std::cout;

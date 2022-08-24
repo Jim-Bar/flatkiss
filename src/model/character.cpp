@@ -23,8 +23,6 @@
 #include <set>
 #include <utility>
 
-#include "character_controller.hpp"
-
 using std::ifstream;
 using std::ios;
 using std::istream;

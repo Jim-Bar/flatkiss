@@ -17,31 +17,17 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef CHARACTER_CONTROLLER_HPP_INCLUDED
-#define CHARACTER_CONTROLLER_HPP_INCLUDED
+#ifndef MODEL_HPP_INCLUDED
+#define MODEL_HPP_INCLUDED
 
-#include <memory>
-#include <vector>
-
-#include "media.hpp"
-#include "model.hpp"
-
-class KeyboardCharacterController {
- public:
-  KeyboardCharacterController(Character& character);
-  Character const& character() const;
-  void handleKeyboardEvent(KeyboardState const& keyboard_state);
-
- private:
-  Character& character_;
-  static int64_t constexpr kSpeedInPixels{1};
-};
-
-class CharacterControllerLoader {
- public:
-  static std::vector<KeyboardCharacterController> load(
-      std::vector<Character>& characters,
-      std::vector<int64_t> characters_to_controllers);
-};
+#include "../action_sprite_mapper.hpp"
+#include "../animation_player.hpp"
+#include "../character.hpp"
+#include "../level.hpp"
+#include "../navigator.hpp"
+#include "../positioned_rectangle.hpp"
+#include "../spriteset.hpp"
+#include "../tile_solid_mapper.hpp"
+#include "../vector.hpp"
 
 #endif

@@ -3,7 +3,15 @@ cmake_minimum_required(VERSION 3.22)
 project(FlatKiss)
 
 # Enable clang-tidy for all the targets using the .clang-tidy file.
-set(CMAKE_CXX_CLANG_TIDY clang-tidy)
+find_program(CLANG_TIDY_IS_AVAILABLE clang-tidy)
+if(CLANG_TIDY_IS_AVAILABLE)
+    set(CMAKE_CXX_CLANG_TIDY clang-tidy)
+else()
+    message(WARNING "Linter rules are disabled because clang-tidy was not found")
+endif()
+
+# On some systems (hello macOS!) this directory is not included, so manually add it.
+include_directories(/usr/local/include)
 
 configure_file(
     src/main.hpp.in

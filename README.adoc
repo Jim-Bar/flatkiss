@@ -1,6 +1,7 @@
 = FlatKiss
 :1: https://en.wikipedia.org/wiki/KISS_principle
 :2: https://google.github.io/styleguide/cppguide.html
+:3: https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1204r0.html
 
 FlatKiss is a 2D tile based toy game engine.
 
@@ -13,6 +14,16 @@ then revamp it.
 
 Concerns about performance only come after. When the project starts behaving slowly, *then* things can be torn to
 accomodate performance. This is C++ with SDL, so unless doing crazy things performance often comes out of the box.
+
+== Terminology
+
+FlatKiss is spelled like this depending on the chosen case:
+
+. FlatKiss
+. flatkiss
+. FLATKISS
+
+IMPORTANT: No hyphen `-` or underscore `_` in the name, ever.
 
 == How to build
 
@@ -142,6 +153,11 @@ enough for finding all the (animated) sprites showing the character walking to t
 
 == Quality
 
+=== Project structure
+
+The project structure is compliant with {3}[Canonical Project Structure] without exception. This document has been
+submitted to the C++ standard and is sane and simple enough to work with.
+
 === Coding style
 
 All the C++ code follows {2}[Google's {cpp} Style Guide], with two exceptions:
@@ -174,8 +190,9 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
-. Use standard project structure: https://medium.com/swlh/c-project-structure-for-cmake-67d60135f6f5 / https://stackoverflow.com/a/43870093
-. Fix those awful imports `../path/to/the/*.hpp`
+. Use standard project structure (see the project structure above section for the link)
+. Fix the imports to be compliant with the project structure
+. Fix the include guards to be compliant with the project structure
 . `PRIVATE` / `PUBLIC` / `INTERFACE` explanation: https://crascit.com/2016/01/31/enhanced-source-file-handling-with-target_sources/
 . Characters are updated every ticks. Add a parameter for updating them every N ticks instead (allows lower speeds)?
 . Use struct when reading files

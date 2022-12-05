@@ -26,4 +26,4 @@ wget --output-document spriteset_0.png "https://www.spriters-resource.com/resour
 wget --output-document spriteset_1.png "https://i.postimg.cc/8cJk8WKQ/characterset-0.png"
 cd ..
 
-#docker build -t flat-kiss .
+#docker build -t flatkiss .

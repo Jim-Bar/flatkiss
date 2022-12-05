@@ -174,7 +174,8 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
-. Use standard project structure: https://medium.com/swlh/c-project-structure-for-cmake-67d60135f6f5
+. Use standard project structure: https://medium.com/swlh/c-project-structure-for-cmake-67d60135f6f5 / https://stackoverflow.com/a/43870093
+. Fix those awful imports `../path/to/the/*.hpp`
 . `PRIVATE` / `PUBLIC` / `INTERFACE` explanation: https://crascit.com/2016/01/31/enhanced-source-file-handling-with-target_sources/
 . Characters are updated every ticks. Add a parameter for updating them every N ticks instead (allows lower speeds)?
 . Use struct when reading files

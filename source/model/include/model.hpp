@@ -17,11 +17,17 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef MEDIA_HPP_INCLUDED
-#define MEDIA_HPP_INCLUDED
+#ifndef MODEL_HPP_INCLUDED
+#define MODEL_HPP_INCLUDED
 
-#include "../keyboard_state.hpp"
-#include "../renderer.hpp"
-#include "../texture.hpp"
+#include "../src/action_sprite_mapper.hpp"
+#include "../src/animation_player.hpp"
+#include "../src/character.hpp"
+#include "../src/level.hpp"
+#include "../src/navigator.hpp"
+#include "../src/positioned_rectangle.hpp"
+#include "../src/spriteset.hpp"
+#include "../src/tile_solid_mapper.hpp"
+#include "../src/vector.hpp"
 
 #endif

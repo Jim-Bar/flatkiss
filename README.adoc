@@ -193,17 +193,17 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
-. Use C++20 modules?
-. `PRIVATE` / `PUBLIC` / `INTERFACE` explanation: https://crascit.com/2016/01/31/enhanced-source-file-handling-with-target_sources/
+. Find out where controllers are supposed to live (a new library?)
 . Characters are updated every ticks. Add a parameter for updating them every N ticks instead (allows lower speeds)?
 . Use struct when reading files
 . Dedicated type for tiles / sprites instead of `uint16_t`
-. Better directory structure
 . Warning bug with readability-identifier-naming: https://stackoverflow.com/q/68475958 (upgrade clang-tidy?)
 . Check whether the built binary can run on a system without libsdl2
 . Replace "pixel" by "point" in the code that does not deal with graphics
+. Use namespaces
+. Use C++20 modules?
 . Editor: synchronize animated tiles when placing them
 . Objects or entities or whatever (including characters): each tile has a z-order sorted list of objects. Each tile
-draws its objects respecting the z-order, **clipped** to the tile. So that multi-tiles objects are not a problem.
+draws its objects respecting the z-order, *clipped* to the tile. So that multi-tiles objects are not a problem.
 . Editor: resizable tileset window
 . Tiled: https://www.mapeditor.org

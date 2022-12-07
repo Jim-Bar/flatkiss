@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(flatkiss)
+project(FlatKiss)
 
 # List of the library targets to build.
+string(TOLOWER ${PROJECT_NAME} NAME_PROJECT)
 set(NAME_MEDIA media)
-set(LIBRARY_MEDIA ${PROJECT_NAME}-${NAME_MEDIA})
+set(LIBRARY_MEDIA ${NAME_PROJECT}-${NAME_MEDIA})
 set(NAME_MODEL model)
-set(LIBRARY_MODEL ${PROJECT_NAME}-${NAME_MODEL})
+set(LIBRARY_MODEL ${NAME_PROJECT}-${NAME_MODEL})
 
 # Enable clang-tidy using the .clang-tidy file for all the targets.
 find_program(CLANG_TIDY_IS_AVAILABLE clang-tidy)
@@ -19,6 +20,6 @@ endif()
 # Including header files in the targets because from Modern CMake: "The headers will be, for most intents and purposes,
 # ignored; the only reason to list them is to get them to show up in IDEs". Refer to:
 # https://cliutils.gitlab.io/modern-cmake/chapters/basics.html
-add_subdirectory(${PROJECT_NAME})
+add_subdirectory(${NAME_PROJECT})
 add_subdirectory(lib${LIBRARY_MEDIA})
 add_subdirectory(lib${LIBRARY_MODEL})

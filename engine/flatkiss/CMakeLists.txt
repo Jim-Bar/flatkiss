@@ -1,18 +1,18 @@
 configure_file(
-    ${PROJECT_NAME}/main.hpp.in
-    ${PROJECT_NAME}/main.hpp
+    ${NAME_PROJECT}/main.hpp.in
+    ${NAME_PROJECT}/main.hpp
 )
 
-add_executable(${PROJECT_NAME}
-    ${PROJECT_NAME}/character_controller.cpp
-    ${PROJECT_NAME}/character_controller.hpp
-    ${PROJECT_NAME}/configuration.cpp
-    ${PROJECT_NAME}/configuration.hpp
-    ${PROJECT_NAME}/main.cpp
-    ${PROJECT_NAME}/main.hpp
+add_executable(${NAME_PROJECT}
+    ${NAME_PROJECT}/character_controller.cpp
+    ${NAME_PROJECT}/character_controller.hpp
+    ${NAME_PROJECT}/configuration.cpp
+    ${NAME_PROJECT}/configuration.hpp
+    ${NAME_PROJECT}/main.cpp
+    ${NAME_PROJECT}/main.hpp
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE
+target_include_directories(${NAME_PROJECT} PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
     # On some systems (hello macOS!) this directory is not included, so manually add it.
     /usr/local/include
@@ -20,15 +20,15 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(${NAME_PROJECT}
     ${LIBRARY_MEDIA}
     ${LIBRARY_MODEL}
 )
 
 # Setting the C++ version, from Modern CMake:
 # https://cliutils.gitlab.io/modern-cmake/chapters/features/cpp11.html
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(${NAME_PROJECT} PUBLIC cxx_std_20)
+set_target_properties(${NAME_PROJECT} PROPERTIES CXX_EXTENSIONS OFF)
 
 # Change the name of the final binary so that it does not conflict with CMake's build tree.
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME}-bin)
+set_target_properties(${NAME_PROJECT} PROPERTIES OUTPUT_NAME ${NAME_PROJECT}-bin)

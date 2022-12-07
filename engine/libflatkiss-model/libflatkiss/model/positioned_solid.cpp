@@ -17,11 +17,9 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "positioned_solid.hpp"
-
+#include <libflatkiss/model/collider.hpp>
+#include <libflatkiss/model/positioned_solid.hpp>
 #include <utility>
-
-#include "collider.hpp"
 
 using std::move;
 using std::vector;

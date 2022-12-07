@@ -17,14 +17,13 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef ACTION_SPRITE_MAPPER_HPP_INCLUDED
-#define ACTION_SPRITE_MAPPER_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_SPRITE_MAPPER_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_SPRITE_MAPPER_HPP_INCLUDED
 
 #include <cstdint>
+#include <libflatkiss/model/action.hpp>
 #include <string>
 #include <unordered_map>
-
-#include "action.hpp"
 
 /**
  * @brief Maps actions to the index of the first sprite of the animation showing

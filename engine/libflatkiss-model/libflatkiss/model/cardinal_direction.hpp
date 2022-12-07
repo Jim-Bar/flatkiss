@@ -17,14 +17,14 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef CARDINAL_DIRECTION_HPP_INCLUDED
-#define CARDINAL_DIRECTION_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_CARDINAL_DIRECTION_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_CARDINAL_DIRECTION_HPP_INCLUDED
 
 enum CardinalDirection {
-    kWest = 0,
-    kSouth = 1,
-    kEast = 2,
-    kNorth = 3,
+  kWest = 0,
+  kSouth = 1,
+  kEast = 2,
+  kNorth = 3,
 };
 
 #endif

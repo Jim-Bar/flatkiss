@@ -17,11 +17,9 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "positioned_rectangle.hpp"
-
+#include <libflatkiss/model/positioned_ellipse.hpp>
+#include <libflatkiss/model/positioned_rectangle.hpp>
 #include <utility>
-
-#include "positioned_ellipse.hpp"
 
 using std::move;
 

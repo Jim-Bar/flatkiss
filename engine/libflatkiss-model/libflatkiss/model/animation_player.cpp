@@ -17,9 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "animation_player.hpp"
-
 #include <fstream>
+#include <libflatkiss/model/animation_player.hpp>
 #include <utility>
 #include <vector>
 

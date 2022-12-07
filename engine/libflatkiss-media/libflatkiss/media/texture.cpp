@@ -17,11 +17,9 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "texture.hpp"
-
 #include <iostream>  // FIXME: Remove.
-
-#include "renderer.hpp"
+#include <libflatkiss/media/renderer.hpp>
+#include <libflatkiss/media/texture.hpp>
 
 using std::forward_as_tuple;
 using std::piecewise_construct;

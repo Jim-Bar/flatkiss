@@ -17,14 +17,13 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef CHARACTER_CONTROLLER_HPP_INCLUDED
-#define CHARACTER_CONTROLLER_HPP_INCLUDED
+#ifndef FLATKISS_CHARACTER_CONTROLLER_HPP_INCLUDED
+#define FLATKISS_CHARACTER_CONTROLLER_HPP_INCLUDED
 
+#include <libflatkiss/media/media.hpp>
+#include <libflatkiss/model/model.hpp>
 #include <memory>
 #include <vector>
-
-#include "media.hpp"
-#include "model.hpp"
 
 class KeyboardCharacterController {
  public:

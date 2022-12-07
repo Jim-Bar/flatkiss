@@ -17,12 +17,11 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef POSITION_HPP_INCLUDED
-#define POSITION_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_POSITION_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_POSITION_HPP_INCLUDED
 
 #include <cstdint>
-
-#include "vector.hpp"
+#include <libflatkiss/model/vector.hpp>
 
 // Forward declaration to break the cycle Position / PositionedEllipse;
 class PositionedEllipse;

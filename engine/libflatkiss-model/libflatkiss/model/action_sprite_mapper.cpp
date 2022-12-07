@@ -17,9 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "action_sprite_mapper.hpp"
-
 #include <fstream>
+#include <libflatkiss/model/action_sprite_mapper.hpp>
 #include <utility>
 
 using std::forward_as_tuple;

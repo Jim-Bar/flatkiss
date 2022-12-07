@@ -17,8 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef CONFIGURATION_HPP_INCLUDED
-#define CONFIGURATION_HPP_INCLUDED
+#ifndef FLATKISS_CONFIGURATION_HPP_INCLUDED
+#define FLATKISS_CONFIGURATION_HPP_INCLUDED
 
 #include <string>
 

@@ -17,9 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "character.hpp"
-
 #include <fstream>
+#include <libflatkiss/model/character.hpp>
 #include <set>
 #include <utility>
 

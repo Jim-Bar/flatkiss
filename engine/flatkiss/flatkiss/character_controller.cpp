@@ -17,7 +17,7 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "character_controller.hpp"
+#include <flatkiss/character_controller.hpp>
 
 using std::vector;
 

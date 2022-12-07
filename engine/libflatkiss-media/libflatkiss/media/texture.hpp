@@ -17,16 +17,15 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef TEXTURE_HPP_INCLUDED
-#define TEXTURE_HPP_INCLUDED
+#ifndef LIBFLATKISS_MEDIA_TEXTURE_HPP_INCLUDED
+#define LIBFLATKISS_MEDIA_TEXTURE_HPP_INCLUDED
 
 #include <SDL2/SDL.h>
 
+#include <libflatkiss/model/model.hpp>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-#include "model.hpp"
 
 // Forward declaration to break the cycle Spriteset / Renderer.
 class Renderer;

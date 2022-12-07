@@ -17,15 +17,13 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "vector.hpp"
+#include <libflatkiss/model/vector.hpp>
 
 Vector const Vector::kZero{0, 0};
 
 Vector::Vector(int64_t dx, int64_t dy) : dx_{dx}, dy_{dy} {}
 
-bool Vector::operator!=(Vector const& other) const {
-  return !(*this == other);
-}
+bool Vector::operator!=(Vector const& other) const { return !(*this == other); }
 
 bool Vector::operator==(Vector const& other) const {
   return dx() == other.dx() && dy() == other.dy();

@@ -17,7 +17,7 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "ellipse.hpp"
+#include <libflatkiss/model/ellipse.hpp>
 
 Ellipse::Ellipse(int64_t radius_x, int64_t radius_y)
     : radius_x_{radius_x}, radius_y_{radius_y} {}

@@ -17,8 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef ACTION_HPP_INCLUDED
-#define ACTION_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_ACTION_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_ACTION_HPP_INCLUDED
 
 enum Action {
   kWalkLeft,

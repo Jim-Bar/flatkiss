@@ -17,7 +17,7 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "rectangle.hpp"
+#include <libflatkiss/model/rectangle.hpp>
 
 Rectangle::Rectangle(int64_t width, int64_t height)
     : width_{width}, height_{height} {}

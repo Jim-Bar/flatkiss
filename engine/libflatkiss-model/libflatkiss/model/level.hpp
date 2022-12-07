@@ -17,16 +17,15 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef LEVEL_HPP_INCLUDED
-#define LEVEL_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_LEVEL_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_LEVEL_HPP_INCLUDED
 
+#include <libflatkiss/model/animation_player.hpp>
+#include <libflatkiss/model/spriteset.hpp>
+#include <libflatkiss/model/tile_solid_mapper.hpp>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-#include "animation_player.hpp"
-#include "spriteset.hpp"
-#include "tile_solid_mapper.hpp"
 
 /**
  * @brief Models a level.

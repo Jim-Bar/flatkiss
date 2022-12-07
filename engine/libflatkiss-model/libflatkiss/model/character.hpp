@@ -17,20 +17,19 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef CHARACTER_HPP_INCLUDED
-#define CHARACTER_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_CHARACTER_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_CHARACTER_HPP_INCLUDED
 
+#include <libflatkiss/model/action_sprite_mapper.hpp>
+#include <libflatkiss/model/animation_player.hpp>
+#include <libflatkiss/model/cardinal_direction.hpp>
+#include <libflatkiss/model/navigator.hpp>
+#include <libflatkiss/model/positioned_solid.hpp>
+#include <libflatkiss/model/rectangle.hpp>
+#include <libflatkiss/model/spriteset.hpp>
 #include <tuple>
 #include <unordered_map>
 #include <vector>
-
-#include "action_sprite_mapper.hpp"
-#include "animation_player.hpp"
-#include "cardinal_direction.hpp"
-#include "navigator.hpp"
-#include "positioned_solid.hpp"
-#include "rectangle.hpp"
-#include "spriteset.hpp"
 
 /**
  * @brief A character in the level.

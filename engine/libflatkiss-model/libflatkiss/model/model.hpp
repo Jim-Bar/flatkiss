@@ -17,17 +17,17 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef MODEL_HPP_INCLUDED
-#define MODEL_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_MODEL_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_MODEL_HPP_INCLUDED
 
-#include "action_sprite_mapper.hpp"
-#include "animation_player.hpp"
-#include "character.hpp"
-#include "level.hpp"
-#include "navigator.hpp"
-#include "positioned_rectangle.hpp"
-#include "spriteset.hpp"
-#include "tile_solid_mapper.hpp"
-#include "vector.hpp"
+#include <libflatkiss/model/action_sprite_mapper.hpp>
+#include <libflatkiss/model/animation_player.hpp>
+#include <libflatkiss/model/character.hpp>
+#include <libflatkiss/model/level.hpp>
+#include <libflatkiss/model/navigator.hpp>
+#include <libflatkiss/model/positioned_rectangle.hpp>
+#include <libflatkiss/model/spriteset.hpp>
+#include <libflatkiss/model/tile_solid_mapper.hpp>
+#include <libflatkiss/model/vector.hpp>
 
 #endif

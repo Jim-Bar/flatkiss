@@ -17,11 +17,11 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef MEDIA_HPP_INCLUDED
-#define MEDIA_HPP_INCLUDED
+#ifndef LIBFLATKISS_MEDIA_MEDIA_HPP_INCLUDED
+#define LIBFLATKISS_MEDIA_MEDIA_HPP_INCLUDED
 
-#include "keyboard_state.hpp"
-#include "renderer.hpp"
-#include "texture.hpp"
+#include <libflatkiss/media/keyboard_state.hpp>
+#include <libflatkiss/media/renderer.hpp>
+#include <libflatkiss/media/texture.hpp>
 
 #endif

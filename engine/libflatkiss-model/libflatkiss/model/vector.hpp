@@ -17,8 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef VECTOR_HPP_INCLUDED
-#define VECTOR_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_VECTOR_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_VECTOR_HPP_INCLUDED
 
 #include <cstdint>
 

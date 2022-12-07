@@ -17,10 +17,9 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "solid.hpp"
-
 #include <algorithm>
 #include <fstream>
+#include <libflatkiss/model/solid.hpp>
 #include <limits>
 #include <utility>
 #include <vector>

@@ -17,9 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "renderer.hpp"
-
 #include <algorithm>
+#include <libflatkiss/media/renderer.hpp>
 
 using std::sort;
 using std::unordered_map;

@@ -17,4 +17,4 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "action.hpp"
+#include <libflatkiss/model/action.hpp>

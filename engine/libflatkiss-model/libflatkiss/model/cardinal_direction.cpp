@@ -17,4 +17,4 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "cardinal_direction.hpp"
+#include <libflatkiss/model/cardinal_direction.hpp>

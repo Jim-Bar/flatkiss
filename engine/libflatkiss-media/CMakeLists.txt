@@ -10,7 +10,7 @@ add_library(${LIBRARY_MEDIA} STATIC
 )
 
 target_include_directories(${LIBRARY_MEDIA} PUBLIC
-    lib${PROJECT_NAME}/${NAME_MEDIA}
+    ${CMAKE_CURRENT_LIST_DIR}
     ${SDL2_INCLUDE_DIRS}
 )
 

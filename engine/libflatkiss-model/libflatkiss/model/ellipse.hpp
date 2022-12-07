@@ -17,8 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef ELLIPSE_HPP_INCLUDED
-#define ELLIPSE_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_ELLIPSE_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_ELLIPSE_HPP_INCLUDED
 
 #include <cstdint>
 

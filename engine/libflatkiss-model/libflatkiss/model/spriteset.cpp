@@ -17,9 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "spriteset.hpp"
-
 #include <fstream>
+#include <libflatkiss/model/spriteset.hpp>
 #include <utility>
 
 using std::ifstream;
@@ -110,10 +109,10 @@ vector<Spriteset> SpritesetLoader::load(string const& file_path) {
       stream.read(reinterpret_cast<char*>(&alpha_green), 1);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&alpha_blue), 1);
-      spritesets.emplace_back(sprites_width, sprites_height,
-                                 width_in_sprites, height_in_tiles, left_offset,
-                                 top_offset, gap, texture_index, alpha_red,
-                                 alpha_green, alpha_blue);
+      spritesets.emplace_back(sprites_width, sprites_height, width_in_sprites,
+                              height_in_tiles, left_offset, top_offset, gap,
+                              texture_index, alpha_red, alpha_green,
+                              alpha_blue);
     }
     stream.close();
   }  // FIXME: Raise exception.

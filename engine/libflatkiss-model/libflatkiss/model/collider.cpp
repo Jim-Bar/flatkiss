@@ -17,9 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "collider.hpp"
-
 #include <cmath>
+#include <libflatkiss/model/collider.hpp>
 
 using std::abs;
 

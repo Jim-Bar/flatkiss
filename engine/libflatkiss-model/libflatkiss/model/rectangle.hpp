@@ -17,8 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef RECTANGLE_HPP_INCLUDED
-#define RECTANGLE_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_RECTANGLE_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_RECTANGLE_HPP_INCLUDED
 
 #include <cstdint>
 

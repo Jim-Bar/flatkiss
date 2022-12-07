@@ -17,7 +17,7 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "animation.hpp"
+#include <libflatkiss/model/animation.hpp>
 
 using std::vector;
 

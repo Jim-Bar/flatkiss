@@ -17,12 +17,12 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef POSITIONED_RECTANGLE_HPP_INCLUDED
-#define POSITIONED_RECTANGLE_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_POSITIONED_RECTANGLE_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_POSITIONED_RECTANGLE_HPP_INCLUDED
 
-#include "position.hpp"
-#include "rectangle.hpp"
-#include "vector.hpp"
+#include <libflatkiss/model/position.hpp>
+#include <libflatkiss/model/rectangle.hpp>
+#include <libflatkiss/model/vector.hpp>
 
 /**
  * @brief A rectangle with a position.

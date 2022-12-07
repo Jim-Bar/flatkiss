@@ -17,8 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef TILE_SOLID_MAPPER_HPP_INCLUDED
-#define TILE_SOLID_MAPPER_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_TILE_SOLID_MAPPER_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_TILE_SOLID_MAPPER_HPP_INCLUDED
 
 #include <cstdint>
 #include <string>

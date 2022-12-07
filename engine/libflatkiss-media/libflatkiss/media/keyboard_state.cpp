@@ -17,7 +17,7 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "keyboard_state.hpp"
+#include <libflatkiss/media/keyboard_state.hpp>
 
 bool KeyboardState::isPressed(SDL_Scancode key) const {
   switch (key) {

@@ -40,7 +40,7 @@ add_library(${LIBRARY_MODEL} STATIC
 )
 
 target_include_directories(${LIBRARY_MODEL} PUBLIC
-    lib${PROJECT_NAME}/${NAME_MODEL}
+    ${CMAKE_CURRENT_LIST_DIR}
 )
 
 # Setting the C++ version, from Modern CMake:

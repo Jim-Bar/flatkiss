@@ -17,14 +17,13 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef ANIMATION_PLAYER_HPP_INCLUDED
-#define ANIMATION_PLAYER_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_ANIMATION_PLAYER_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_ANIMATION_PLAYER_HPP_INCLUDED
 
 #include <cstdint>
 #include <fstream>
+#include <libflatkiss/model/animation.hpp>
 #include <unordered_map>
-
-#include "animation.hpp"
 
 /**
  * @brief Maps sprite indices to their animated counterparts.
@@ -40,8 +39,8 @@ class AnimationPlayer {
    * @param animations_per_sprite_index Map of sprite indices to their
    * respective animations.
    */
-  AnimationPlayer(std::unordered_map<uint16_t, Animation>&&
-                      animations_per_sprite_index);
+  AnimationPlayer(
+      std::unordered_map<uint16_t, Animation>&& animations_per_sprite_index);
   uint16_t animatedSpriteIndexFor(uint16_t sprite_index, int64_t tick) const;
   int64_t animationDurationForSpriteIndex(uint16_t sprite_index) const;
 

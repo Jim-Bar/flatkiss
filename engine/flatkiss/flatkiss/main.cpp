@@ -17,20 +17,18 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "main.hpp"
-
 #include <cstdlib>
+#include <flatkiss/character_controller.hpp>
+#include <flatkiss/configuration.hpp>
+#include <flatkiss/main.hpp>
 #include <fstream>
 #include <iostream>
+#include <libflatkiss/media/media.hpp>
+#include <libflatkiss/model/model.hpp>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-#include "character_controller.hpp"
-#include "configuration.hpp"
-#include "media.hpp"
-#include "model.hpp"
 
 using std::cerr;
 using std::cout;
@@ -83,7 +81,7 @@ int main(int argc, char* argv[]) {
   PositionedRectangle viewport{Position{0, 0},
                                Rectangle{kViewportSize, kViewportSize}};
   SDL_Window* window = SDL_CreateWindow(
-      PROJECT_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+      FLATKISS_PROJECT_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
       static_cast<int>(viewport.rectangle().width()),
       static_cast<int>(viewport.rectangle().height()), SDL_WINDOW_SHOWN);
   if (window == nullptr) {

@@ -17,9 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "navigator.hpp"
-
 #include <algorithm>
+#include <libflatkiss/model/navigator.hpp>
 
 using std::abs;
 using std::max;

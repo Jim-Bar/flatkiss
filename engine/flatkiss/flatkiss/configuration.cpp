@@ -17,10 +17,9 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "configuration.hpp"
-
 #include <inipp.h>
 
+#include <flatkiss/configuration.hpp>
 #include <fstream>
 
 using std::ifstream;

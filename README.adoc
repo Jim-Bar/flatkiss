@@ -158,12 +158,15 @@ enough for finding all the (animated) sprites showing the character walking to t
 The project structure is compliant with {3}[Canonical Project Structure] without exception. This document has been
 submitted to the C++ standard and is sane and simple enough to work with.
 
+The instructions in this document take precedence over the coding style used in the project.
+
 === Coding style
 
 All the C++ code follows {2}[Google's {cpp} Style Guide], with two exceptions:
 
 . Functions and methods are `camelBack` to avoid collisions with types
-. Implementation source files have the `cpp` suffix, and header files have the `hpp` suffix
+. Implementation source files have the `cpp` suffix, and header files have the `hpp` suffix (refer to the section about
+the project structure)
 
 Stick to the style as much as possible for the rest. The tool `clang-format` is available in the Docker container (and
 Visual Studio Code will use it), and reads its configuration from link:.clang-format[`.clang-format`]. Likewise,
@@ -190,9 +193,7 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
-. Use standard project structure (see the project structure above section for the link)
-. Fix the imports to be compliant with the project structure
-. Fix the include guards to be compliant with the project structure
+. Use C++20 modules?
 . `PRIVATE` / `PUBLIC` / `INTERFACE` explanation: https://crascit.com/2016/01/31/enhanced-source-file-handling-with-target_sources/
 . Characters are updated every ticks. Add a parameter for updating them every N ticks instead (allows lower speeds)?
 . Use struct when reading files

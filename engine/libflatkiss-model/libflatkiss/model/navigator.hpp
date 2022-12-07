@@ -17,16 +17,15 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef NAVIGATOR_HPP_INCLUDED
-#define NAVIGATOR_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_NAVIGATOR_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_NAVIGATOR_HPP_INCLUDED
 
+#include <libflatkiss/model/collider.hpp>
+#include <libflatkiss/model/level.hpp>
+#include <libflatkiss/model/positioned_solid.hpp>
+#include <libflatkiss/model/tile_solid_mapper.hpp>
+#include <libflatkiss/model/vector.hpp>
 #include <vector>
-
-#include "collider.hpp"
-#include "level.hpp"
-#include "positioned_solid.hpp"
-#include "tile_solid_mapper.hpp"
-#include "vector.hpp"
 
 /**
  * @brief Move a positioned solid to the closest desired location.

@@ -17,15 +17,14 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef SOLID_HPP_INCLUDED
-#define SOLID_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_SOLID_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_SOLID_HPP_INCLUDED
 
+#include <libflatkiss/model/positioned_ellipse.hpp>
+#include <libflatkiss/model/positioned_rectangle.hpp>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-#include "positioned_ellipse.hpp"
-#include "positioned_rectangle.hpp"
 
 /**
  * @brief An area made up of several shapes and which cannot be crossed.

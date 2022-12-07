@@ -17,13 +17,12 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef POSITIONED_SOLID_HPP_INCLUDED
-#define POSITIONED_SOLID_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_POSITIONED_SOLID_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_POSITIONED_SOLID_HPP_INCLUDED
 
+#include <libflatkiss/model/position.hpp>
+#include <libflatkiss/model/solid.hpp>
 #include <vector>
-
-#include "position.hpp"
-#include "solid.hpp"
 
 class PositionedSolid {
  public:

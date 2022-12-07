@@ -17,8 +17,7 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "positioned_ellipse.hpp"
-
+#include <libflatkiss/model/positioned_ellipse.hpp>
 #include <utility>
 
 using std::move;

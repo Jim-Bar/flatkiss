@@ -17,8 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef SPRITESET_HPP_INCLUDED
-#define SPRITESET_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_SPRITESET_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_SPRITESET_HPP_INCLUDED
 
 #include <string>
 #include <vector>

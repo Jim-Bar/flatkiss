@@ -17,10 +17,10 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef MAIN_HPP_INCLUDED
-#define MAIN_HPP_INCLUDED
+#ifndef FLATKISS_MAIN_HPP_INCLUDED
+#define FLATKISS_MAIN_HPP_INCLUDED
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define PROJECT_NAME "@PROJECT_NAME@"
+#define FLATKISS_PROJECT_NAME "@PROJECT_NAME@"
 
 #endif

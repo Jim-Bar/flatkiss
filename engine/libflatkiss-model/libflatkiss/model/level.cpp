@@ -17,9 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include "level.hpp"
-
 #include <fstream>
+#include <libflatkiss/model/level.hpp>
 #include <utility>
 
 using std::ifstream;

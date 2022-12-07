@@ -17,16 +17,15 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef RENDERER_HPP_INCLUDED
-#define RENDERER_HPP_INCLUDED
+#ifndef LIBFLATKISS_MEDIA_RENDERER_HPP_INCLUDED
+#define LIBFLATKISS_MEDIA_RENDERER_HPP_INCLUDED
 
 #include <SDL2/SDL.h>
 
+#include <libflatkiss/media/texture.hpp>
+#include <libflatkiss/model/model.hpp>
 #include <unordered_map>
 #include <vector>
-
-#include "model.hpp"
-#include "texture.hpp"
 
 /**
  * @brief Renders the whole scene.

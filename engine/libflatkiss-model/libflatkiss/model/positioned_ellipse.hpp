@@ -17,11 +17,11 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef POSITIONED_ELLIPSE_HPP_INCLUDED
-#define POSITIONED_ELLIPSE_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_POSITIONED_ELLIPSE_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_POSITIONED_ELLIPSE_HPP_INCLUDED
 
-#include "ellipse.hpp"
-#include "position.hpp"
+#include <libflatkiss/model/ellipse.hpp>
+#include <libflatkiss/model/position.hpp>
 
 class PositionedEllipse {
  public:

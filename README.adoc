@@ -193,7 +193,8 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 == TODOs
 
-. Find out where controllers are supposed to live (a new library?)
+. Continue the work on libraries: move all SDL related stuff in media (must be PRIVATE), improve controllers in logic
+(and does logic have to depend on media?)
 . Characters are updated every ticks. Add a parameter for updating them every N ticks instead (allows lower speeds)?
 . Use struct when reading files
 . Dedicated type for tiles / sprites instead of `uint16_t`

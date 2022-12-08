@@ -18,11 +18,11 @@
  */
 
 #include <cstdlib>
-#include <flatkiss/character_controller.hpp>
 #include <flatkiss/configuration.hpp>
 #include <flatkiss/main.hpp>
 #include <fstream>
 #include <iostream>
+#include <libflatkiss/logic/logic.hpp>
 #include <libflatkiss/media/media.hpp>
 #include <libflatkiss/model/model.hpp>
 #include <memory>

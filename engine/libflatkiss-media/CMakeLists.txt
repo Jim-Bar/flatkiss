@@ -3,6 +3,7 @@ find_package(SDL2 REQUIRED)
 add_library(${LIBRARY_MEDIA} STATIC
     lib${NAME_PROJECT}/${NAME_MEDIA}/keyboard_state.cpp
     lib${NAME_PROJECT}/${NAME_MEDIA}/keyboard_state.hpp
+    lib${NAME_PROJECT}/${NAME_MEDIA}/media.hpp
     lib${NAME_PROJECT}/${NAME_MEDIA}/renderer.cpp
     lib${NAME_PROJECT}/${NAME_MEDIA}/renderer.hpp
     lib${NAME_PROJECT}/${NAME_MEDIA}/texture.cpp

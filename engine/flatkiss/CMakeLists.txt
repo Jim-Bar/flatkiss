@@ -4,8 +4,6 @@ configure_file(
 )
 
 add_executable(${NAME_PROJECT}
-    ${NAME_PROJECT}/character_controller.cpp
-    ${NAME_PROJECT}/character_controller.hpp
     ${NAME_PROJECT}/configuration.cpp
     ${NAME_PROJECT}/configuration.hpp
     ${NAME_PROJECT}/main.cpp
@@ -21,6 +19,7 @@ target_include_directories(${NAME_PROJECT} PRIVATE
 )
 
 target_link_libraries(${NAME_PROJECT}
+    ${LIBRARY_LOGIC}
     ${LIBRARY_MEDIA}
     ${LIBRARY_MODEL}
 )

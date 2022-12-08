@@ -23,6 +23,7 @@
 #include <SDL2/SDL.h>
 
 #include <libflatkiss/media/texture.hpp>
+#include <libflatkiss/media/texture_atlas.hpp>
 #include <libflatkiss/model/model.hpp>
 #include <unordered_map>
 #include <vector>
@@ -47,8 +48,7 @@ class Renderer {
    */
   SDL_Texture* createTextureFromSurface(SDL_Surface* surface) const;
   void render(Level const& level, PositionedRectangle const& viewport,
-              int64_t tick,
-              std::unordered_map<int64_t, Texture> const& textures,
+              int64_t tick, TextureAtlas const& textures,
               std::vector<Character> const& characters) const;
 
  private:
@@ -62,7 +62,7 @@ class Renderer {
   void renderCharacters(
       PositionedRectangle const& viewport,
       std::vector<Character> const& characters,
-      std::unordered_map<int64_t, Texture> const& charactersets_textures) const;
+      TextureAtlas const& charactersets_textures) const;
   void renderLevel(Level const& level, Texture const& tileset_texture,
                    PositionedRectangle const& viewport, int64_t tick) const;
 };

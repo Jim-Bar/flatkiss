@@ -8,6 +8,10 @@ add_library(${LIBRARY_MEDIA} STATIC
     lib${NAME_PROJECT}/${NAME_MEDIA}/renderer.hpp
     lib${NAME_PROJECT}/${NAME_MEDIA}/texture.cpp
     lib${NAME_PROJECT}/${NAME_MEDIA}/texture.hpp
+    lib${NAME_PROJECT}/${NAME_MEDIA}/texture_atlas.cpp
+    lib${NAME_PROJECT}/${NAME_MEDIA}/texture_atlas.hpp
+    lib${NAME_PROJECT}/${NAME_MEDIA}/window.cpp
+    lib${NAME_PROJECT}/${NAME_MEDIA}/window.hpp
 )
 
 target_include_directories(${LIBRARY_MEDIA} PUBLIC

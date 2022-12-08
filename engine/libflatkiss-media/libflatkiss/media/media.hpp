@@ -22,6 +22,7 @@
 
 #include <libflatkiss/media/keyboard_state.hpp>
 #include <libflatkiss/media/renderer.hpp>
-#include <libflatkiss/media/texture.hpp>
+#include <libflatkiss/media/texture_atlas.hpp>
+#include <libflatkiss/media/window.hpp>
 
 #endif

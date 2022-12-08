@@ -56,12 +56,12 @@ SDL_Rect Renderer::rectForSpriteIndex(int64_t sprite_index,
 }
 
 void Renderer::render(Level const& level, PositionedRectangle const& viewport,
-                      int64_t tick,
-                      unordered_map<int64_t, Texture> const& textures,
+                      int64_t tick, TextureAtlas const& textures,
                       vector<Character> const& characters) const {
   SDL_RenderClear(sdl_renderer_);
-  renderLevel(level, textures.at(level.spriteset().textureIndex()), viewport,
-              tick);
+  renderLevel(level,
+              textures.texture_for_index(level.spriteset().textureIndex()),
+              viewport, tick);
   renderCharacters(viewport, characters, textures);
   SDL_RenderPresent(sdl_renderer_);
 }
@@ -83,7 +83,7 @@ void Renderer::renderCharacter(PositionedRectangle const& viewport,
 
 void Renderer::renderCharacters(
     PositionedRectangle const& viewport, vector<Character> const& characters,
-    unordered_map<int64_t, Texture> const& charactersets_textures) const {
+    TextureAtlas const& charactersets_textures) const {
   /* The characters with the lower positions on the Y-axis must appear behind
    * the others. Sort them using their Y-positions. However it is better not to
    * modify the input vector (plus it is const). A copy could be made, but then
@@ -108,10 +108,10 @@ void Renderer::renderCharacters(
   // Render the characters from top-most to bottom-most.
   for (int64_t character_index : character_indices) {
     Character const& character = characters[character_index];
-    renderCharacter(
-        viewport,
-        charactersets_textures.at(character.spriteset().textureIndex()),
-        character);
+    renderCharacter(viewport,
+                    charactersets_textures.texture_for_index(
+                        character.spriteset().textureIndex()),
+                    character);
   }
 }
 

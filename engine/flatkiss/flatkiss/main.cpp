@@ -80,24 +80,14 @@ int main(int argc, char* argv[]) {
 
   PositionedRectangle viewport{Position{0, 0},
                                Rectangle{kViewportSize, kViewportSize}};
-  SDL_Window* window = SDL_CreateWindow(
-      FLATKISS_PROJECT_NAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-      static_cast<int>(viewport.rectangle().width()),
-      static_cast<int>(viewport.rectangle().height()), SDL_WINDOW_SHOWN);
-  if (window == nullptr) {
-    cerr << "SDL_CreateWindow Error: " << SDL_GetError() << endl;
-    return EXIT_FAILURE;
-  }
+  Window const window{FLATKISS_PROJECT_NAME, viewport.rectangle().width(), viewport.rectangle().height()};
 
-  Renderer renderer{window};
-
-  TextureLoader texture_loader{configuration.spritesetFilesDirectory(),
-                               configuration.spritesetFilesPrefix(),
-                               configuration.spritesetFilesSuffix()};
   vector<Spriteset> const spritesets{
       SpritesetLoader::load(configuration.spritesetsPath())};
-  unordered_map<int64_t, Texture> const textures{
-      texture_loader.load(spritesets, renderer)};
+  TextureAtlas textures{spritesets, window.renderer(),
+                        configuration.spritesetFilesDirectory(),
+                        configuration.spritesetFilesPrefix(),
+                        configuration.spritesetFilesSuffix()};
 
   unordered_map<int64_t, AnimationPlayer const> animation_players{
       AnimationPlayerLoader::load(configuration.animationsPath())};
@@ -125,7 +115,7 @@ int main(int argc, char* argv[]) {
       CharacterControllerLoader::load(characters, characters_to_controllers)};
   int64_t tick(0);
   while (!quit) {
-    renderer.render(level, viewport, tick++, textures, characters);
+    window.render(level, viewport, tick++, textures, characters);
     SDL_Delay(configuration.engineTickDurationMs());
     while (SDL_PollEvent(&event)) {
       if (event.type == SDL_QUIT) {
@@ -148,7 +138,6 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  SDL_DestroyWindow(window);
   SDL_Quit();
 
   return EXIT_SUCCESS;

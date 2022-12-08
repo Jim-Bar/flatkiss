@@ -20,15 +20,16 @@
 #ifndef LIBFLATKISS_MEDIA_TEXTURE_HPP_INCLUDED
 #define LIBFLATKISS_MEDIA_TEXTURE_HPP_INCLUDED
 
-#include <SDL2/SDL.h>
-
 #include <libflatkiss/model/model.hpp>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-// Forward declaration to break the cycle Spriteset / Renderer.
+// Forward declaration to break the cycle Texture / Renderer.
 class Renderer;
+
+// Forward declaration to avoid exposing SDL to the outside world.
+class SDL_Texture;
 
 class Texture {
  public:
@@ -63,26 +64,6 @@ class Texture {
   static SDL_Texture* loadTexture(std::string const& file_path,
                                   Renderer const& renderer, uint8_t alpha_red,
                                   uint8_t alpha_green, uint8_t alpha_blue);
-};
-
-/**
- * @brief Helper class for loading the textures from a file.
- */
-class TextureLoader {
- public:
-  TextureLoader(std::string texture_files_directory,
-                std::string texture_files_prefix,
-                std::string texture_files_suffix);
-
-  std::unordered_map<int64_t, Texture> load(
-      std::vector<Spriteset> const& spritesets, Renderer const& renderer);
-
- private:
-  std::string const texture_files_directory_;
-  std::string const texture_files_prefix_;
-  std::string const texture_files_suffix_;
-
-  std::string texturePath(int64_t texture_index) const;
 };
 
 #endif

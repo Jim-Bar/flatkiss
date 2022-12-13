@@ -20,7 +20,8 @@
 #ifndef LIBFLATKISS_MEDIA_MEDIA_HPP_INCLUDED
 #define LIBFLATKISS_MEDIA_MEDIA_HPP_INCLUDED
 
-#include <libflatkiss/media/keyboard_state.hpp>
+#include <libflatkiss/media/event_handler.hpp>
+#include <libflatkiss/media/key.hpp>
 #include <libflatkiss/media/renderer.hpp>
 #include <libflatkiss/media/texture_atlas.hpp>
 #include <libflatkiss/media/window.hpp>

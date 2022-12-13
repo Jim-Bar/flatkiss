@@ -195,7 +195,7 @@ Note also that the speed of animations can slightly differ from the engine, depe
 
 . Continue the work on libraries: move all SDL related stuff in media (must be PRIVATE), improve controllers in logic
 (and does logic have to depend on media?)
-. Create a library libflatkiss-data which will depend on libflatkiss-media and load the whole model
+. Create a library libflatkiss-data which will depend on libflatkiss-model and load the whole model
 . Characters are updated every ticks. Add a parameter for updating them every N ticks instead (allows lower speeds)?
 . Use struct when reading files
 . Dedicated type for tiles / sprites instead of `uint16_t`

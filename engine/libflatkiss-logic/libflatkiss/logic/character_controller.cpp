@@ -29,19 +29,19 @@ Character const& KeyboardCharacterController::character() const {
 }
 
 void KeyboardCharacterController::handleKeyboardEvent(
-    KeyboardState const& keyboard_state) {
+    EventHandler const& event_handler) {
   int64_t dx{0};
   int64_t dy{0};
-  if (keyboard_state.isPressed(SDL_SCANCODE_UP)) {
+  if (event_handler.isKeyPressed(Key::kUp)) {
     dy -= kSpeedInPixels;
   }
-  if (keyboard_state.isPressed(SDL_SCANCODE_DOWN)) {
+  if (event_handler.isKeyPressed(Key::kDown)) {
     dy += kSpeedInPixels;
   }
-  if (keyboard_state.isPressed(SDL_SCANCODE_LEFT)) {
+  if (event_handler.isKeyPressed(Key::kLeft)) {
     dx -= kSpeedInPixels;
   }
-  if (keyboard_state.isPressed(SDL_SCANCODE_RIGHT)) {
+  if (event_handler.isKeyPressed(Key::kRight)) {
     dx += kSpeedInPixels;
   }
 

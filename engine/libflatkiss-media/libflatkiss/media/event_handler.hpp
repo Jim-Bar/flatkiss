@@ -17,30 +17,30 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef LIBFLATKISS_LOGIC_CHARACTER_CONTROLLER_HPP_INCLUDED
-#define LIBFLATKISS_LOGIC_CHARACTER_CONTROLLER_HPP_INCLUDED
+#ifndef LIBFLATKISS_MEDIA_EVENT_HANDLER_HPP_INCLUDED
+#define LIBFLATKISS_MEDIA_EVENT_HANDLER_HPP_INCLUDED
 
-#include <libflatkiss/media/media.hpp>
-#include <libflatkiss/model/model.hpp>
-#include <memory>
-#include <vector>
+#include <libflatkiss/media/key.hpp>
 
-class KeyboardCharacterController {
+// Forward declaration to avoid exposing SDL to the outside world.
+// enum SDL_Scancode : int;
+// FIXME: Forward declaration on an enum not tagged... Complicated:
+// https://stackoverflow.com/a/1280969
+// https://stackoverflow.com/q/22386191
+// https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_scancode.h
+#include <SDL2/SDL.h> // FIXME: Rhaaaaaa....
+
+class EventHandler {
  public:
-  KeyboardCharacterController(Character& character);
-  Character const& character() const;
-  void handleKeyboardEvent(EventHandler const& event_handler);
+  void handleEvents();
+  bool isKeyPressed(Key key) const;
+  bool mustQuit() const;
 
  private:
-  Character& character_;
-  static int64_t constexpr kSpeedInPixels{1};
-};
+  bool keys_state_[Key::kMax];
+  bool must_quit_ = false;
 
-class CharacterControllerLoader {
- public:
-  static std::vector<KeyboardCharacterController> load(
-      std::vector<Character>& characters,
-      std::vector<int64_t> characters_to_controllers);
+  void updateKeysState(SDL_Scancode key, bool pressed);
 };
 
 #endif

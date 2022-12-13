@@ -103,8 +103,6 @@ int main(int argc, char* argv[]) {
   Level const& level{levels[0]};
 
   bool quit = false;
-  SDL_Event event;
-  KeyboardState keyboard_state;
   Navigator navigator{solids, level, level.spriteset().spritesWidth(),
                       level.spriteset().spritesHeight()};
   auto [characters_to_controllers, characters]{CharacterLoader::load(
@@ -114,21 +112,14 @@ int main(int argc, char* argv[]) {
   vector<KeyboardCharacterController> character_controllers{
       CharacterControllerLoader::load(characters, characters_to_controllers)};
   int64_t tick(0);
+  EventHandler event_handler;
   while (!quit) {
     window.render(level, viewport, tick++, textures, characters);
     SDL_Delay(configuration.engineTickDurationMs());
-    while (SDL_PollEvent(&event)) {
-      if (event.type == SDL_QUIT) {
-        cout << "Program quit after " << event.quit.timestamp << " ticks"
-             << endl;
-        quit = true;
-      } else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
-        keyboard_state.update(event.key.keysym.scancode,
-                              event.key.state == SDL_PRESSED);
-      }
-    }
+    event_handler.handleEvents();
+    quit = event_handler.mustQuit();
     for (auto& controller : character_controllers) {
-      controller.handleKeyboardEvent(keyboard_state);
+      controller.handleKeyboardEvent(event_handler);
     }
     // FIXME: Way to define which character is followed by the viewport.
     if (!character_controllers.empty()) {

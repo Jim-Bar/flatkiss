@@ -1,8 +1,10 @@
 find_package(SDL2 REQUIRED)
 
 add_library(${LIBRARY_MEDIA} STATIC
-    lib${NAME_PROJECT}/${NAME_MEDIA}/keyboard_state.cpp
-    lib${NAME_PROJECT}/${NAME_MEDIA}/keyboard_state.hpp
+    lib${NAME_PROJECT}/${NAME_MEDIA}/event_handler.cpp
+    lib${NAME_PROJECT}/${NAME_MEDIA}/event_handler.hpp
+    lib${NAME_PROJECT}/${NAME_MEDIA}/key.cpp
+    lib${NAME_PROJECT}/${NAME_MEDIA}/key.hpp
     lib${NAME_PROJECT}/${NAME_MEDIA}/media.hpp
     lib${NAME_PROJECT}/${NAME_MEDIA}/renderer.cpp
     lib${NAME_PROJECT}/${NAME_MEDIA}/renderer.hpp

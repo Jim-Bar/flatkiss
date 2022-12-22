@@ -35,7 +35,7 @@ class TextureAtlas {
                std::string texture_files_prefix,
                std::string texture_files_suffix);
 
-  Texture const& texture_for_index(int64_t texture_index) const;
+  Texture const& textureForIndex(int64_t texture_index) const;
 
  private:
   std::unordered_map<int64_t, Texture> const textures_;

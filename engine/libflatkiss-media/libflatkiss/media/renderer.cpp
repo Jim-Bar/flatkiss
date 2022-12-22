@@ -60,7 +60,7 @@ void Renderer::render(Level const& level, PositionedRectangle const& viewport,
                       vector<Character> const& characters) const {
   SDL_RenderClear(sdl_renderer_);
   renderLevel(level,
-              textures.texture_for_index(level.spriteset().textureIndex()),
+              textures.textureForIndex(level.spriteset().textureIndex()),
               viewport, tick);
   renderCharacters(viewport, characters, textures);
   SDL_RenderPresent(sdl_renderer_);
@@ -109,7 +109,7 @@ void Renderer::renderCharacters(
   for (int64_t character_index : character_indices) {
     Character const& character = characters[character_index];
     renderCharacter(viewport,
-                    charactersets_textures.texture_for_index(
+                    charactersets_textures.textureForIndex(
                         character.spriteset().textureIndex()),
                     character);
   }

@@ -54,7 +54,7 @@ unordered_map<int64_t, Texture> TextureAtlas::load(
   return textures_by_indices;
 }
 
-Texture const& TextureAtlas::texture_for_index(int64_t texture_index) const {
+Texture const& TextureAtlas::textureForIndex(int64_t texture_index) const {
   return textures_.at(texture_index);
 }
 

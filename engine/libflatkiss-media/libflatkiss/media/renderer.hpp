@@ -20,13 +20,18 @@
 #ifndef LIBFLATKISS_MEDIA_RENDERER_HPP_INCLUDED
 #define LIBFLATKISS_MEDIA_RENDERER_HPP_INCLUDED
 
-#include <SDL2/SDL.h>
-
 #include <libflatkiss/media/texture.hpp>
 #include <libflatkiss/media/texture_atlas.hpp>
 #include <libflatkiss/model/model.hpp>
 #include <unordered_map>
 #include <vector>
+
+// Forward declarations to avoid exposing SDL to the outside world.
+struct SDL_Rect;
+struct SDL_Renderer;
+struct SDL_Surface;
+struct SDL_Texture;
+struct SDL_Window;
 
 /**
  * @brief Renders the whole scene.

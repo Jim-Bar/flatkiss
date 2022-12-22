@@ -17,6 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
+#include <SDL2/SDL.h>
+
 #include <algorithm>
 #include <libflatkiss/media/renderer.hpp>
 
@@ -59,8 +61,7 @@ void Renderer::render(Level const& level, PositionedRectangle const& viewport,
                       int64_t tick, TextureAtlas const& textures,
                       vector<Character> const& characters) const {
   SDL_RenderClear(sdl_renderer_);
-  renderLevel(level,
-              textures.textureForIndex(level.spriteset().textureIndex()),
+  renderLevel(level, textures.textureForIndex(level.spriteset().textureIndex()),
               viewport, tick);
   renderCharacters(viewport, characters, textures);
   SDL_RenderPresent(sdl_renderer_);

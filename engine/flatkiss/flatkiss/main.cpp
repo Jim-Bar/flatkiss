@@ -17,6 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
+#include <SDL2/SDL.h>
+
 #include <cstdlib>
 #include <flatkiss/configuration.hpp>
 #include <flatkiss/main.hpp>
@@ -80,7 +82,8 @@ int main(int argc, char* argv[]) {
 
   PositionedRectangle viewport{Position{0, 0},
                                Rectangle{kViewportSize, kViewportSize}};
-  Window const window{FLATKISS_PROJECT_NAME, viewport.rectangle().width(), viewport.rectangle().height()};
+  Window const window{FLATKISS_PROJECT_NAME, viewport.rectangle().width(),
+                      viewport.rectangle().height()};
 
   vector<Spriteset> const spritesets{
       SpritesetLoader::load(configuration.spritesetsPath())};

@@ -27,8 +27,7 @@ void EventHandler::handleEvents() {
     if (event.type == SDL_QUIT) {
       must_quit_ = true;
     } else if (event.type == SDL_KEYDOWN || event.type == SDL_KEYUP) {
-      updateKeysState(event.key.keysym.scancode,
-                      event.key.state == SDL_PRESSED);
+      updateKeysState(event);
     }
   }
 }
@@ -37,8 +36,10 @@ bool EventHandler::isKeyPressed(Key key) const { return keys_state_[key]; }
 
 bool EventHandler::mustQuit() const { return must_quit_; }
 
-void EventHandler::updateKeysState(SDL_Scancode key, bool pressed) {
-  switch (key) {  // FIXME: Makes an mapping array instead of a giant switch.
+void EventHandler::updateKeysState(SDL_Event const& event) {
+  SDL_Scancode key{event.key.keysym.scancode};
+  bool pressed{event.key.state == SDL_PRESSED};
+  switch (key) {  // FIXME: Makes a mapping array instead of a giant switch.
     case SDL_SCANCODE_UP:
       keys_state_[Key::kUp] = pressed;
       return;

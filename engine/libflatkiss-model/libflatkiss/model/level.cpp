@@ -33,10 +33,12 @@ using std::vector;
 Level::Level(vector<uint16_t>&& tiles, int64_t width_in_tiles,
              int64_t height_in_tiles, Spriteset const& spriteset,
              AnimationPlayer const& animation_player,
+             Navigator const& navigator,
              TileSolidMapper const& tile_solid_mapper)
     : tiles_{move(tiles)},
       width_in_tiles_{width_in_tiles},
       height_in_tiles_{height_in_tiles},
+      navigator_{navigator},
       spriteset_{spriteset},
       animation_player_{animation_player},
       tile_solid_mapper_{tile_solid_mapper} {}
@@ -44,6 +46,8 @@ Level::Level(vector<uint16_t>&& tiles, int64_t width_in_tiles,
 AnimationPlayer const& Level::animationPlayer() const {
   return animation_player_;
 }
+
+vector<Character>& Level::characters() { return characters_; }
 
 int64_t Level::heightInTiles() const { return height_in_tiles_; }
 
@@ -59,10 +63,21 @@ TileSolidMapper const& Level::tileSolidMapper() const {
 
 int64_t Level::widthInTiles() const { return width_in_tiles_; }
 
+// FIXME: Remove this, the best thing to do is probably to put the characters
+// after the tiles in the binary file for the level, and then reading the
+// characters after the level.
+struct CharacterTemp {
+  CharacterTemplate const& character_template;
+  Position const position;
+};
+
 vector<Level> LevelLoader::load(
     string const& file_path, vector<Spriteset> const& spritesets,
     unordered_map<int64_t, AnimationPlayer const>& animation_players,
-    unordered_map<int64_t, TileSolidMapper const>& tile_solid_mappers) {
+    unordered_map<int64_t, TileSolidMapper const>& tile_solid_mappers,
+    Navigator const& navigator,
+    vector<CharacterTemplate> const& character_templates,
+    vector<Character> characters) {
   vector<Level> levels;
   ifstream stream;
   stream.open(file_path, ios::in | ios::binary);
@@ -75,6 +90,7 @@ vector<Level> LevelLoader::load(
       uint16_t spriteset_index{0};
       uint16_t animation_player_index{0};
       uint16_t tile_solid_mapper_index{0};
+      uint16_t num_characters{0};
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&width_in_tiles), 2);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -85,6 +101,24 @@ vector<Level> LevelLoader::load(
       stream.read(reinterpret_cast<char*>(&animation_player_index), 2);
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(&tile_solid_mapper_index), 2);
+      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+      stream.read(reinterpret_cast<char*>(&num_characters), 2);
+      vector<CharacterTemp> characters_temp;
+      for (int i{0}; i < num_characters; i++) {
+        uint16_t index{0};
+        uint16_t x{0};
+        uint16_t y{0};
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+        stream.read(reinterpret_cast<char*>(&index), 2);
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+        stream.read(reinterpret_cast<char*>(&x), 2);
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+        stream.read(reinterpret_cast<char*>(&y), 2);
+        characters_temp.emplace_back(
+            character_templates[index],
+            Position{x * spritesets[spriteset_index].spritesWidth(),
+                     y * spritesets[spriteset_index].spritesHeight()});
+      }
       // Two bytes per tile.
       int64_t const size_in_bytes{width_in_tiles * height_in_tiles * 2};
       auto tiles{vector<uint16_t>(size_in_bytes, 0)};
@@ -95,6 +129,13 @@ vector<Level> LevelLoader::load(
                           spritesets[spriteset_index],
                           animation_players.at(animation_player_index),
                           tile_solid_mappers.at(tile_solid_mapper_index));
+      for (CharacterTemp temp : characters_temp) {
+        characters.emplace_back(temp.character_template.spriteset(),
+                                temp.character_template.action_sprite_mapper(),
+                                temp.character_template.animation_player(),
+                                temp.character_template.solid(), levels.back(),
+                                navigator, temp.position);
+      }
     }
     stream.close();
   }  // FIXME: fail.

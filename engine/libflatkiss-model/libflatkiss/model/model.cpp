@@ -26,13 +26,13 @@ Model::Model(
     unordered_map<int64_t, ActionSpriteMapper const> const
         action_sprite_mappers,
     unordered_map<int64_t, AnimationPlayer const> const animation_players,
-    vector<Character> characters, vector<Level> const levels,
+    vector<Level> const levels, unordered_map<int64_t, Solid const> solids,
     vector<Spriteset> const spritesets,
     unordered_map<int64_t, TileSolidMapper const> const tile_solid_mappers)
     : action_sprite_mappers_{action_sprite_mappers},
       animation_players_{animation_players},
-      characters_{characters},
       levels_{levels},
+      navigator_{solids},
       spritesets_{spritesets},
       tile_solid_mappers_{tile_solid_mappers} {}
 
@@ -45,8 +45,6 @@ unordered_map<int64_t, AnimationPlayer const> const Model::animation_players()
     const {
   return animation_players_;
 }
-
-vector<Character> Model::characters() { return characters_; }
 
 vector<Level> const Model::levels() const { return levels_; }
 

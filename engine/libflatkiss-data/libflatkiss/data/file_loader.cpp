@@ -45,16 +45,15 @@ Model FileLoader::load() const {
   unordered_map<int64_t, TileSolidMapper const> tile_solid_mappers{
       TileSolidMapperLoader::load(tile_solid_maps_path_)};
   unordered_map<int64_t, Solid const> solids{SolidLoader::load(solids_path_)};
-  vector<Level> const levels{LevelLoader::load(
-      levels_path_, spritesets, animation_players, tile_solid_mappers)};
-  // FIXME: Characters can only be used in level zero.
-  Navigator navigator{solids, levels[0], levels[0].spriteset().spritesWidth(),
-                      levels[0].spriteset().spritesHeight()};
-  vector<Character> characters{
+
+  auto [characters_to_controllers, character_templates]{
       CharacterLoader::load(characters_path_, spritesets, action_sprite_mappers,
                             animation_players, solids, navigator, 0, 0)};
+  vector<Character> characters;
+  vector<Level> const levels{LevelLoader::load(
+      levels_path_, spritesets, animation_players, tile_solid_mappers,
+      navigator, character_templates, characters)};
 
-  return Model{
-      action_sprite_mappers, animation_players, characters, levels, spritesets,
-      tile_solid_mappers};
+  return Model{action_sprite_mappers, animation_players, levels, spritesets,
+               tile_solid_mappers};
 }

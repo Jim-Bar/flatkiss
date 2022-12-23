@@ -23,6 +23,7 @@
 #include <libflatkiss/model/action_sprite_mapper.hpp>
 #include <libflatkiss/model/animation_player.hpp>
 #include <libflatkiss/model/cardinal_direction.hpp>
+#include <libflatkiss/model/character_template.hpp>
 #include <libflatkiss/model/navigator.hpp>
 #include <libflatkiss/model/positioned_solid.hpp>
 #include <libflatkiss/model/rectangle.hpp>
@@ -30,6 +31,9 @@
 #include <tuple>
 #include <unordered_map>
 #include <vector>
+
+// Forward declaration to break the cycle Character / Level.
+class Level;
 
 /**
  * @brief A character in the level.
@@ -41,7 +45,8 @@ class Character {
   Character(Spriteset const& spriteset,
             ActionSpriteMapper const& action_sprite_mapper,
             AnimationPlayer const& animation_player, Solid const& solid,
-            Navigator const& navigator, Position const& initial_position);
+            Level const& level, Navigator const& navigator,
+            Position const& initial_position);
   void moveBy(Vector const& desired_displacement);
   Position const& position() const;
   uint16_t spriteIndex() const;
@@ -54,6 +59,7 @@ class Character {
   int64_t animation_tick_{0};
   Spriteset const& spriteset_;
   CardinalDirection facing_direction_;
+  Level const& level_;
   Navigator const& navigator_;
   PositionedSolid positioned_solid_;
   ActionSpriteMapper const& action_sprite_mapper_;
@@ -70,7 +76,7 @@ class Character {
  */
 class CharacterLoader {
  public:
-  static std::tuple<std::vector<int64_t>, std::vector<Character>> load(
+  static std::tuple<std::vector<int64_t>, std::vector<CharacterTemplate>> load(
       std::string const& characters_file_path,
       std::vector<Spriteset> const& spritesets,
       std::unordered_map<int64_t, ActionSpriteMapper const> const&

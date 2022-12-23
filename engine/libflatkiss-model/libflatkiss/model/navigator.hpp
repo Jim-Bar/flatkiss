@@ -32,16 +32,12 @@
  */
 class Navigator {
  public:
-  Navigator(std::unordered_map<int64_t, Solid const>& solids,
-            Level const& level, int64_t tiles_width, int64_t tiles_height);
+  Navigator(std::unordered_map<int64_t, Solid const>& solids);
   Position moveBy(PositionedSolid const& source_positioned_solid,
-                  Vector const& desired_displacement) const;
+                  Vector const& desired_displacement, Level const& level) const;
 
  private:
-  Level const& level_;
   std::unordered_map<int64_t, Solid const>& solids_;
-  int64_t const tiles_height_;
-  int64_t const tiles_width_;
 
   /**
    * @brief Given a position and a movement (delta) on an axis (representing
@@ -57,15 +53,18 @@ class Navigator {
    */
   static int64_t clampToBounds(int64_t object_position, int64_t object_size,
                                int64_t delta_value, int64_t upper_bound);
-  bool collidesWithTiles(PositionedSolid const& positioned_solid) const;
+  bool collidesWithTiles(PositionedSolid const& positioned_solid,
+                         Level const& level) const;
   Position findNearestPositionToDestination(
       PositionedSolid const& source_positioned_solid,
-      Position const& destination) const;
+      Position const& destination, Level const& level) const;
   bool solidCollidesWithTileAtPosition(PositionedSolid const& positioned_solid,
                                        uint16_t tile_index,
-                                       Position const& position) const;
+                                       Position const& position,
+                                       Level const& level) const;
   PositionedSolid solidForTileIndexAtPosition(uint16_t tile_index,
-                                              Position const& position) const;
+                                              Position const& position,
+                                              Level const& level) const;
 };
 
 #endif

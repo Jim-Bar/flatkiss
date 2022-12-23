@@ -38,7 +38,8 @@ class Model {
             action_sprite_mappers,
         std::unordered_map<int64_t, AnimationPlayer const> const
             animation_players,
-        std::vector<Character> characters, std::vector<Level> const levels,
+        std::vector<Level> const levels,
+        std::unordered_map<int64_t, Solid const> solids,
         std::vector<Spriteset> const spritesets,
         std::unordered_map<int64_t, TileSolidMapper const> const
             tile_solid_mappers);
@@ -46,7 +47,6 @@ class Model {
   action_sprite_mappers() const;
   std::unordered_map<int64_t, AnimationPlayer const> const animation_players()
       const;
-  std::vector<Character> characters();
   std::vector<Level> const levels() const;
   std::vector<Spriteset> const spritesets() const;
   std::unordered_map<int64_t, TileSolidMapper const> tile_solid_mappers() const;
@@ -54,8 +54,8 @@ class Model {
  private:
   std::unordered_map<int64_t, ActionSpriteMapper const> action_sprite_mappers_;
   std::unordered_map<int64_t, AnimationPlayer const> animation_players_;
-  std::vector<Character> characters_;
   std::vector<Level> const levels_;
+  Navigator const navigator_;
   std::vector<Spriteset> const spritesets_;
   std::unordered_map<int64_t, TileSolidMapper const> tile_solid_mappers_;
 };

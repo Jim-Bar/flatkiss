@@ -47,17 +47,21 @@ be ran from the project's root directory in order to find the assets).
 
 == Binary files format
 
+NOTE: Everything is little-endian.
+
 === Level
 
 Width and height of the level in tiles on two bytes each, followed by the spriteset index to use on two bytes, then the
-tile animation on two bytes, then the tiles to solids map index on two bytes, followed by the list of tiles indices (in
-the tileset) as shorts (two bytes per index, little endian).
+tile animation on two bytes, then the tiles to solids map index on two bytes. After comes the characters in the level.
+Firstly is the number of characters on two bytes, followed by a list of pairs for each character. A pair is composed of
+the index of the character to use on two bytes and of its location in the level in tiles, two bytes for x and two bytes
+for y. After the characters come the list of tiles indices (in the tileset) as shorts (two bytes per index).
 
 === Animations
 
 The _period_ of the animation is the number of tiles making it up. It is stored on one byte. The _duration_ of the
 animation is how many ticks pass before the animation goes to the next step / tile. Stored on the next byte. Then are
-the tiles indices (in the tileset) as shorts (two bytes per index, little endian).
+the tiles indices (in the tileset) as shorts (two bytes per index).
 
 A group of animation starts with the index on two bytes. Then the number of animations making up the group on two bytes.
 Then come the animations concatenated together.

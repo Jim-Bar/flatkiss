@@ -103,8 +103,7 @@ int main(int argc, char* argv[]) {
   Level const& level{levels[0]};
 
   bool quit = false;
-  Navigator navigator{solids, level, level.spriteset().spritesWidth(),
-                      level.spriteset().spritesHeight()};
+  Navigator navigator{solids, level};
   auto [characters_to_controllers, characters]{CharacterLoader::load(
       configuration.charactersPath(), spritesets, action_sprite_mappers,
       animation_players, solids, navigator, level.spriteset().spritesWidth(),

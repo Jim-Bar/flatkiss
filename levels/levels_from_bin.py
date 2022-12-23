@@ -27,18 +27,25 @@ with open('levels.bin', 'rb') as level_file:
 with open('levels.txt', 'w') as level_file:
 
     while len(level_bytes) > 0:
-        width, height, spriteset_index, animation_index, tile_solid_map_index = \
-            struct.unpack('HHHHH', level_bytes[:5 * 2])
-        tiles = struct.unpack('H' * width * height, level_bytes[5 * 2:5 * 2 + width * height * 2])
+        mark = 6 * 2
+        width, height, spriteset_index, animation_index, tile_solid_map_index, num_characters = \
+            struct.unpack('HHHHHH', level_bytes[:mark])
+        characters = struct.unpack('HHH' * num_characters, level_bytes[mark:mark + num_characters * 3 * 2])
+        mark += num_characters * 3 * 2
+        tiles = struct.unpack('H' * width * height, level_bytes[mark:mark + width * height * 2])
 
+        level_file.write('{} {} {} {} {} {}\n'.format(width, height, spriteset_index, animation_index,
+                                                   tile_solid_map_index, num_characters))
+
+        rows = [characters[i:i + 3] for i in range(0, len(characters), 3)]
+        level_file.write('\n'.join([' '.join([str(index).zfill(2) for index in row]) for row in rows]))
+
+        level_file.write('\n')
         rows = [tiles[i:i + width] for i in range(0, len(tiles), width)]
-
-        level_file.write('{} {} {} {} {}\n'.format(width, height, spriteset_index, animation_index,
-                                                   tile_solid_map_index))
         level_file.write('\n'.join([' '.join([str(index).zfill(3) for index in row]) for row in rows]))
 
         # Prepare for next level.
-        level_bytes = level_bytes[5 * 2 + width * height * 2:]
+        level_bytes = level_bytes[mark + width * height * 2:]
 
         if len(level_bytes) > 0:
             level_file.write('\n')

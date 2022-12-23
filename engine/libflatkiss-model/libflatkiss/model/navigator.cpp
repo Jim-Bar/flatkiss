@@ -24,13 +24,8 @@ using std::abs;
 using std::max;
 using std::unordered_map;
 
-Navigator::Navigator(unordered_map<int64_t, Solid const>& solids,
-                     Level const& level, int64_t tiles_width,
-                     int64_t tiles_height)
-    : solids_{solids},
-      level_{level},
-      tiles_width_{tiles_width},
-      tiles_height_{tiles_height} {}
+Navigator::Navigator(unordered_map<int64_t, Solid const>& solids)
+    : solids_{solids} {}
 
 int64_t Navigator::clampToBounds(int64_t object_position, int64_t object_size,
                                  int64_t delta_value, int64_t upper_bound) {
@@ -45,22 +40,26 @@ int64_t Navigator::clampToBounds(int64_t object_position, int64_t object_size,
   return object_position + delta_value;
 }
 
-bool Navigator::collidesWithTiles(
-    PositionedSolid const& positioned_solid) const {
-  for (int64_t y(positioned_solid.absoluteBoundingBox().y() / tiles_height_);
+bool Navigator::collidesWithTiles(PositionedSolid const& positioned_solid,
+                                  Level const& level) const {
+  for (int64_t y(positioned_solid.absoluteBoundingBox().y() /
+                 level.spriteset().spritesHeight());
        y <= (positioned_solid.absoluteBoundingBox().y() +
              positioned_solid.boundingBox().height() - 1) /
-                tiles_height_;
+                level.spriteset().spritesHeight();
        y++) {
-    for (int64_t x(positioned_solid.absoluteBoundingBox().x() / tiles_width_);
+    for (int64_t x(positioned_solid.absoluteBoundingBox().x() /
+                   level.spriteset().spritesWidth());
          x <= (positioned_solid.absoluteBoundingBox().x() +
                positioned_solid.boundingBox().width() - 1) /
-                  tiles_width_;
+                  level.spriteset().spritesWidth();
          x++) {
-      uint16_t tile_index(level_.tileIndex(x, y));
+      uint16_t tile_index(level.tileIndex(x, y));
       if (solidCollidesWithTileAtPosition(
               positioned_solid, tile_index,
-              Position{x * tiles_width_, y * tiles_height_})) {
+              Position{x * level.spriteset().spritesWidth(),
+                       y * level.spriteset().spritesHeight()},
+              level)) {
         return true;
       }
     }
@@ -70,8 +69,8 @@ bool Navigator::collidesWithTiles(
 }
 
 Position Navigator::findNearestPositionToDestination(
-    PositionedSolid const& source_positioned_solid,
-    Position const& destination) const {
+    PositionedSolid const& source_positioned_solid, Position const& destination,
+    Level const& level) const {
   /* Decompose the displacement in steps. Each step is a point. Because the
    * components of the displacement can be different, first find the greatest of
    * the two. This is the number of steps. Then move step by step (point by
@@ -85,7 +84,8 @@ Position Navigator::findNearestPositionToDestination(
   for (int64_t step{1}; step <= max_displacement; step++) {
     Vector partial_displacement{(step * displacement.dx()) / max_displacement,
                                 (step * displacement.dy()) / max_displacement};
-    if (collidesWithTiles(source_positioned_solid + partial_displacement)) {
+    if (collidesWithTiles(source_positioned_solid + partial_displacement,
+                          level)) {
       /* Return the last step for which the position does not collide (for the
        * first step this is the original position). */
       return Position{source_positioned_solid.x() +
@@ -101,19 +101,20 @@ Position Navigator::findNearestPositionToDestination(
 }
 
 Position Navigator::moveBy(PositionedSolid const& source_positioned_solid,
-                           Vector const& desired_displacement) const {
+                           Vector const& desired_displacement,
+                           Level const& level) const {
   /* First collide with the bounds of the level. Compute the resulting
    * (potential) destination. */
   Position destination{
       clampToBounds(source_positioned_solid.absoluteBoundingBox().x(),
                     source_positioned_solid.boundingBox().width(),
                     desired_displacement.dx(),
-                    level_.widthInTiles() * tiles_width_) -
+                    level.widthInTiles() * level.spriteset().spritesWidth()) -
           source_positioned_solid.boundingBox().x(),
       clampToBounds(source_positioned_solid.absoluteBoundingBox().y(),
                     source_positioned_solid.boundingBox().height(),
                     desired_displacement.dy(),
-                    level_.heightInTiles() * tiles_height_) -
+                    level.heightInTiles() * level.spriteset().spritesHeight()) -
           source_positioned_solid.boundingBox().y()};
 
   /* Secondly, if the destination is the same as the current position, nothing
@@ -125,9 +126,10 @@ Position Navigator::moveBy(PositionedSolid const& source_positioned_solid,
   /* Otherwise if there is a collision with a tile, make sure to stick to the
    * tile. */
   if (collidesWithTiles(
-          PositionedSolid{destination, source_positioned_solid.solid()})) {
-    Position nearest_position{
-        findNearestPositionToDestination(source_positioned_solid, destination)};
+          PositionedSolid{destination, source_positioned_solid.solid()},
+          level)) {
+    Position nearest_position{findNearestPositionToDestination(
+        source_positioned_solid, destination, level)};
     if (source_positioned_solid.position() != nearest_position) {
       return nearest_position;
     }
@@ -135,9 +137,10 @@ Position Navigator::moveBy(PositionedSolid const& source_positioned_solid,
     // Maybe it is possible to slide against the obstacle along the X axis.
     Position destination_x{destination.x(), source_positioned_solid.y()};
     if (collidesWithTiles(
-            PositionedSolid{destination_x, source_positioned_solid.solid()})) {
+            PositionedSolid{destination_x, source_positioned_solid.solid()},
+            level)) {
       Position nearest_position_x{findNearestPositionToDestination(
-          source_positioned_solid, destination_x)};
+          source_positioned_solid, destination_x, level)};
       if (source_positioned_solid.position() != nearest_position_x) {
         return nearest_position_x;
       }
@@ -148,9 +151,10 @@ Position Navigator::moveBy(PositionedSolid const& source_positioned_solid,
     // Or along the Y axis.
     Position destination_y{source_positioned_solid.x(), destination.y()};
     if (collidesWithTiles(
-            PositionedSolid{destination_y, source_positioned_solid.solid()})) {
+            PositionedSolid{destination_y, source_positioned_solid.solid()},
+            level)) {
       Position nearest_position_y{findNearestPositionToDestination(
-          source_positioned_solid, destination_y)};
+          source_positioned_solid, destination_y, level)};
       if (source_positioned_solid.position() != nearest_position_y) {
         return nearest_position_y;
       }
@@ -168,18 +172,19 @@ Position Navigator::moveBy(PositionedSolid const& source_positioned_solid,
 
 bool Navigator::solidCollidesWithTileAtPosition(
     PositionedSolid const& positioned_solid, uint16_t tile_index,
-    Position const& position) const {
-  if (level_.tileSolidMapper().contains(tile_index)) {
-    return Collider::collide(positioned_solid,
-                             solidForTileIndexAtPosition(tile_index, position));
+    Position const& position, Level const& level) const {
+  if (level.tileSolidMapper().contains(tile_index)) {
+    return Collider::collide(
+        positioned_solid,
+        solidForTileIndexAtPosition(tile_index, position, level));
   }
 
   return false;
 }
 
 PositionedSolid Navigator::solidForTileIndexAtPosition(
-    uint16_t tile_index, Position const& position) const {
+    uint16_t tile_index, Position const& position, Level const& level) const {
   return PositionedSolid{
       position,
-      solids_.at(level_.tileSolidMapper().solidIndexForTileIndex(tile_index))};
+      solids_.at(level.tileSolidMapper().solidIndexForTileIndex(tile_index))};
 }

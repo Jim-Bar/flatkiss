@@ -21,6 +21,8 @@
 #define LIBFLATKISS_MODEL_LEVEL_HPP_INCLUDED
 
 #include <libflatkiss/model/animation_player.hpp>
+#include <libflatkiss/model/character.hpp>
+#include <libflatkiss/model/character_template.hpp>
 #include <libflatkiss/model/spriteset.hpp>
 #include <libflatkiss/model/tile_solid_mapper.hpp>
 #include <string>
@@ -38,8 +40,10 @@ class Level {
   Level(std::vector<uint16_t>&& tiles, int64_t width_in_tiles,
         int64_t height_in_tiles, Spriteset const& spriteset,
         AnimationPlayer const& animation_player,
+        Navigator const& navigator,
         TileSolidMapper const& tile_solid_mapper);
   AnimationPlayer const& animationPlayer() const;
+  std::vector<Character>& characters();
   int64_t heightInTiles() const;
   Spriteset const& spriteset() const;
   uint16_t tileIndex(int64_t i, int64_t j) const;
@@ -48,7 +52,9 @@ class Level {
 
  private:
   AnimationPlayer const& animation_player_;
+  std::vector<Character> characters_;
   int64_t const height_in_tiles_;
+  Navigator const& navigator_;
   Spriteset const& spriteset_;
   TileSolidMapper const& tile_solid_mapper_;
   std::vector<uint16_t> const tiles_;
@@ -63,7 +69,10 @@ class LevelLoader {
   static std::vector<Level> load(
       std::string const& file_path, std::vector<Spriteset> const& spritesets,
       std::unordered_map<int64_t, AnimationPlayer const>& animation_players,
-      std::unordered_map<int64_t, TileSolidMapper const>& tile_solid_mappers);
+      std::unordered_map<int64_t, TileSolidMapper const>& tile_solid_mappers,
+      Navigator const& navigator,
+      std::vector<CharacterTemplate> const& character_templates,
+      std::vector<Character> characters);
 };
 
 #endif

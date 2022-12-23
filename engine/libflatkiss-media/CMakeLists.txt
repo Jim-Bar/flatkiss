@@ -16,9 +16,11 @@ add_library(${LIBRARY_MEDIA} STATIC
     lib${NAME_PROJECT}/${NAME_MEDIA}/window.hpp
 )
 
-target_include_directories(${LIBRARY_MEDIA} PUBLIC
-    ${CMAKE_CURRENT_LIST_DIR}
-    ${SDL2_INCLUDE_DIRS}
+target_include_directories(${LIBRARY_MEDIA}
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}
+    PRIVATE
+        ${SDL2_INCLUDE_DIRS}
 )
 
 target_link_libraries(${LIBRARY_MEDIA}

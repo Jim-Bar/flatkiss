@@ -48,6 +48,12 @@ class Window {
  private:
   SDL_Window* const sdl_window_;
   Renderer renderer_;
+  static int64_t windows_count_;
+
+  static SDL_Window* createSDLWindow(std::string display_name, int64_t width,
+                                     int64_t height);
+  static void initSDL();
+  static void quitSDL();
 };
 
 #endif

@@ -17,8 +17,7 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include <SDL2/SDL.h>
-
+#include <chrono>
 #include <cstdlib>
 #include <flatkiss/configuration.hpp>
 #include <flatkiss/main.hpp>
@@ -29,16 +28,19 @@
 #include <libflatkiss/model/model.hpp>
 #include <memory>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <vector>
 
 using std::cerr;
+using std::chrono::milliseconds;
 using std::cout;
 using std::endl;
 using std::move;
 using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
+using std::this_thread::sleep_for;
 
 int64_t const kCharacterSizePixels(16);
 int64_t const kViewportSize(160);
@@ -74,11 +76,6 @@ void updateViewport(Character const& character, PositionedRectangle& viewport,
 
 int main(int argc, char* argv[]) {
   Configuration configuration{"configuration.ini"};
-
-  if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-    cerr << "SDL_Init Error: " << SDL_GetError() << endl;
-    return EXIT_FAILURE;
-  }
 
   PositionedRectangle viewport{Position{0, 0},
                                Rectangle{kViewportSize, kViewportSize}};
@@ -118,7 +115,7 @@ int main(int argc, char* argv[]) {
   EventHandler event_handler;
   while (!quit) {
     window.render(level, viewport, tick++, textures, characters);
-    SDL_Delay(configuration.engineTickDurationMs());
+    sleep_for(milliseconds(configuration.engineTickDurationMs()));
     event_handler.handleEvents();
     quit = event_handler.mustQuit();
     for (auto& controller : character_controllers) {
@@ -131,8 +128,6 @@ int main(int argc, char* argv[]) {
                      level.spriteset().spritesHeight());
     }
   }
-
-  SDL_Quit();
 
   return EXIT_SUCCESS;
 }

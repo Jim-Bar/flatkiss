@@ -33,13 +33,13 @@
 #include <vector>
 
 using std::cerr;
-using std::chrono::milliseconds;
 using std::cout;
 using std::endl;
 using std::move;
 using std::unique_ptr;
 using std::unordered_map;
 using std::vector;
+using std::chrono::milliseconds;
 using std::this_thread::sleep_for;
 
 int64_t const kCharacterSizePixels(16);

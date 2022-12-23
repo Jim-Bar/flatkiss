@@ -4,6 +4,8 @@ project(FlatKiss)
 
 # List of the library targets to build.
 string(TOLOWER ${PROJECT_NAME} NAME_PROJECT)
+set(NAME_DATA data)
+set(LIBRARY_DATA ${NAME_PROJECT}-${NAME_DATA})
 set(NAME_LOGIC logic)
 set(LIBRARY_LOGIC ${NAME_PROJECT}-${NAME_LOGIC})
 set(NAME_MEDIA media)
@@ -23,6 +25,7 @@ endif()
 # ignored; the only reason to list them is to get them to show up in IDEs". Refer to:
 # https://cliutils.gitlab.io/modern-cmake/chapters/basics.html
 add_subdirectory(${NAME_PROJECT})
+add_subdirectory(lib${LIBRARY_DATA})
 add_subdirectory(lib${LIBRARY_LOGIC})
 add_subdirectory(lib${LIBRARY_MEDIA})
 add_subdirectory(lib${LIBRARY_MODEL})

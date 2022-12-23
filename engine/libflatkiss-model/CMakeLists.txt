@@ -17,6 +17,7 @@ add_library(${LIBRARY_MODEL} STATIC
     lib${NAME_PROJECT}/${NAME_MODEL}/ellipse.hpp
     lib${NAME_PROJECT}/${NAME_MODEL}/level.cpp
     lib${NAME_PROJECT}/${NAME_MODEL}/level.hpp
+    lib${NAME_PROJECT}/${NAME_MODEL}/model.cpp
     lib${NAME_PROJECT}/${NAME_MODEL}/model.hpp
     lib${NAME_PROJECT}/${NAME_MODEL}/navigator.cpp
     lib${NAME_PROJECT}/${NAME_MODEL}/navigator.hpp

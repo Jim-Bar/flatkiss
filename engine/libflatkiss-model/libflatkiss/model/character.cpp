@@ -36,14 +36,12 @@ Character::Character(Spriteset const& spriteset,
                      ActionSpriteMapper const& action_sprite_mapper,
                      AnimationPlayer const& animation_player,
                      Solid const& solid, Level const& level,
-                     Navigator const& navigator,
                      Position const& initial_position)
     : spriteset_{spriteset},
       action_sprite_mapper_{action_sprite_mapper},
       animation_player_{animation_player},
       facing_direction_{CardinalDirection::kSouth},
       level_{level},
-      navigator_{navigator},
       positioned_solid_{initial_position, solid} {}
 
 Action Character::currentAction() const {
@@ -62,10 +60,10 @@ Action Character::currentAction() const {
 }
 
 void Character::moveBy(Vector const& desired_displacement) {
-  Position final_position{
+  /*Position final_position{
       navigator_.moveBy(positioned_solid_, desired_displacement)};
   updateFacingDirection(desired_displacement, final_position - position());
-  positioned_solid_.position(move(final_position));
+  positioned_solid_.position(move(final_position));*/
 }
 
 Position const& Character::position() const {
@@ -138,8 +136,7 @@ tuple<vector<int64_t>, vector<CharacterTemplate>> CharacterLoader::load(
     unordered_map<int64_t, ActionSpriteMapper const> const&
         action_sprite_mappers,
     unordered_map<int64_t, AnimationPlayer const> const& animation_players,
-    unordered_map<int64_t, Solid const> const& solids,
-    Navigator const& navigator, int64_t tiles_width, int64_t tiles_height) {
+    unordered_map<int64_t, Solid const> const& solids) {
   vector<int64_t> characters_to_controllers;
   vector<CharacterTemplate> character_templates;
   ifstream stream;

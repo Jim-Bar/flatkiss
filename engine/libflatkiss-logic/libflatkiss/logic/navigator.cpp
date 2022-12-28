@@ -18,7 +18,7 @@
  */
 
 #include <algorithm>
-#include <libflatkiss/model/navigator.hpp>
+#include <libflatkiss/logic/navigator.hpp>
 
 using std::abs;
 using std::max;

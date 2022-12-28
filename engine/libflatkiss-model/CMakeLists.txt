@@ -13,16 +13,12 @@ add_library(${LIBRARY_MODEL} STATIC
     lib${NAME_PROJECT}/${NAME_MODEL}/character.hpp
     lib${NAME_PROJECT}/${NAME_MODEL}/character_template.cpp
     lib${NAME_PROJECT}/${NAME_MODEL}/character_template.hpp
-    lib${NAME_PROJECT}/${NAME_MODEL}/collider.cpp
-    lib${NAME_PROJECT}/${NAME_MODEL}/collider.hpp
     lib${NAME_PROJECT}/${NAME_MODEL}/ellipse.cpp
     lib${NAME_PROJECT}/${NAME_MODEL}/ellipse.hpp
     lib${NAME_PROJECT}/${NAME_MODEL}/level.cpp
     lib${NAME_PROJECT}/${NAME_MODEL}/level.hpp
     lib${NAME_PROJECT}/${NAME_MODEL}/model.cpp
     lib${NAME_PROJECT}/${NAME_MODEL}/model.hpp
-    lib${NAME_PROJECT}/${NAME_MODEL}/navigator.cpp
-    lib${NAME_PROJECT}/${NAME_MODEL}/navigator.hpp
     lib${NAME_PROJECT}/${NAME_MODEL}/position.cpp
     lib${NAME_PROJECT}/${NAME_MODEL}/position.hpp
     lib${NAME_PROJECT}/${NAME_MODEL}/positioned_ellipse.cpp

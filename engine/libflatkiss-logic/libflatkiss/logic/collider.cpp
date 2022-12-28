@@ -18,7 +18,7 @@
  */
 
 #include <cmath>
-#include <libflatkiss/model/collider.hpp>
+#include <libflatkiss/logic/collider.hpp>
 
 using std::abs;
 

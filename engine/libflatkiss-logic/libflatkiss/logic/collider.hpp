@@ -17,8 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef LIBFLATKISS_MODEL_COLLIDER_HPP_INCLUDED
-#define LIBFLATKISS_MODEL_COLLIDER_HPP_INCLUDED
+#ifndef LIBFLATKISS_LOGIC_COLLIDER_HPP_INCLUDED
+#define LIBFLATKISS_LOGIC_COLLIDER_HPP_INCLUDED
 
 #include <libflatkiss/model/positioned_ellipse.hpp>
 #include <libflatkiss/model/positioned_rectangle.hpp>

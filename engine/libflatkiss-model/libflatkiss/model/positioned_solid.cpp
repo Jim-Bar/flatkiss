@@ -17,7 +17,6 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include <libflatkiss/model/collider.hpp>
 #include <libflatkiss/model/positioned_solid.hpp>
 #include <utility>
 

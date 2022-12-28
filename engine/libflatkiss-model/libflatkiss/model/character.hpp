@@ -24,7 +24,6 @@
 #include <libflatkiss/model/animation_player.hpp>
 #include <libflatkiss/model/cardinal_direction.hpp>
 #include <libflatkiss/model/character_template.hpp>
-#include <libflatkiss/model/navigator.hpp>
 #include <libflatkiss/model/positioned_solid.hpp>
 #include <libflatkiss/model/rectangle.hpp>
 #include <libflatkiss/model/spriteset.hpp>
@@ -45,8 +44,7 @@ class Character {
   Character(Spriteset const& spriteset,
             ActionSpriteMapper const& action_sprite_mapper,
             AnimationPlayer const& animation_player, Solid const& solid,
-            Level const& level, Navigator const& navigator,
-            Position const& initial_position);
+            Level const& level, Position const& initial_position);
   void moveBy(Vector const& desired_displacement);
   Position const& position() const;
   uint16_t spriteIndex() const;
@@ -60,7 +58,6 @@ class Character {
   Spriteset const& spriteset_;
   CardinalDirection facing_direction_;
   Level const& level_;
-  Navigator const& navigator_;
   PositionedSolid positioned_solid_;
   ActionSpriteMapper const& action_sprite_mapper_;
 
@@ -83,8 +80,7 @@ class CharacterLoader {
           action_sprite_mappers,
       std::unordered_map<int64_t, AnimationPlayer const> const&
           animation_players,
-      std::unordered_map<int64_t, Solid const> const& solids,
-      Navigator const& navigator, int64_t tiles_width, int64_t tiles_height);
+      std::unordered_map<int64_t, Solid const> const& solids);
 
  private:
   static int64_t constexpr kAnimationFieldSize{2};

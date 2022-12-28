@@ -33,12 +33,10 @@ using std::vector;
 Level::Level(vector<uint16_t>&& tiles, int64_t width_in_tiles,
              int64_t height_in_tiles, Spriteset const& spriteset,
              AnimationPlayer const& animation_player,
-             Navigator const& navigator,
              TileSolidMapper const& tile_solid_mapper)
     : tiles_{move(tiles)},
       width_in_tiles_{width_in_tiles},
       height_in_tiles_{height_in_tiles},
-      navigator_{navigator},
       spriteset_{spriteset},
       animation_player_{animation_player},
       tile_solid_mapper_{tile_solid_mapper} {}
@@ -67,15 +65,18 @@ int64_t Level::widthInTiles() const { return width_in_tiles_; }
 // after the tiles in the binary file for the level, and then reading the
 // characters after the level.
 struct CharacterTemp {
-  CharacterTemplate const& character_template;
-  Position const position;
+ public:
+  CharacterTemp(CharacterTemplate const& character_template,
+                Position const position)
+      : character_template_{character_template}, position_{position} {};
+  CharacterTemplate const& character_template_;
+  Position const position_;
 };
 
 vector<Level> LevelLoader::load(
     string const& file_path, vector<Spriteset> const& spritesets,
     unordered_map<int64_t, AnimationPlayer const>& animation_players,
     unordered_map<int64_t, TileSolidMapper const>& tile_solid_mappers,
-    Navigator const& navigator,
     vector<CharacterTemplate> const& character_templates,
     vector<Character> characters) {
   vector<Level> levels;
@@ -130,11 +131,11 @@ vector<Level> LevelLoader::load(
                           animation_players.at(animation_player_index),
                           tile_solid_mappers.at(tile_solid_mapper_index));
       for (CharacterTemp temp : characters_temp) {
-        characters.emplace_back(temp.character_template.spriteset(),
-                                temp.character_template.action_sprite_mapper(),
-                                temp.character_template.animation_player(),
-                                temp.character_template.solid(), levels.back(),
-                                navigator, temp.position);
+        characters.emplace_back(temp.character_template_.spriteset(),
+                                temp.character_template_.action_sprite_mapper(),
+                                temp.character_template_.animation_player(),
+                                temp.character_template_.solid(), levels.back(),
+                                temp.position_);
       }
     }
     stream.close();

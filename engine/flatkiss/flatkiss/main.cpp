@@ -97,19 +97,19 @@ int main(int argc, char* argv[]) {
       TileSolidMapperLoader::load(configuration.tileSolidMapsPath())};
   unordered_map<int64_t, Solid const> solids{
       SolidLoader::load(configuration.solidsPath())};
-  vector<Level> const levels{LevelLoader::load(configuration.levelsPath(),
-                                               spritesets, animation_players,
-                                               tile_solid_mappers)};
+  vector<Character> characters;
+  auto [characters_to_controllers, character_templates]{
+      CharacterLoader::load(configuration.charactersPath(), spritesets,
+                            action_sprite_mappers, animation_players, solids)};
+  vector<Level> const levels{LevelLoader::load(
+      configuration.levelsPath(), spritesets, animation_players,
+      tile_solid_mappers, character_templates, characters)};
   Level const& level{levels[0]};
 
   bool quit = false;
-  Navigator navigator{solids, level};
-  auto [characters_to_controllers, characters]{CharacterLoader::load(
-      configuration.charactersPath(), spritesets, action_sprite_mappers,
-      animation_players, solids, navigator, level.spriteset().spritesWidth(),
-      level.spriteset().spritesHeight())};
   vector<KeyboardCharacterController> character_controllers{
-      CharacterControllerLoader::load(characters, characters_to_controllers)};
+      CharacterControllerLoader::load(characters,
+                                      characters_to_controllers)};
   int64_t tick(0);
   EventHandler event_handler;
   while (!quit) {

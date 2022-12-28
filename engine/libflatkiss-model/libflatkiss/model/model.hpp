@@ -24,7 +24,6 @@
 #include <libflatkiss/model/animation_player.hpp>
 #include <libflatkiss/model/character.hpp>
 #include <libflatkiss/model/level.hpp>
-#include <libflatkiss/model/navigator.hpp>
 #include <libflatkiss/model/positioned_rectangle.hpp>
 #include <libflatkiss/model/spriteset.hpp>
 #include <libflatkiss/model/tile_solid_mapper.hpp>
@@ -39,23 +38,21 @@ class Model {
         std::unordered_map<int64_t, AnimationPlayer const> const
             animation_players,
         std::vector<Level> const levels,
-        std::unordered_map<int64_t, Solid const> solids,
         std::vector<Spriteset> const spritesets,
         std::unordered_map<int64_t, TileSolidMapper const> const
             tile_solid_mappers);
-  std::unordered_map<int64_t, ActionSpriteMapper const> const
-  action_sprite_mappers() const;
-  std::unordered_map<int64_t, AnimationPlayer const> const animation_players()
+  std::unordered_map<int64_t, ActionSpriteMapper const> action_sprite_mappers()
       const;
-  std::vector<Level> const levels() const;
-  std::vector<Spriteset> const spritesets() const;
+  std::unordered_map<int64_t, AnimationPlayer const> animation_players()
+      const;
+  std::vector<Level> levels() const;
+  std::vector<Spriteset> spritesets() const;
   std::unordered_map<int64_t, TileSolidMapper const> tile_solid_mappers() const;
 
  private:
   std::unordered_map<int64_t, ActionSpriteMapper const> action_sprite_mappers_;
   std::unordered_map<int64_t, AnimationPlayer const> animation_players_;
   std::vector<Level> const levels_;
-  Navigator const navigator_;
   std::vector<Spriteset> const spritesets_;
   std::unordered_map<int64_t, TileSolidMapper const> tile_solid_mappers_;
 };

@@ -17,14 +17,11 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef LIBFLATKISS_MODEL_NAVIGATOR_HPP_INCLUDED
-#define LIBFLATKISS_MODEL_NAVIGATOR_HPP_INCLUDED
+#ifndef LIBFLATKISS_LOGIC_NAVIGATOR_HPP_INCLUDED
+#define LIBFLATKISS_LOGIC_NAVIGATOR_HPP_INCLUDED
 
-#include <libflatkiss/model/collider.hpp>
-#include <libflatkiss/model/level.hpp>
-#include <libflatkiss/model/positioned_solid.hpp>
-#include <libflatkiss/model/tile_solid_mapper.hpp>
-#include <libflatkiss/model/vector.hpp>
+#include <libflatkiss/logic/collider.hpp>
+#include <libflatkiss/model/model.hpp>
 #include <vector>
 
 /**

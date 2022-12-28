@@ -1,7 +1,11 @@
 add_library(${LIBRARY_LOGIC} STATIC
     lib${NAME_PROJECT}/${NAME_LOGIC}/character_controller.cpp
     lib${NAME_PROJECT}/${NAME_LOGIC}/character_controller.hpp
+    lib${NAME_PROJECT}/${NAME_LOGIC}/collider.cpp
+    lib${NAME_PROJECT}/${NAME_LOGIC}/collider.hpp
     lib${NAME_PROJECT}/${NAME_LOGIC}/logic.hpp
+    lib${NAME_PROJECT}/${NAME_LOGIC}/navigator.cpp
+    lib${NAME_PROJECT}/${NAME_LOGIC}/navigator.hpp
 )
 
 target_include_directories(${LIBRARY_LOGIC} PUBLIC

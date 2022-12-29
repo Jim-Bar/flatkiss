@@ -23,6 +23,7 @@
 #include <flatkiss/main.hpp>
 #include <fstream>
 #include <iostream>
+#include <libflatkiss/data/data.hpp>
 #include <libflatkiss/logic/logic.hpp>
 #include <libflatkiss/media/media.hpp>
 #include <libflatkiss/model/model.hpp>
@@ -89,31 +90,28 @@ int main(int argc, char* argv[]) {
                         configuration.spritesetFilesPrefix(),
                         configuration.spritesetFilesSuffix()};
 
-  unordered_map<int64_t, AnimationPlayer const> animation_players{
-      AnimationPlayerLoader::load(configuration.animationsPath())};
-  unordered_map<int64_t, ActionSpriteMapper const> action_sprite_mappers{
-      ActionSpriteMapperLoader::load(configuration.actionSpriteMapsPath())};
-  unordered_map<int64_t, TileSolidMapper const> tile_solid_mappers{
-      TileSolidMapperLoader::load(configuration.tileSolidMapsPath())};
+  FileLoader file_loader{
+      configuration.actionSpriteMapsPath(), configuration.animationsPath(),
+      configuration.charactersPath(),       configuration.levelsPath(),
+      configuration.solidsPath(),           configuration.spritesetsPath(),
+      configuration.tileSolidMapsPath()};
+  Model model{file_loader.load()};
+
   unordered_map<int64_t, Solid const> solids{
-      SolidLoader::load(configuration.solidsPath())};
-  vector<Character> characters;
-  auto [characters_to_controllers, character_templates]{
-      CharacterLoader::load(configuration.charactersPath(), spritesets,
-                            action_sprite_mappers, animation_players, solids)};
-  vector<Level> const levels{LevelLoader::load(
-      configuration.levelsPath(), spritesets, animation_players,
-      tile_solid_mappers, character_templates, characters)};
-  Level const& level{levels[0]};
+      SolidLoader::load(configuration.solidsPath())};  // FIXME: Delete.
+  auto [characters_to_controllers, character_templates]{CharacterLoader::load(
+      configuration.charactersPath(), spritesets, model.action_sprite_mappers(),
+      model.animation_players(), solids)};
+  Level& level{model.levels()[0]};
 
   bool quit = false;
   vector<KeyboardCharacterController> character_controllers{
-      CharacterControllerLoader::load(characters,
+      CharacterControllerLoader::load(level.characters(),
                                       characters_to_controllers)};
   int64_t tick(0);
   EventHandler event_handler;
   while (!quit) {
-    window.render(level, viewport, tick++, textures, characters);
+    window.render(level, viewport, tick++, textures, level.characters());
     sleep_for(milliseconds(configuration.engineTickDurationMs()));
     event_handler.handleEvents();
     quit = event_handler.mustQuit();

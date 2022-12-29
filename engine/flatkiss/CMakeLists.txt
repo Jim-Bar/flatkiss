@@ -19,6 +19,7 @@ target_include_directories(${NAME_PROJECT} PRIVATE
 )
 
 target_link_libraries(${NAME_PROJECT}
+    ${LIBRARY_DATA}
     ${LIBRARY_LOGIC}
     ${LIBRARY_MEDIA}
     ${LIBRARY_MODEL}

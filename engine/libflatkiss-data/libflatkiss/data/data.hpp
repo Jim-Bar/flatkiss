@@ -20,4 +20,6 @@
 #ifndef LIBFLATKISS_DATA_DATA_HPP_INCLUDED
 #define LIBFLATKISS_DATA_DATA_HPP_INCLUDED
 
+#include <libflatkiss/data/file_loader.hpp>
+
 #endif

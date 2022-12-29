@@ -66,8 +66,10 @@ class LevelLoader {
  public:
   static std::vector<Level> load(
       std::string const& file_path, std::vector<Spriteset> const& spritesets,
-      std::unordered_map<int64_t, AnimationPlayer const>& animation_players,
-      std::unordered_map<int64_t, TileSolidMapper const>& tile_solid_mappers,
+      std::unordered_map<int64_t, AnimationPlayer const> const&
+          animation_players,
+      std::unordered_map<int64_t, TileSolidMapper const> const&
+          tile_solid_mappers,
       std::vector<CharacterTemplate> const& character_templates,
       std::vector<Character> characters);
 };

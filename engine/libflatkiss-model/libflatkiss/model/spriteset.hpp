@@ -39,10 +39,10 @@ class Spriteset {
             int64_t left_offset, int64_t top_offset, int64_t gap,
             int64_t texture_index, int64_t alpha_red, int64_t alpha_green,
             int64_t alpha_blue);
-  Spriteset(Spriteset const& other) = default;
+  Spriteset(Spriteset const& other) = delete;
   Spriteset(Spriteset&& other) = default;
   Spriteset& operator=(Spriteset const& other) = delete;
-  Spriteset& operator=(Spriteset&& other) = delete;
+  Spriteset& operator=(Spriteset&& other) = default;
   int64_t alpha_blue() const;
   int64_t alpha_green() const;
   int64_t alpha_red() const;

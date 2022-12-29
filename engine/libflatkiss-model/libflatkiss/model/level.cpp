@@ -75,8 +75,8 @@ struct CharacterTemp {
 
 vector<Level> LevelLoader::load(
     string const& file_path, vector<Spriteset> const& spritesets,
-    unordered_map<int64_t, AnimationPlayer const>& animation_players,
-    unordered_map<int64_t, TileSolidMapper const>& tile_solid_mappers,
+    unordered_map<int64_t, AnimationPlayer const> const& animation_players,
+    unordered_map<int64_t, TileSolidMapper const> const& tile_solid_mappers,
     vector<CharacterTemplate> const& character_templates,
     vector<Character> characters) {
   vector<Level> levels;

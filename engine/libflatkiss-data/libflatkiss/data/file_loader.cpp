@@ -37,7 +37,7 @@ FileLoader::FileLoader(string const& action_sprite_maps_path,
       tile_solid_maps_path_{tile_solid_maps_path} {}
 
 Model FileLoader::load() const {
-  vector<Spriteset> const spritesets{SpritesetLoader::load(spritesets_path_)};
+  vector<Spriteset> spritesets{SpritesetLoader::load(spritesets_path_)};
   unordered_map<int64_t, AnimationPlayer const> animation_players{
       AnimationPlayerLoader::load(animations_path_)};
   unordered_map<int64_t, ActionSpriteMapper const> action_sprite_mappers{
@@ -50,9 +50,9 @@ Model FileLoader::load() const {
       CharacterLoader::load(characters_path_, spritesets, action_sprite_mappers,
                             animation_players, solids)};
   vector<Character> characters;
-  vector<Level> const levels{LevelLoader::load(
-      levels_path_, spritesets, animation_players, tile_solid_mappers,
-      character_templates, characters)};
+  vector<Level> levels{LevelLoader::load(levels_path_, spritesets,
+                                         animation_players, tile_solid_mappers,
+                                         character_templates, characters)};
 
   return Model{action_sprite_mappers, animation_players, levels, spritesets,
                tile_solid_mappers};

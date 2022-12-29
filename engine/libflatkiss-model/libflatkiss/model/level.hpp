@@ -40,6 +40,7 @@ class Level {
   Level(std::vector<uint16_t>&& tiles, int64_t width_in_tiles,
         int64_t height_in_tiles, Spriteset const& spriteset,
         AnimationPlayer const& animation_player,
+        std::vector<Character>& characters,
         TileSolidMapper const& tile_solid_mapper);
   AnimationPlayer const& animationPlayer() const;
   std::vector<Character>& characters();
@@ -70,8 +71,7 @@ class LevelLoader {
           animation_players,
       std::unordered_map<int64_t, TileSolidMapper const> const&
           tile_solid_mappers,
-      std::vector<CharacterTemplate> const& character_templates,
-      std::vector<Character> characters);
+      std::vector<CharacterTemplate> const& character_templates);
 };
 
 #endif

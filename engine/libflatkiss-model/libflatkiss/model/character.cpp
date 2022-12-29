@@ -35,13 +35,11 @@ using std::vector;
 Character::Character(Spriteset const& spriteset,
                      ActionSpriteMapper const& action_sprite_mapper,
                      AnimationPlayer const& animation_player,
-                     Solid const& solid, Level const& level,
-                     Position const& initial_position)
+                     Solid const& solid, Position const& initial_position)
     : spriteset_{spriteset},
       action_sprite_mapper_{action_sprite_mapper},
       animation_player_{animation_player},
       facing_direction_{CardinalDirection::kSouth},
-      level_{level},
       positioned_solid_{initial_position, solid} {}
 
 Action Character::currentAction() const {

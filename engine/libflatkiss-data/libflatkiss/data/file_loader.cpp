@@ -49,10 +49,9 @@ Model FileLoader::load() const {
   auto [characters_to_controllers, character_templates]{
       CharacterLoader::load(characters_path_, spritesets, action_sprite_mappers,
                             animation_players, solids)};
-  vector<Character> characters;
   vector<Level> levels{LevelLoader::load(levels_path_, spritesets,
                                          animation_players, tile_solid_mappers,
-                                         character_templates, characters)};
+                                         character_templates)};
 
   return Model{action_sprite_mappers, animation_players, levels, spritesets,
                tile_solid_mappers};

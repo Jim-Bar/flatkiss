@@ -44,7 +44,7 @@ class Character {
   Character(Spriteset const& spriteset,
             ActionSpriteMapper const& action_sprite_mapper,
             AnimationPlayer const& animation_player, Solid const& solid,
-            Level const& level, Position const& initial_position);
+            Position const& initial_position);
   void moveBy(Vector const& desired_displacement);
   Position const& position() const;
   uint16_t spriteIndex() const;
@@ -57,7 +57,6 @@ class Character {
   int64_t animation_tick_{0};
   Spriteset const& spriteset_;
   CardinalDirection facing_direction_;
-  Level const& level_;
   PositionedSolid positioned_solid_;
   ActionSpriteMapper const& action_sprite_mapper_;
 

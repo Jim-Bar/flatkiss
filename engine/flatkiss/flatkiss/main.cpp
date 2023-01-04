@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
     }
     // FIXME: Way to define which character is followed by the viewport.
     if (!logic.character_controllers().empty()) {
-      updateViewport(logic.character_controllers()[0].character(), viewport,
+      updateViewport(level.characters()[0], viewport,
                      level, level.spriteset().spritesWidth(),
                      level.spriteset().spritesHeight());
     }

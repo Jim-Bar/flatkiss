@@ -42,7 +42,7 @@ class Spriteset {
   Spriteset(Spriteset const& other) = delete;
   Spriteset(Spriteset&& other) = default;
   Spriteset& operator=(Spriteset const& other) = delete;
-  Spriteset& operator=(Spriteset&& other) = default;
+  Spriteset& operator=(Spriteset&& other) = delete;
   int64_t alpha_blue() const;
   int64_t alpha_green() const;
   int64_t alpha_red() const;

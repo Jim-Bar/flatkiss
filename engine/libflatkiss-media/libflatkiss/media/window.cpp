@@ -43,7 +43,7 @@ Window::~Window() {
     quitSDL();
   }
 
-  windows_count_ = max(0L, windows_count_ - 1);
+  windows_count_ = max(static_cast<int64_t>(0), windows_count_ - 1);
 }
 
 SDL_Window* Window::createSDLWindow(string display_name, int64_t width,

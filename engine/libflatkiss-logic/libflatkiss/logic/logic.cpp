@@ -17,23 +17,17 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef LIBFLATKISS_LOGIC_LOGIC_HPP_INCLUDED
-#define LIBFLATKISS_LOGIC_LOGIC_HPP_INCLUDED
+#include <libflatkiss/logic/logic.hpp>
 
-#include <libflatkiss/logic/character_controller.hpp>
-#include <libflatkiss/logic/navigator.hpp>
-#include <vector>
+using std::vector;
 
-class Logic {
- public:
-  Logic(std::vector<KeyboardCharacterController> const& character_controllers,
-        Navigator const& navigator);
-  Navigator const& navigator() const;  // FIXME: Delete.
-  std::vector<KeyboardCharacterController>& character_controllers();
+Logic::Logic(
+    std::vector<KeyboardCharacterController> const& character_controllers,
+    Navigator const& navigator)
+    : character_controllers_{character_controllers}, navigator_{navigator} {}
 
- private:
-  std::vector<KeyboardCharacterController> character_controllers_;
-  Navigator const navigator_;
-};
+vector<KeyboardCharacterController>& Logic::character_controllers() {
+  return character_controllers_;
+}
 
-#endif
+Navigator const& Logic::navigator() const { return navigator_; }

@@ -36,7 +36,22 @@ FileLoader::FileLoader(string const& action_sprite_maps_path,
       spritesets_path_{spritesets_path},
       tile_solid_maps_path_{tile_solid_maps_path} {}
 
-Model FileLoader::load() const {
+Logic FileLoader::loadLogic(vector<Level>& levels) const {
+  // FIXME: Double load of solids from file.
+  unordered_map<int64_t, Solid const> solids{SolidLoader::load(solids_path_)};
+  Navigator navigator{solids};
+  vector<KeyboardCharacterController> character_controllers;
+  for (auto& level : levels) {
+    for (auto& character :
+         CharacterControllerLoader::load(level.characters())) {
+      character_controllers.emplace_back(character);
+    }
+  }
+
+  return Logic{character_controllers, navigator};
+}
+
+Model FileLoader::loadModel() const {
   vector<Spriteset> spritesets{SpritesetLoader::load(spritesets_path_)};
   unordered_map<int64_t, AnimationPlayer const> animation_players{
       AnimationPlayerLoader::load(animations_path_)};

@@ -44,7 +44,7 @@ class CharacterTemplate {
   AnimationPlayer const& animation_player_;
   std::vector<ControllerType> const controllers_;
   Spriteset const& spriteset_;
-  Solid solid_;
+  Solid const solid_;
 };
 
 #endif

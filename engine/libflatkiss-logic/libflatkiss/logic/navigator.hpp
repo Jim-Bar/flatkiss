@@ -34,7 +34,7 @@ class Navigator {
                   Vector const& desired_displacement, Level const& level) const;
 
  private:
-  std::unordered_map<int64_t, Solid const>& solids_;
+  std::unordered_map<int64_t, Solid const> solids_;
 
   /**
    * @brief Given a position and a movement (delta) on an axis (representing

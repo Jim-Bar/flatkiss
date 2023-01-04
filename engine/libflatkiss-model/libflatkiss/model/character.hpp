@@ -47,10 +47,13 @@ class Character {
             std::vector<ControllerType> const& controllers, Solid const& solid,
             Position const& initial_position);
   std::vector<ControllerType> const& controllers() const;
-  void moveBy(Vector const& desired_displacement);
+  void moveTo(Position&& new_position);
   Position const& position() const;
+  PositionedSolid const& positionedSolid() const;
   uint16_t spriteIndex() const;
   Spriteset const& spriteset() const;
+  void updateFacingDirection(Vector const& desired_displacement,
+                             Vector const& actual_displacement);
   int64_t x() const;
   int64_t y() const;
 
@@ -65,8 +68,6 @@ class Character {
 
   Action currentAction() const;
   void resetAnimationTick();
-  void updateFacingDirection(Vector const& desired_displacement,
-                             Vector const& actual_displacement);
   void updateFacingDirectionForDisplacement(Vector const& displacement);
 };
 

@@ -20,8 +20,10 @@
 #ifndef LIBFLATKISS_DATA_FILE_LOADER_HPP_INCLUDED
 #define LIBFLATKISS_DATA_FILE_LOADER_HPP_INCLUDED
 
+#include <libflatkiss/logic/logic.hpp>
 #include <libflatkiss/model/model.hpp>
 #include <string>
+#include <vector>
 
 class FileLoader {
  public:
@@ -30,7 +32,8 @@ class FileLoader {
              std::string const& characters_path, std::string const& levels_path,
              std::string const& solids_path, std::string const& spritesets_path,
              std::string const& tile_solid_maps_path);
-  Model load() const;
+  Logic loadLogic(std::vector<Level>& levels) const;
+  Model loadModel() const;
 
  private:
   std::string const action_sprite_maps_path_;

@@ -18,7 +18,9 @@
  */
 
 #include <libflatkiss/logic/character_controller.hpp>
+#include <utility>
 
+using std::move;
 using std::vector;
 
 KeyboardCharacterController::KeyboardCharacterController(Character& character)
@@ -29,7 +31,8 @@ Character const& KeyboardCharacterController::character() const {
 }
 
 void KeyboardCharacterController::handleKeyboardEvent(
-    EventHandler const& event_handler) {
+    EventHandler const& event_handler, Navigator const& navigator,
+    Level const& level) {
   int64_t dx{0};
   int64_t dy{0};
   if (event_handler.isKeyPressed(Key::kUp)) {
@@ -45,7 +48,12 @@ void KeyboardCharacterController::handleKeyboardEvent(
     dx += kSpeedInPixels;
   }
 
-  character_.moveBy(Vector{dx, dy});
+  Vector desired_displacement{dx, dy};
+  Position final_position{navigator.moveBy(character_.positionedSolid(),
+                                           desired_displacement, level)};
+  character_.updateFacingDirection(desired_displacement,
+                                   final_position - character_.position());
+  character_.moveTo(move(final_position));
 }
 
 vector<KeyboardCharacterController> CharacterControllerLoader::load(

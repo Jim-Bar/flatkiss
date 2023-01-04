@@ -95,13 +95,12 @@ int main(int argc, char* argv[]) {
       configuration.charactersPath(),       configuration.levelsPath(),
       configuration.solidsPath(),           configuration.spritesetsPath(),
       configuration.tileSolidMapsPath()};
-  Model model{file_loader.load()};
+  Model model{file_loader.loadModel()};
+  Logic logic{file_loader.loadLogic(model.levels())};
 
   Level& level{model.levels()[0]};
 
   bool quit = false;
-  vector<KeyboardCharacterController> character_controllers{
-      CharacterControllerLoader::load(level.characters())};
   int64_t tick(0);
   EventHandler event_handler;
   while (!quit) {
@@ -109,13 +108,14 @@ int main(int argc, char* argv[]) {
     sleep_for(milliseconds(configuration.engineTickDurationMs()));
     event_handler.handleEvents();
     quit = event_handler.mustQuit();
-    for (auto& controller : character_controllers) {
-      controller.handleKeyboardEvent(event_handler);
+    for (auto& controller : logic.character_controllers()) {
+      // FIXME: Move all this into logic.
+      controller.handleKeyboardEvent(event_handler, logic.navigator(), level);
     }
     // FIXME: Way to define which character is followed by the viewport.
-    if (!character_controllers.empty()) {
-      updateViewport(character_controllers[0].character(), viewport, level,
-                     level.spriteset().spritesWidth(),
+    if (!logic.character_controllers().empty()) {
+      updateViewport(logic.character_controllers()[0].character(), viewport,
+                     level, level.spriteset().spritesWidth(),
                      level.spriteset().spritesHeight());
     }
   }

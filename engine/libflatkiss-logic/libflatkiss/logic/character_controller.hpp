@@ -20,6 +20,7 @@
 #ifndef LIBFLATKISS_LOGIC_CHARACTER_CONTROLLER_HPP_INCLUDED
 #define LIBFLATKISS_LOGIC_CHARACTER_CONTROLLER_HPP_INCLUDED
 
+#include <libflatkiss/logic/navigator.hpp>
 #include <libflatkiss/media/media.hpp>
 #include <libflatkiss/model/model.hpp>
 #include <memory>
@@ -29,7 +30,8 @@ class KeyboardCharacterController {
  public:
   KeyboardCharacterController(Character& character);
   Character const& character() const;
-  void handleKeyboardEvent(EventHandler const& event_handler);
+  void handleKeyboardEvent(EventHandler const& event_handler,
+                           Navigator const& navigator, Level const& level);
 
  private:
   Character& character_;

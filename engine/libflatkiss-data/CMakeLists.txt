@@ -9,6 +9,7 @@ target_include_directories(${LIBRARY_DATA} PUBLIC
 )
 
 target_link_libraries(${LIBRARY_DATA}
+    ${LIBRARY_LOGIC}
     ${LIBRARY_MODEL}
 )
 

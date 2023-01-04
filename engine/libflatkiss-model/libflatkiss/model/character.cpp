@@ -62,15 +62,16 @@ Action Character::currentAction() const {
   }
 }
 
-void Character::moveBy(Vector const& desired_displacement) {
-  /*Position final_position{
-      navigator_.moveBy(positioned_solid_, desired_displacement)};
-  updateFacingDirection(desired_displacement, final_position - position());
-  positioned_solid_.position(move(final_position));*/
+void Character::moveTo(Position&& new_position) {
+  positioned_solid_.position(move(new_position));
 }
 
 Position const& Character::position() const {
   return positioned_solid_.position();
+}
+
+PositionedSolid const& Character::positionedSolid() const {
+  return positioned_solid_;
 }
 
 void Character::resetAnimationTick() {

@@ -49,11 +49,11 @@ void KeyboardCharacterController::handleKeyboardEvent(
 }
 
 vector<KeyboardCharacterController> CharacterControllerLoader::load(
-    vector<Character>& characters, vector<int64_t> characters_to_controllers) {
+    vector<Character>& characters) {
   vector<KeyboardCharacterController> controllers{};
   for (int64_t i{0}; i < characters.size(); i++) {
-    switch (characters_to_controllers[i]) {
-      case 0:
+    switch (characters[i].controllers()[0]) {
+      case ControllerType::kKeyboardController:
         controllers.emplace_back(characters[i]);
         break;
       default:

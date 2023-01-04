@@ -28,19 +28,24 @@ using std::istream;
 using std::move;
 using std::set;
 using std::string;
-using std::tuple;
 using std::unordered_map;
 using std::vector;
 
 Character::Character(Spriteset const& spriteset,
                      ActionSpriteMapper const& action_sprite_mapper,
                      AnimationPlayer const& animation_player,
+                     vector<ControllerType> const& controllers,
                      Solid const& solid, Position const& initial_position)
     : spriteset_{spriteset},
       action_sprite_mapper_{action_sprite_mapper},
       animation_player_{animation_player},
+      controllers_{controllers},
       facing_direction_{CardinalDirection::kSouth},
       positioned_solid_{initial_position, solid} {}
+
+vector<ControllerType> const& Character::controllers() const {
+  return controllers_;
+}
 
 Action Character::currentAction() const {
   switch (facing_direction_) {
@@ -129,13 +134,12 @@ int64_t Character::x() const { return position().x(); }
 
 int64_t Character::y() const { return position().y(); }
 
-tuple<vector<int64_t>, vector<CharacterTemplate>> CharacterLoader::load(
+vector<CharacterTemplate> CharacterLoader::load(
     string const& characters_file_path, vector<Spriteset> const& spritesets,
     unordered_map<int64_t, ActionSpriteMapper const> const&
         action_sprite_mappers,
     unordered_map<int64_t, AnimationPlayer const> const& animation_players,
     unordered_map<int64_t, Solid const> const& solids) {
-  vector<int64_t> characters_to_controllers;
   vector<CharacterTemplate> character_templates;
   ifstream stream;
   stream.open(characters_file_path, ios::in | ios::binary);
@@ -168,12 +172,12 @@ tuple<vector<int64_t>, vector<CharacterTemplate>> CharacterLoader::load(
                   kControllerFieldSize);
       character_templates.emplace_back(
           action_sprite_mappers.at(action_sprite_mapper_index),
-          animation_players.at(animations_index), spritesets[spriteset_index],
-          solids.at(solid_index));
-      characters_to_controllers.emplace_back(controller_type);
+          animation_players.at(animations_index),
+          vector<ControllerType>{static_cast<ControllerType>(controller_type)},
+          spritesets[spriteset_index], solids.at(solid_index));
     }
     stream.close();
   }  // FIXME: Raise exception.
 
-  return {characters_to_controllers, character_templates};
+  return character_templates;
 }

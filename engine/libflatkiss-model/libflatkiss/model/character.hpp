@@ -24,10 +24,10 @@
 #include <libflatkiss/model/animation_player.hpp>
 #include <libflatkiss/model/cardinal_direction.hpp>
 #include <libflatkiss/model/character_template.hpp>
+#include <libflatkiss/model/controller_type.hpp>
 #include <libflatkiss/model/positioned_solid.hpp>
 #include <libflatkiss/model/rectangle.hpp>
 #include <libflatkiss/model/spriteset.hpp>
-#include <tuple>
 #include <unordered_map>
 #include <vector>
 
@@ -43,8 +43,10 @@ class Character {
  public:
   Character(Spriteset const& spriteset,
             ActionSpriteMapper const& action_sprite_mapper,
-            AnimationPlayer const& animation_player, Solid const& solid,
+            AnimationPlayer const& animation_player,
+            std::vector<ControllerType> const& controllers, Solid const& solid,
             Position const& initial_position);
+  std::vector<ControllerType> const& controllers() const;
   void moveBy(Vector const& desired_displacement);
   Position const& position() const;
   uint16_t spriteIndex() const;
@@ -55,6 +57,7 @@ class Character {
  private:
   AnimationPlayer const& animation_player_;
   int64_t animation_tick_{0};
+  std::vector<ControllerType> const controllers_;
   Spriteset const& spriteset_;
   CardinalDirection facing_direction_;
   PositionedSolid positioned_solid_;
@@ -72,7 +75,7 @@ class Character {
  */
 class CharacterLoader {
  public:
-  static std::tuple<std::vector<int64_t>, std::vector<CharacterTemplate>> load(
+  static std::vector<CharacterTemplate> load(
       std::string const& characters_file_path,
       std::vector<Spriteset> const& spritesets,
       std::unordered_map<int64_t, ActionSpriteMapper const> const&

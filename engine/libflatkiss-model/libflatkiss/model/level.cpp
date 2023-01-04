@@ -132,6 +132,7 @@ vector<Level> LevelLoader::load(
         characters.emplace_back(temp.character_template_.spriteset(),
                                 temp.character_template_.action_sprite_mapper(),
                                 temp.character_template_.animation_player(),
+                                temp.character_template_.controllers(),
                                 temp.character_template_.solid(),
                                 temp.position_);
       }

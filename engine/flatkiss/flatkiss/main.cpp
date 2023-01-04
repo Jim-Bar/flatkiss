@@ -97,17 +97,11 @@ int main(int argc, char* argv[]) {
       configuration.tileSolidMapsPath()};
   Model model{file_loader.load()};
 
-  unordered_map<int64_t, Solid const> solids{
-      SolidLoader::load(configuration.solidsPath())};  // FIXME: Delete.
-  auto [characters_to_controllers, character_templates]{CharacterLoader::load(
-      configuration.charactersPath(), spritesets, model.action_sprite_mappers(),
-      model.animation_players(), solids)};
   Level& level{model.levels()[0]};
 
   bool quit = false;
   vector<KeyboardCharacterController> character_controllers{
-      CharacterControllerLoader::load(level.characters(),
-                                      characters_to_controllers)};
+      CharacterControllerLoader::load(level.characters())};
   int64_t tick(0);
   EventHandler event_handler;
   while (!quit) {

@@ -13,6 +13,8 @@ add_library(${LIBRARY_MODEL} STATIC
     lib${NAME_PROJECT}/${NAME_MODEL}/character.hpp
     lib${NAME_PROJECT}/${NAME_MODEL}/character_template.cpp
     lib${NAME_PROJECT}/${NAME_MODEL}/character_template.hpp
+    lib${NAME_PROJECT}/${NAME_MODEL}/controller_type.cpp
+    lib${NAME_PROJECT}/${NAME_MODEL}/controller_type.hpp
     lib${NAME_PROJECT}/${NAME_MODEL}/ellipse.cpp
     lib${NAME_PROJECT}/${NAME_MODEL}/ellipse.hpp
     lib${NAME_PROJECT}/${NAME_MODEL}/level.cpp

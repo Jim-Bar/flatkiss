@@ -17,29 +17,11 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef LIBFLATKISS_LOGIC_CHARACTER_CONTROLLER_HPP_INCLUDED
-#define LIBFLATKISS_LOGIC_CHARACTER_CONTROLLER_HPP_INCLUDED
+#ifndef LIBFLATKISS_MODEL_CONTROLLER_HPP_INCLUDED
+#define LIBFLATKISS_MODEL_CONTROLLER_HPP_INCLUDED
 
-#include <libflatkiss/media/media.hpp>
-#include <libflatkiss/model/model.hpp>
-#include <memory>
-#include <vector>
-
-class KeyboardCharacterController {
- public:
-  KeyboardCharacterController(Character& character);
-  Character const& character() const;
-  void handleKeyboardEvent(EventHandler const& event_handler);
-
- private:
-  Character& character_;
-  static int64_t constexpr kSpeedInPixels{1};
-};
-
-class CharacterControllerLoader {
- public:
-  static std::vector<KeyboardCharacterController> load(
-      std::vector<Character>& characters);
+enum class ControllerType {
+  kKeyboardController = 0,
 };
 
 #endif

@@ -19,12 +19,16 @@
 
 #include <libflatkiss/model/character_template.hpp>
 
+using std::vector;
+
 CharacterTemplate::CharacterTemplate(
     ActionSpriteMapper const& action_sprite_mapper,
-    AnimationPlayer const& animation_player, Spriteset const& spriteset,
+    AnimationPlayer const& animation_player,
+    vector<ControllerType> const& controllers, Spriteset const& spriteset,
     Solid const& solid)
     : action_sprite_mapper_{action_sprite_mapper},
       animation_player_{animation_player},
+      controllers_{controllers},
       spriteset_{spriteset},
       solid_{solid} {}
 
@@ -34,6 +38,10 @@ ActionSpriteMapper const& CharacterTemplate::action_sprite_mapper() const {
 
 AnimationPlayer const& CharacterTemplate::animation_player() const {
   return animation_player_;
+}
+
+vector<ControllerType> const& CharacterTemplate::controllers() const {
+  return controllers_;
 }
 
 Spriteset const& CharacterTemplate::spriteset() const { return spriteset_; }

@@ -46,7 +46,7 @@ Model FileLoader::load() const {
       TileSolidMapperLoader::load(tile_solid_maps_path_)};
   unordered_map<int64_t, Solid const> solids{SolidLoader::load(solids_path_)};
 
-  auto [characters_to_controllers, character_templates]{
+  vector<CharacterTemplate> character_templates{
       CharacterLoader::load(characters_path_, spritesets, action_sprite_mappers,
                             animation_players, solids)};
   vector<Level> levels{LevelLoader::load(levels_path_, spritesets,

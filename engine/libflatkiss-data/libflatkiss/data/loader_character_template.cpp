@@ -27,6 +27,27 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
+struct DataCharacterTemplate {
+  int64_t x;  // FIXME: Remove.
+  int64_t y;
+  uint16_t spriteset_index;
+  uint16_t action_sprite_mapper_index;
+  uint16_t animations_index;
+  uint16_t solid_index;
+  uint8_t controller_type;
+};
+
+ControllerType
+LoaderCharacterTemplate::controllerTypeIdentifierToControllerType(
+    uint8_t controller_type_identifier) {
+  switch (controller_type_identifier) {
+    case 0:
+      return ControllerType::kKeyboardController;
+    default:
+      return ControllerType::kKeyboardController;  // FIXME: Raise exception;
+  }
+}
+
 vector<CharacterTemplate> LoaderCharacterTemplate::load(
     string const& characters_file_path, vector<Spriteset> const& spritesets,
     unordered_map<int64_t, ActionSpriteMapper const> const&
@@ -38,36 +59,18 @@ vector<CharacterTemplate> LoaderCharacterTemplate::load(
   stream.open(characters_file_path, ios::in | ios::binary);
   if (stream.is_open()) {
     while (stream.peek() != istream::traits_type::eof()) {
-      int64_t x{0};
-      int64_t y{0};
-      uint16_t spriteset_index{0};
-      uint16_t action_sprite_mapper_index{0};
-      uint16_t animations_index{0};
-      uint16_t solid_index{0};
-      uint8_t controller_type{0};
+      DataCharacterTemplate character_template{};
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&x), kXFieldSize);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&y), kYFieldSize);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&spriteset_index),
-                  kSpritesetFieldSize);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&action_sprite_mapper_index),
-                  kIndicesFieldSize);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&animations_index),
-                  kAnimationFieldSize);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&solid_index), kCollisionFieldSize);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&controller_type),
-                  kControllerFieldSize);
+      stream.read(reinterpret_cast<char*>(&character_template),
+                  sizeof(DataCharacterTemplate));
       character_templates.emplace_back(
-          action_sprite_mappers.at(action_sprite_mapper_index),
-          animation_players.at(animations_index),
-          vector<ControllerType>{static_cast<ControllerType>(controller_type)},
-          spritesets[spriteset_index], solids.at(solid_index));
+          action_sprite_mappers.at(
+              character_template.action_sprite_mapper_index),
+          animation_players.at(character_template.animations_index),
+          vector<ControllerType>{controllerTypeIdentifierToControllerType(
+              character_template.controller_type)},
+          spritesets[character_template.spriteset_index],
+          solids.at(character_template.solid_index));
     }
     stream.close();
   }  // FIXME: Raise exception.

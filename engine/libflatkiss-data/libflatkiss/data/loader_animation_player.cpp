@@ -33,6 +33,16 @@ using std::to_string;
 using std::unordered_map;
 using std::vector;
 
+struct DataGroupInfo {
+  uint16_t index;
+  uint16_t size;
+};
+
+struct DataAnimation {
+  uint8_t period;
+  uint8_t duration;
+};
+
 unordered_map<int64_t, AnimationPlayer const> LoaderAnimationPlayer::load(
     string const& file_path) {
   unordered_map<int64_t, AnimationPlayer const> animation_players_per_group;
@@ -40,15 +50,12 @@ unordered_map<int64_t, AnimationPlayer const> LoaderAnimationPlayer::load(
   stream.open(file_path, ios::in | ios::binary);
   if (stream.is_open()) {
     while (stream.peek() != istream::traits_type::eof()) {
-      uint16_t group_index{0};
-      uint16_t group_size{0};
+      DataGroupInfo group_info{};
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&group_index), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&group_size), 2);
+      stream.read(reinterpret_cast<char*>(&group_info), sizeof(DataGroupInfo));
       animation_players_per_group.emplace(
-          piecewise_construct, forward_as_tuple(group_index),
-          forward_as_tuple(move(loadGroup(group_size, stream))));
+          piecewise_construct, forward_as_tuple(group_info.index),
+          forward_as_tuple(move(loadGroup(group_info.size, stream))));
     }
     stream.close();
   }  // FIXME: Raise exception.
@@ -60,19 +67,19 @@ unordered_map<uint16_t, Animation> LoaderAnimationPlayer::loadGroup(
     int64_t group_size, ifstream& stream) {
   unordered_map<uint16_t, Animation> animations_per_sprite_index;
   for (int64_t i{0}; i < group_size; i++) {
-    uint8_t animation_period{static_cast<uint8_t>(stream.get())};
-    uint8_t animation_duration{static_cast<uint8_t>(stream.get())};
+    DataAnimation animation{};
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+    stream.read(reinterpret_cast<char*>(&animation), sizeof(DataAnimation));
     /* The vector containing animations is created and space is reserved for
      * containing all of them at the same time. Then the stream is read
      * directly into the vector. */
-    auto animation{vector<uint16_t>(animation_period, 0)};
+    vector<uint16_t> sprites(animation.period, 0);
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-    stream.read(reinterpret_cast<char*>(animation.data()),
-                animation_period * 2);  // Two bytes per sprite.
+    stream.read(reinterpret_cast<char*>(sprites.data()),
+                animation.period * 2);  // Two bytes per sprite.
     animations_per_sprite_index.emplace(
-        piecewise_construct, forward_as_tuple(animation[0]),
-        forward_as_tuple(move(animation), animation_period,
-                         animation_duration));
+        piecewise_construct, forward_as_tuple(sprites[0]),
+        forward_as_tuple(move(sprites), animation.period, animation.duration));
   }
 
   return animations_per_sprite_index;

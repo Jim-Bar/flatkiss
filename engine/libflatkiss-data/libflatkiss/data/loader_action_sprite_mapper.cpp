@@ -30,6 +30,16 @@ using std::piecewise_construct;
 using std::string;
 using std::unordered_map;
 
+struct DataGroupInfo {
+  uint16_t index;
+  uint16_t size;
+};
+
+struct DataGroup {
+  uint16_t action_identifier;
+  uint16_t sprite_index;
+};
+
 Action LoaderActionSpriteMapper::actionIdentifierToAction(
     uint16_t action_identifier) {
   switch (action_identifier) {
@@ -53,15 +63,12 @@ unordered_map<int64_t, ActionSpriteMapper const> LoaderActionSpriteMapper::load(
   stream.open(indices_file_path, ios::in | ios::binary);
   if (stream.is_open()) {
     while (stream.peek() != istream::traits_type::eof()) {
-      uint16_t group_index{0};
-      uint16_t group_size{0};
+      DataGroupInfo group_info{};
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&group_index), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&group_size), 2);
+      stream.read(reinterpret_cast<char*>(&group_info), sizeof(DataGroupInfo));
       index_to_mapper.emplace(
-          piecewise_construct, forward_as_tuple(group_index),
-          forward_as_tuple(move(loadGroup(group_size, stream))));
+          piecewise_construct, forward_as_tuple(group_info.index),
+          forward_as_tuple(move(loadGroup(group_info.size, stream))));
     }
     stream.close();
   }  // FIXME: Raise exception.
@@ -73,14 +80,11 @@ unordered_map<Action, uint16_t> LoaderActionSpriteMapper::loadGroup(
     int64_t group_size, ifstream& stream) {
   unordered_map<Action, uint16_t> action_to_indices;
   for (int64_t i{0}; i < group_size; i++) {
-    uint16_t action_identifier{0};
-    uint16_t sprite_index{0};
+    DataGroup group{};
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-    stream.read(reinterpret_cast<char*>(&action_identifier), 2);
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-    stream.read(reinterpret_cast<char*>(&sprite_index), 2);
-    action_to_indices[actionIdentifierToAction(action_identifier)] =
-        sprite_index;
+    stream.read(reinterpret_cast<char*>(&group), sizeof(DataGroup));
+    action_to_indices[actionIdentifierToAction(group.action_identifier)] =
+        group.sprite_index;
   }
 
   return action_to_indices;

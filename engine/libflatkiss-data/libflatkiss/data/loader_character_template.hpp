@@ -40,13 +40,8 @@ class LoaderCharacterTemplate {
       std::unordered_map<int64_t, Solid const> const& solids);
 
  private:
-  static int64_t constexpr kAnimationFieldSize{2};
-  static int64_t constexpr kControllerFieldSize{1};
-  static int64_t constexpr kCollisionFieldSize{2};
-  static int64_t constexpr kIndicesFieldSize{2};
-  static int64_t constexpr kSpritesetFieldSize{2};
-  static int64_t constexpr kXFieldSize{8};
-  static int64_t constexpr kYFieldSize{8};
+  static ControllerType controllerTypeIdentifierToControllerType(
+      uint8_t controller_type_identifier);
 };
 
 #endif

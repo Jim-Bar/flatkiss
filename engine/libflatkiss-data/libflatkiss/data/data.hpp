@@ -20,6 +20,27 @@
 #ifndef LIBFLATKISS_DATA_DATA_HPP_INCLUDED
 #define LIBFLATKISS_DATA_DATA_HPP_INCLUDED
 
-#include <libflatkiss/data/file_loader.hpp>
+#include <libflatkiss/model/model.hpp>
+#include <string>
+#include <vector>
+
+class Data {
+ public:
+  Data(std::string const& action_sprite_maps_path,
+             std::string const& animations_path,
+             std::string const& characters_path, std::string const& levels_path,
+             std::string const& solids_path, std::string const& spritesets_path,
+             std::string const& tile_solid_maps_path);
+  Model load() const;
+
+ private:
+  std::string const action_sprite_maps_path_;
+  std::string const animations_path_;
+  std::string const characters_path_;
+  std::string const levels_path_;
+  std::string const solids_path_;
+  std::string const spritesets_path_;
+  std::string const tile_solid_maps_path_;
+};
 
 #endif

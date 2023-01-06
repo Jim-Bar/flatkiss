@@ -17,18 +17,7 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include <fstream>
 #include <libflatkiss/model/spriteset.hpp>
-#include <utility>
-
-using std::ifstream;
-using std::ios;
-using std::istream;
-using std::move;
-using std::string;
-using std::to_string;
-using std::tuple;
-using std::vector;
 
 Spriteset::Spriteset(int64_t sprites_width, int64_t sprites_height,
                      int64_t width_in_sprites, int64_t height_in_sprites,
@@ -68,54 +57,3 @@ int64_t Spriteset::textureIndex() const { return texture_index_; }
 int64_t Spriteset::topOffset() const { return top_offset_; }
 
 int64_t Spriteset::widthInSprites() const { return width_in_sprites_; }
-
-vector<Spriteset> SpritesetLoader::load(string const& file_path) {
-  vector<Spriteset> spritesets;
-  ifstream stream;
-  stream.open(file_path, ios::in | ios::binary);
-  if (stream.is_open()) {
-    while (stream.peek() != istream::traits_type::eof()) {
-      // FIXME: Use stream.get() for uint8_t variables.
-      uint8_t sprites_width{0};
-      uint8_t sprites_height{0};
-      uint16_t width_in_sprites{0};
-      uint16_t height_in_tiles{0};
-      uint16_t top_offset{0};
-      uint16_t left_offset{0};
-      uint16_t gap{0};
-      uint16_t texture_index{0};
-      uint8_t alpha_red{0};
-      uint8_t alpha_green{0};
-      uint8_t alpha_blue{0};
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&sprites_width), 1);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&sprites_height), 1);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&width_in_sprites), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&height_in_tiles), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&top_offset), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&left_offset), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&gap), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&texture_index), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&alpha_red), 1);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&alpha_green), 1);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&alpha_blue), 1);
-      spritesets.emplace_back(sprites_width, sprites_height, width_in_sprites,
-                              height_in_tiles, left_offset, top_offset, gap,
-                              texture_index, alpha_red, alpha_green,
-                              alpha_blue);
-    }
-    stream.close();
-  }  // FIXME: Raise exception.
-
-  return spritesets;
-}

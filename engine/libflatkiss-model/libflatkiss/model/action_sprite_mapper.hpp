@@ -48,15 +48,4 @@ class ActionSpriteMapper {
   std::unordered_map<Action, uint16_t> const action_to_indices_;
 };
 
-class ActionSpriteMapperLoader {
- public:
-  static std::unordered_map<int64_t, ActionSpriteMapper const> load(
-      std::string const& indices_file_path);
-
- private:
-  static Action actionIdentifierToAction(uint16_t action_identifier);
-  static std::unordered_map<Action, uint16_t> loadGroup(int64_t group_size,
-                                                        std::ifstream& stream);
-};
-
 #endif

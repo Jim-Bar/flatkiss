@@ -81,24 +81,32 @@ int main(int argc, char* argv[]) {
   PositionedRectangle viewport{Position{0, 0},
                                Rectangle{kViewportSize, kViewportSize}};
   Window const window{FLATKISS_PROJECT_NAME, viewport.rectangle().width(),
-                      viewport.rectangle().height()};
+                      viewport.rectangle().height()};  
 
-  vector<Spriteset> const spritesets{
-      SpritesetLoader::load(configuration.spritesetsPath())};
-  TextureAtlas textures{spritesets, window.renderer(),
-                        configuration.spritesetFilesDirectory(),
-                        configuration.spritesetFilesPrefix(),
-                        configuration.spritesetFilesSuffix()};
-
-  FileLoader file_loader{
+  Data data{
       configuration.actionSpriteMapsPath(), configuration.animationsPath(),
       configuration.charactersPath(),       configuration.levelsPath(),
       configuration.solidsPath(),           configuration.spritesetsPath(),
       configuration.tileSolidMapsPath()};
-  Model model{file_loader.loadModel()};
-  Logic logic{file_loader.loadLogic(model.levels())};
+  Model model{data.load()};
+
+  Navigator navigator{model.solids()};
+  vector<KeyboardCharacterController> character_controllers;
+  for (auto& level : model.levels()) {
+    for (auto& character :
+         CharacterControllerLoader::load(level.characters())) {
+      character_controllers.emplace_back(character);
+    }
+  }
+
+  Logic logic{character_controllers, navigator};
 
   Level& level{model.levels()[0]};
+
+  TextureAtlas textures{model.spritesets(), window.renderer(),
+                        configuration.spritesetFilesDirectory(),
+                        configuration.spritesetFilesPrefix(),
+                        configuration.spritesetFilesSuffix()};
 
   bool quit = false;
   int64_t tick(0);

@@ -20,8 +20,7 @@
 #ifndef LIBFLATKISS_MODEL_SPRITESET_HPP_INCLUDED
 #define LIBFLATKISS_MODEL_SPRITESET_HPP_INCLUDED
 
-#include <string>
-#include <vector>
+#include <cstdint>
 
 /**
  * @brief Models a spriteset.
@@ -67,14 +66,6 @@ class Spriteset {
   int64_t const texture_index_;
   int64_t const top_offset_;
   int64_t const width_in_sprites_;
-};
-
-/**
- * @brief Helper class for loading the spritesets from a file.
- */
-class SpritesetLoader {
- public:
-  static std::vector<Spriteset> load(std::string const& file_path);
 };
 
 #endif

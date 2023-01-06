@@ -17,21 +17,23 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include <fstream>
-#include <libflatkiss/model/action_sprite_mapper.hpp>
-#include <utility>
+#ifndef LIBFLATKISS_DATA_LOADER_ACTION_SPRITE_MAPPER_HPP_INCLUDED
+#define LIBFLATKISS_DATA_LOADER_ACTION_SPRITE_MAPPER_HPP_INCLUDED
 
-using std::move;
-using std::unordered_map;
+#include <unordered_map>
+#include <string>
 
-ActionSpriteMapper::ActionSpriteMapper(
-    unordered_map<Action, uint16_t>&& action_to_indices)
-    : action_to_indices_{move(action_to_indices)} {}
+#include <libflatkiss/model/model.hpp>
 
-uint16_t ActionSpriteMapper::spriteIndexForAction(Action const& action) const {
-  if (action_to_indices_.contains(action)) {
-    return action_to_indices_.at(action);
-  }
+class LoaderActionSpriteMapper {
+ public:
+  static std::unordered_map<int64_t, ActionSpriteMapper const> load(
+      std::string const& indices_file_path);
 
-  return 0;  // FIXME: Raise exception.
-}
+ private:
+  static Action actionIdentifierToAction(uint16_t action_identifier);
+  static std::unordered_map<Action, uint16_t> loadGroup(int64_t group_size,
+                                                        std::ifstream& stream);
+};
+
+#endif

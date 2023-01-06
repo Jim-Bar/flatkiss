@@ -36,13 +36,16 @@ class Model {
   Model(std::unordered_map<int64_t, ActionSpriteMapper const>&
             action_sprite_mappers,
         std::unordered_map<int64_t, AnimationPlayer const>& animation_players,
-        std::vector<Level>& levels, std::vector<Spriteset>& spritesets,
+        std::vector<Level>& levels,
+        std::unordered_map<int64_t, Solid const>& solids,
+        std::vector<Spriteset>& spritesets,
         std::unordered_map<int64_t, TileSolidMapper const>& tile_solid_mappers);
   std::unordered_map<int64_t, ActionSpriteMapper const> const&
   action_sprite_mappers() const;
   std::unordered_map<int64_t, AnimationPlayer const> const& animation_players()
       const;
   std::vector<Level>& levels();
+  std::unordered_map<int64_t, Solid const> const& solids() const;
   std::vector<Spriteset> const& spritesets() const;
   std::unordered_map<int64_t, TileSolidMapper const> const& tile_solid_mappers()
       const;
@@ -51,6 +54,7 @@ class Model {
   std::unordered_map<int64_t, ActionSpriteMapper const> action_sprite_mappers_;
   std::unordered_map<int64_t, AnimationPlayer const> animation_players_;
   std::vector<Level> levels_;
+  std::unordered_map<int64_t, Solid const> solids_;
   std::vector<Spriteset> const spritesets_;
   std::unordered_map<int64_t, TileSolidMapper const> tile_solid_mappers_;
 };

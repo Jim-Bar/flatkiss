@@ -17,32 +17,23 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef LIBFLATKISS_DATA_FILE_LOADER_HPP_INCLUDED
-#define LIBFLATKISS_DATA_FILE_LOADER_HPP_INCLUDED
+#ifndef LIBFLATKISS_DATA_LOADER_SOLID_HPP_INCLUDED
+#define LIBFLATKISS_DATA_LOADER_SOLID_HPP_INCLUDED
 
-#include <libflatkiss/logic/logic.hpp>
 #include <libflatkiss/model/model.hpp>
+#include <unordered_map>
 #include <string>
-#include <vector>
 
-class FileLoader {
+/**
+ * @brief Helper class for loading the solids from a file.
+ */
+class LoaderSolid {
  public:
-  FileLoader(std::string const& action_sprite_maps_path,
-             std::string const& animations_path,
-             std::string const& characters_path, std::string const& levels_path,
-             std::string const& solids_path, std::string const& spritesets_path,
-             std::string const& tile_solid_maps_path);
-  Logic loadLogic(std::vector<Level>& levels) const;
-  Model loadModel() const;
+  static std::unordered_map<int64_t, Solid const> load(
+      std::string const& file_path);
 
  private:
-  std::string const action_sprite_maps_path_;
-  std::string const animations_path_;
-  std::string const characters_path_;
-  std::string const levels_path_;
-  std::string const solids_path_;
-  std::string const spritesets_path_;
-  std::string const tile_solid_maps_path_;
+  static Solid loadSolid(int64_t solid_size, std::ifstream& solids_stream);
 };
 
 #endif

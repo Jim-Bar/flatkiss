@@ -21,7 +21,6 @@
 #define LIBFLATKISS_MODEL_TILE_SOLID_MAPPER_HPP_INCLUDED
 
 #include <cstdint>
-#include <string>
 #include <unordered_map>
 
 /**
@@ -41,16 +40,6 @@ class TileSolidMapper {
 
  private:
   std::unordered_map<uint16_t, int64_t> const tiles_to_solids_;
-};
-
-class TileSolidMapperLoader {
- public:
-  static std::unordered_map<int64_t, TileSolidMapper const> load(
-      std::string const& tile_solid_map_file_path);
-
- private:
-  static std::unordered_map<uint16_t, int64_t> loadGroup(int64_t group_size,
-                                                         std::ifstream& stream);
 };
 
 #endif

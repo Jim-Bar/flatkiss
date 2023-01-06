@@ -17,21 +17,25 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include <fstream>
-#include <libflatkiss/model/action_sprite_mapper.hpp>
-#include <utility>
+#ifndef LIBFLATKISS_DATA_LOADER_LEVEL_HPP_INCLUDED
+#define LIBFLATKISS_DATA_LOADER_LEVEL_HPP_INCLUDED
 
-using std::move;
-using std::unordered_map;
+#include <libflatkiss/model/model.hpp>
+#include <unordered_map>
+#include <vector>
 
-ActionSpriteMapper::ActionSpriteMapper(
-    unordered_map<Action, uint16_t>&& action_to_indices)
-    : action_to_indices_{move(action_to_indices)} {}
+/**
+ * @brief Helper class for loading the level from a file.
+ */
+class LoaderLevel {
+ public:
+  static std::vector<Level> load(
+      std::string const& file_path, std::vector<Spriteset> const& spritesets,
+      std::unordered_map<int64_t, AnimationPlayer const> const&
+          animation_players,
+      std::unordered_map<int64_t, TileSolidMapper const> const&
+          tile_solid_mappers,
+      std::vector<CharacterTemplate> const& character_templates);
+};
 
-uint16_t ActionSpriteMapper::spriteIndexForAction(Action const& action) const {
-  if (action_to_indices_.contains(action)) {
-    return action_to_indices_.at(action);
-  }
-
-  return 0;  // FIXME: Raise exception.
-}
+#endif

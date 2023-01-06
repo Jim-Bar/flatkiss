@@ -48,17 +48,4 @@ class AnimationPlayer {
   std::unordered_map<uint16_t, Animation> const animations_per_sprite_index_;
 };
 
-/**
- * @brief Helper class for loading the animations from a file.
- */
-class AnimationPlayerLoader {
- public:
-  static std::unordered_map<int64_t, AnimationPlayer const> load(
-      std::string const& file_path);
-
- private:
-  static std::unordered_map<uint16_t, Animation> loadGroup(
-      int64_t group_size, std::ifstream& animations_stream);
-};
-
 #endif

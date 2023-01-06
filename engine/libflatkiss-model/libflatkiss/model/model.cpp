@@ -27,11 +27,13 @@ using std::vector;
 Model::Model(
     unordered_map<int64_t, ActionSpriteMapper const>& action_sprite_mappers,
     unordered_map<int64_t, AnimationPlayer const>& animation_players,
-    vector<Level>& levels, vector<Spriteset>& spritesets,
+    vector<Level>& levels, unordered_map<int64_t, Solid const>& solids,
+    vector<Spriteset>& spritesets,
     unordered_map<int64_t, TileSolidMapper const>& tile_solid_mappers)
     : action_sprite_mappers_{move(action_sprite_mappers)},
       animation_players_{move(animation_players)},
       levels_{move(levels)},
+      solids_{move(solids)},
       spritesets_{move(spritesets)},
       tile_solid_mappers_{move(tile_solid_mappers)} {}
 
@@ -46,6 +48,10 @@ unordered_map<int64_t, AnimationPlayer const> const& Model::animation_players()
 }
 
 vector<Level>& Model::levels() { return levels_; }
+
+unordered_map<int64_t, Solid const> const& Model::solids() const {
+  return solids_;
+}
 
 vector<Spriteset> const& Model::spritesets() const { return spritesets_; }
 

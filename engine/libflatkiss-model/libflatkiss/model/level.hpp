@@ -25,8 +25,6 @@
 #include <libflatkiss/model/character_template.hpp>
 #include <libflatkiss/model/spriteset.hpp>
 #include <libflatkiss/model/tile_solid_mapper.hpp>
-#include <string>
-#include <unordered_map>
 #include <vector>
 
 /**
@@ -58,20 +56,6 @@ class Level {
   TileSolidMapper const& tile_solid_mapper_;
   std::vector<uint16_t> const tiles_;
   int64_t const width_in_tiles_;
-};
-
-/**
- * @brief Helper class for loading the level from a file.
- */
-class LevelLoader {
- public:
-  static std::vector<Level> load(
-      std::string const& file_path, std::vector<Spriteset> const& spritesets,
-      std::unordered_map<int64_t, AnimationPlayer const> const&
-          animation_players,
-      std::unordered_map<int64_t, TileSolidMapper const> const&
-          tile_solid_mappers,
-      std::vector<CharacterTemplate> const& character_templates);
 };
 
 #endif

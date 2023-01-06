@@ -24,7 +24,7 @@ using std::abs;
 using std::max;
 using std::unordered_map;
 
-Navigator::Navigator(unordered_map<int64_t, Solid const>& solids)
+Navigator::Navigator(unordered_map<int64_t, Solid const> const& solids)
     : solids_{solids} {}
 
 int64_t Navigator::clampToBounds(int64_t object_position, int64_t object_size,

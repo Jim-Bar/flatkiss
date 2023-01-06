@@ -71,28 +71,4 @@ class Character {
   void updateFacingDirectionForDisplacement(Vector const& displacement);
 };
 
-/**
- * @brief Helper class for loading the characters from a file.
- */
-class CharacterLoader {
- public:
-  static std::vector<CharacterTemplate> load(
-      std::string const& characters_file_path,
-      std::vector<Spriteset> const& spritesets,
-      std::unordered_map<int64_t, ActionSpriteMapper const> const&
-          action_sprite_mappers,
-      std::unordered_map<int64_t, AnimationPlayer const> const&
-          animation_players,
-      std::unordered_map<int64_t, Solid const> const& solids);
-
- private:
-  static int64_t constexpr kAnimationFieldSize{2};
-  static int64_t constexpr kControllerFieldSize{1};
-  static int64_t constexpr kCollisionFieldSize{2};
-  static int64_t constexpr kIndicesFieldSize{2};
-  static int64_t constexpr kSpritesetFieldSize{2};
-  static int64_t constexpr kXFieldSize{8};
-  static int64_t constexpr kYFieldSize{8};
-};
-
 #endif

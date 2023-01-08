@@ -32,21 +32,31 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
+struct DataSolidInfo {
+  uint16_t index;
+  uint16_t size;
+};
+
+struct DataSolid {
+  uint8_t collision_type;
+  uint8_t x;
+  uint8_t y;
+  uint8_t width;
+  uint8_t height;
+};
+
 unordered_map<int64_t, Solid const> LoaderSolid::load(string const& file_path) {
   unordered_map<int64_t, Solid const> solids_per_index;
   ifstream stream;
   stream.open(file_path, ios::in | ios::binary);
   if (stream.is_open()) {
     while (stream.peek() != istream::traits_type::eof()) {
-      uint16_t solid_index{0};
-      uint16_t solid_size{0};
+      DataSolidInfo solid_info{};
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&solid_index), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&solid_size), 2);
+      stream.read(reinterpret_cast<char*>(&solid_info), sizeof(DataSolidInfo));
       solids_per_index.emplace(
-          piecewise_construct, forward_as_tuple(solid_index),
-          forward_as_tuple(move(loadSolid(solid_size, stream))));
+          piecewise_construct, forward_as_tuple(solid_info.index),
+          forward_as_tuple(move(loadSolid(solid_info.size, stream))));
     }
     stream.close();
   }  // FIXME: Raise exception.
@@ -58,19 +68,17 @@ Solid LoaderSolid::loadSolid(int64_t solid_size, ifstream& solids_stream) {
   vector<PositionedRectangle> rectangles;
   vector<PositionedEllipse> ellipses;
   for (int64_t i{0}; i < solid_size; i++) {
-    uint8_t collision_type{static_cast<uint8_t>(solids_stream.get())};
-    Position position{static_cast<uint8_t>(solids_stream.get()),
-                      static_cast<uint8_t>(solids_stream.get())};
+    DataSolid solid{};
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+    solids_stream.read(reinterpret_cast<char*>(&solid), sizeof(DataSolid));
+    uint8_t collision_type{solid.collision_type};
+    Position position{solid.x, solid.y};
     switch (collision_type) {
       case 0:  // The shape is a positioned rectangle.
-        rectangles.emplace_back(
-            position, Rectangle{static_cast<uint8_t>(solids_stream.get()),
-                                static_cast<uint8_t>(solids_stream.get())});
+        rectangles.emplace_back(position, Rectangle{solid.width, solid.height});
         break;
       case 1:  // The shape is a positioned ellipse.
-        ellipses.emplace_back(
-            position, Ellipse{static_cast<uint8_t>(solids_stream.get()),
-                              static_cast<uint8_t>(solids_stream.get())});
+        ellipses.emplace_back(position, Ellipse{solid.width, solid.height});
         break;
     }
   }

@@ -29,18 +29,24 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-// FIXME: Remove this, the best thing to do is probably to put the characters
-// after the tiles in the binary file for the level, and then reading the
-// characters after the level.
-struct CharacterTemp {
- public:
-  CharacterTemp(CharacterTemplate const& character_template,
-                Position const position)
-      : character_template_{character_template}, position_{position} {};
-  CharacterTemplate const& character_template_;
-  Position const position_;
+/* TODO: To be consistent with the rest, also store the index of the level
+ * in the binary file? */
+struct DataLevelInfo {
+  uint16_t width_in_tiles;
+  uint16_t height_in_tiles;
+  uint16_t spriteset_index;
+  uint16_t animation_player_index;
+  uint16_t tile_solid_mapper_index;
+  uint16_t num_characters;
 };
 
+struct DataCharacterTemplate {
+  uint16_t index;
+  uint16_t x;
+  uint16_t y;
+};
+
+// FIXME: Split in several methods.
 vector<Level> LoaderLevel::load(
     string const& file_path, vector<Spriteset> const& spritesets,
     unordered_map<int64_t, AnimationPlayer const> const& animation_players,
@@ -51,62 +57,39 @@ vector<Level> LoaderLevel::load(
   stream.open(file_path, ios::in | ios::binary);
   if (stream.is_open()) {
     while (stream.peek() != istream::traits_type::eof()) {
-      /* TODO: To be consistent with the rest, also store the index of the level
-       * in the binary file? */
-      uint16_t width_in_tiles{0};
-      uint16_t height_in_tiles{0};
-      uint16_t spriteset_index{0};
-      uint16_t animation_player_index{0};
-      uint16_t tile_solid_mapper_index{0};
-      uint16_t num_characters{0};
+      DataLevelInfo level_info{};
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&width_in_tiles), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&height_in_tiles), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&spriteset_index), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&animation_player_index), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&tile_solid_mapper_index), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&num_characters), 2);
-      vector<CharacterTemp> characters_temp;
-      for (int i{0}; i < num_characters; i++) {
-        uint16_t index{0};
-        uint16_t x{0};
-        uint16_t y{0};
+      stream.read(reinterpret_cast<char*>(&level_info), sizeof(DataLevelInfo));
+      vector<Character> characters;
+      for (int i{0}; i < level_info.num_characters; i++) {
+        DataCharacterTemplate character{};
         // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-        stream.read(reinterpret_cast<char*>(&index), 2);
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-        stream.read(reinterpret_cast<char*>(&x), 2);
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-        stream.read(reinterpret_cast<char*>(&y), 2);
-        characters_temp.emplace_back(
-            character_templates[index],
-            Position{x * spritesets[spriteset_index].spritesWidth(),
-                     y * spritesets[spriteset_index].spritesHeight()});
+        stream.read(reinterpret_cast<char*>(&character),
+                    sizeof(DataCharacterTemplate));
+        characters.emplace_back(
+            character_templates[character.index].spriteset(),
+            character_templates[character.index].action_sprite_mapper(),
+            character_templates[character.index].animation_player(),
+            character_templates[character.index].controllers(),
+            character_templates[character.index].solid(),
+            Position{
+                character.x *
+                    spritesets[level_info.spriteset_index].spritesWidth(),
+                character.y *
+                    spritesets[level_info.spriteset_index].spritesHeight()});
       }
       // Two bytes per tile.
-      int64_t const size_in_bytes{width_in_tiles * height_in_tiles * 2};
+      int64_t const size_in_bytes{level_info.width_in_tiles *
+                                  level_info.height_in_tiles * 2};
       auto tiles{vector<uint16_t>(size_in_bytes, 0)};
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(tiles.data()),
                   static_cast<streamsize>(size_in_bytes));
-      vector<Character> characters;
-      for (CharacterTemp temp : characters_temp) {
-        characters.emplace_back(temp.character_template_.spriteset(),
-                                temp.character_template_.action_sprite_mapper(),
-                                temp.character_template_.animation_player(),
-                                temp.character_template_.controllers(),
-                                temp.character_template_.solid(),
-                                temp.position_);
-      }
-      levels.emplace_back(move(tiles), width_in_tiles, height_in_tiles,
-                          spritesets[spriteset_index],
-                          animation_players.at(animation_player_index),
-                          characters,
-                          tile_solid_mappers.at(tile_solid_mapper_index));
+      levels.emplace_back(
+          move(tiles), level_info.width_in_tiles, level_info.height_in_tiles,
+          spritesets[level_info.spriteset_index],
+          animation_players.at(level_info.animation_player_index), characters,
+          tile_solid_mappers.at(level_info.tile_solid_mapper_index));
     }
     stream.close();
   }  // FIXME: fail.

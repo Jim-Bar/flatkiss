@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Jean-Marie BARAN (jeanmarie.baran@gmail.com)
+ * Copyright (C) 2021-2023 Jean-Marie BARAN (jeanmarie.baran@gmail.com)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

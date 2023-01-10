@@ -50,8 +50,6 @@ vector<CharacterTemplate> LoaderCharacterTemplate::load(
   stream.open(characters_file_path, ios::in | ios::binary);
   if (stream.is_open()) {
     while (stream.peek() != istream::traits_type::eof()) {
-      int64_t x{StreamReader::read(stream, 8)};  // FIXME: Remove.
-      int64_t y{StreamReader::read(stream, 8)};
       int64_t spriteset_index{StreamReader::read(stream, 2)};
       int64_t action_sprite_mapper_index{StreamReader::read(stream, 2)};
       int64_t animations_index{StreamReader::read(stream, 2)};

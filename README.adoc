@@ -110,8 +110,6 @@ the solid to use. This is first the index of the tile on two bytes, followed by 
 
 As many characters can be defined as one like. A character is defined like this:
 
-. Initial X position (eight byte)
-. Initial Y position (eight byte)
 . Index of the spriteset to use (two bytes)
 . Index of the group of sprite indices to use with the spriteset (two bytes)
 . Index of the character animation to use with the spriteset (two bytes)

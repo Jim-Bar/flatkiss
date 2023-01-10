@@ -65,10 +65,10 @@ vector<Level> LoaderLevel::load(
       }
       // Two bytes per tile.
       int64_t const size_in_bytes{width_in_tiles * height_in_tiles * 2};
-      vector<uint16_t> tiles(size_in_bytes, 0);  // FIXME: Endianness.
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(tiles.data()),
-                  static_cast<streamsize>(size_in_bytes));
+      vector<uint16_t> tiles(size_in_bytes, 0);
+      for (int64_t i{0}; i < size_in_bytes; i++) {
+        tiles[i] = StreamReader::read(stream, 2);
+      }
       levels.emplace_back(move(tiles), width_in_tiles, height_in_tiles,
                           spritesets[spriteset_index],
                           animation_players.at(animation_player_index),

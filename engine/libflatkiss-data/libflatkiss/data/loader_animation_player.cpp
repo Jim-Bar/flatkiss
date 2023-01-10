@@ -62,10 +62,10 @@ unordered_map<uint16_t, Animation> LoaderAnimationPlayer::loadGroup(
     /* The vector containing animations is created and space is reserved for
      * containing all of them at the same time. Then the stream is read
      * directly into the vector. */
-    vector<uint16_t> sprites(period, 0);  // FIXME: Endianness.
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-    stream.read(reinterpret_cast<char*>(sprites.data()),
-                period * 2);  // Two bytes per sprite.
+    vector<uint16_t> sprites(period, 0);
+    for (int64_t i{0}; i < period; i++) {
+      sprites[i] = StreamReader::read(stream, 2);
+    }
     animations_per_sprite_index.emplace(
         piecewise_construct, forward_as_tuple(sprites[0]),
         forward_as_tuple(move(sprites), period, duration));

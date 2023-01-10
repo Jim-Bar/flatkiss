@@ -19,6 +19,7 @@
 
 #include <fstream>
 #include <libflatkiss/data/loader_action_sprite_mapper.hpp>
+#include <libflatkiss/data/stream_reader.hpp>
 #include <utility>
 
 using std::forward_as_tuple;
@@ -29,16 +30,6 @@ using std::move;
 using std::piecewise_construct;
 using std::string;
 using std::unordered_map;
-
-struct DataGroupInfo {
-  uint16_t index;
-  uint16_t size;
-};
-
-struct DataGroup {
-  uint16_t action_identifier;
-  uint16_t sprite_index;
-};
 
 Action LoaderActionSpriteMapper::actionIdentifierToAction(
     uint16_t action_identifier) {
@@ -63,12 +54,11 @@ unordered_map<int64_t, ActionSpriteMapper const> LoaderActionSpriteMapper::load(
   stream.open(indices_file_path, ios::in | ios::binary);
   if (stream.is_open()) {
     while (stream.peek() != istream::traits_type::eof()) {
-      DataGroupInfo group_info{};
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&group_info), sizeof(DataGroupInfo));
+      int64_t group_index{StreamReader::read(stream, 2)};
+      int64_t group_size{StreamReader::read(stream, 2)};
       index_to_mapper.emplace(
-          piecewise_construct, forward_as_tuple(group_info.index),
-          forward_as_tuple(move(loadGroup(group_info.size, stream))));
+          piecewise_construct, forward_as_tuple(group_index),
+          forward_as_tuple(move(loadGroup(group_size, stream))));
     }
     stream.close();
   }  // FIXME: Raise exception.
@@ -80,11 +70,10 @@ unordered_map<Action, uint16_t> LoaderActionSpriteMapper::loadGroup(
     int64_t group_size, ifstream& stream) {
   unordered_map<Action, uint16_t> action_to_indices;
   for (int64_t i{0}; i < group_size; i++) {
-    DataGroup group{};
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-    stream.read(reinterpret_cast<char*>(&group), sizeof(DataGroup));
-    action_to_indices[actionIdentifierToAction(group.action_identifier)] =
-        group.sprite_index;
+    int64_t action_identifier{StreamReader::read(stream, 2)};
+    int64_t sprite_index{StreamReader::read(stream, 2)};
+    action_to_indices[actionIdentifierToAction(action_identifier)] =
+        sprite_index;
   }
 
   return action_to_indices;

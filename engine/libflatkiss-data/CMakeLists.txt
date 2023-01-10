@@ -15,6 +15,8 @@ add_library(${LIBRARY_DATA} STATIC
     lib${NAME_PROJECT}/${NAME_DATA}/loader_spriteset.hpp
     lib${NAME_PROJECT}/${NAME_DATA}/loader_tile_solid_mapper.cpp
     lib${NAME_PROJECT}/${NAME_DATA}/loader_tile_solid_mapper.hpp
+    lib${NAME_PROJECT}/${NAME_DATA}/stream_reader.cpp
+    lib${NAME_PROJECT}/${NAME_DATA}/stream_reader.hpp
 )
 
 target_include_directories(${LIBRARY_DATA} PUBLIC

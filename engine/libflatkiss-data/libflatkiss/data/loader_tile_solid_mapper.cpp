@@ -19,6 +19,7 @@
 
 #include <fstream>
 #include <libflatkiss/data/loader_tile_solid_mapper.hpp>
+#include <libflatkiss/data/stream_reader.hpp>
 #include <utility>
 
 using std::forward_as_tuple;
@@ -37,12 +38,8 @@ unordered_map<int64_t, TileSolidMapper const> LoaderTileSolidMapper::load(
   stream.open(tile_solid_map_file_path, ios::in | ios::binary);
   if (stream.is_open()) {
     while (stream.peek() != istream::traits_type::eof()) {
-      uint16_t group_index{0};
-      uint16_t group_size{0};
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&group_index), 2);
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&group_size), 2);
+      int64_t group_index{StreamReader::read(stream, 2)};
+      int64_t group_size{StreamReader::read(stream, 2)};
       index_to_mapper.emplace(
           piecewise_construct, forward_as_tuple(group_index),
           forward_as_tuple(move(loadGroup(group_size, stream))));
@@ -57,12 +54,8 @@ unordered_map<uint16_t, int64_t> LoaderTileSolidMapper::loadGroup(
     int64_t group_size, std::ifstream& stream) {
   unordered_map<uint16_t, int64_t> tiles_to_solids;
   for (int64_t i{0}; i < group_size; i++) {
-    uint16_t tile_index{0};
-    uint16_t solid_index{0};
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-    stream.read(reinterpret_cast<char*>(&tile_index), 2);
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-    stream.read(reinterpret_cast<char*>(&solid_index), 2);
+    int64_t tile_index{StreamReader::read(stream, 2)};
+    int64_t solid_index{StreamReader::read(stream, 2)};
     tiles_to_solids[tile_index] = solid_index;
   }
 

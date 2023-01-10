@@ -19,6 +19,7 @@
 
 #include <fstream>
 #include <libflatkiss/data/loader_level.hpp>
+#include <libflatkiss/data/stream_reader.hpp>
 #include <libflatkiss/model/level.hpp>
 
 using std::ifstream;
@@ -28,23 +29,6 @@ using std::streamsize;
 using std::string;
 using std::unordered_map;
 using std::vector;
-
-/* TODO: To be consistent with the rest, also store the index of the level
- * in the binary file? */
-struct DataLevelInfo {
-  uint16_t width_in_tiles;
-  uint16_t height_in_tiles;
-  uint16_t spriteset_index;
-  uint16_t animation_player_index;
-  uint16_t tile_solid_mapper_index;
-  uint16_t num_characters;
-};
-
-struct DataCharacterTemplate {
-  uint16_t index;
-  uint16_t x;
-  uint16_t y;
-};
 
 // FIXME: Split in several methods.
 vector<Level> LoaderLevel::load(
@@ -57,39 +41,39 @@ vector<Level> LoaderLevel::load(
   stream.open(file_path, ios::in | ios::binary);
   if (stream.is_open()) {
     while (stream.peek() != istream::traits_type::eof()) {
-      DataLevelInfo level_info{};
-      // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-      stream.read(reinterpret_cast<char*>(&level_info), sizeof(DataLevelInfo));
+      /* TODO: To be consistent with the rest, also store the index of the level
+       * in the binary file? */
+      int64_t width_in_tiles{StreamReader::read(stream, 2)};
+      int64_t height_in_tiles{StreamReader::read(stream, 2)};
+      int64_t spriteset_index{StreamReader::read(stream, 2)};
+      int64_t animation_player_index{StreamReader::read(stream, 2)};
+      int64_t tile_solid_mapper_index{StreamReader::read(stream, 2)};
+      int64_t num_characters{StreamReader::read(stream, 2)};
       vector<Character> characters;
-      for (int i{0}; i < level_info.num_characters; i++) {
-        DataCharacterTemplate character{};
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-        stream.read(reinterpret_cast<char*>(&character),
-                    sizeof(DataCharacterTemplate));
+      for (int i{0}; i < num_characters; i++) {
+        int64_t index{StreamReader::read(stream, 2)};
+        int64_t x{StreamReader::read(stream, 2)};
+        int64_t y{StreamReader::read(stream, 2)};
         characters.emplace_back(
-            character_templates[character.index].spriteset(),
-            character_templates[character.index].action_sprite_mapper(),
-            character_templates[character.index].animation_player(),
-            character_templates[character.index].controllers(),
-            character_templates[character.index].solid(),
-            Position{
-                character.x *
-                    spritesets[level_info.spriteset_index].spritesWidth(),
-                character.y *
-                    spritesets[level_info.spriteset_index].spritesHeight()});
+            character_templates[index].spriteset(),
+            character_templates[index].action_sprite_mapper(),
+            character_templates[index].animation_player(),
+            character_templates[index].controllers(),
+            character_templates[index].solid(),
+            Position{x * spritesets[spriteset_index].spritesWidth(),
+                     y * spritesets[spriteset_index].spritesHeight()});
       }
       // Two bytes per tile.
-      int64_t const size_in_bytes{level_info.width_in_tiles *
-                                  level_info.height_in_tiles * 2};
-      auto tiles{vector<uint16_t>(size_in_bytes, 0)};
+      int64_t const size_in_bytes{width_in_tiles * height_in_tiles * 2};
+      vector<uint16_t> tiles(size_in_bytes, 0);  // FIXME: Endianness.
       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
       stream.read(reinterpret_cast<char*>(tiles.data()),
                   static_cast<streamsize>(size_in_bytes));
-      levels.emplace_back(
-          move(tiles), level_info.width_in_tiles, level_info.height_in_tiles,
-          spritesets[level_info.spriteset_index],
-          animation_players.at(level_info.animation_player_index), characters,
-          tile_solid_mappers.at(level_info.tile_solid_mapper_index));
+      levels.emplace_back(move(tiles), width_in_tiles, height_in_tiles,
+                          spritesets[spriteset_index],
+                          animation_players.at(animation_player_index),
+                          characters,
+                          tile_solid_mappers.at(tile_solid_mapper_index));
     }
     stream.close();
   }  // FIXME: fail.

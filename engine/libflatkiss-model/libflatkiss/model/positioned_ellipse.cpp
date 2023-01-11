@@ -17,10 +17,17 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
+#include <cmath>
 #include <libflatkiss/model/positioned_ellipse.hpp>
 #include <utility>
 
+using std::abs;
+using std::llround;
+using std::make_pair;
 using std::move;
+using std::pair;
+using std::pow;
+using std::sqrt;
 
 PositionedEllipse::PositionedEllipse(Position const& position,
                                      Ellipse const& ellipse)
@@ -35,6 +42,34 @@ PositionedEllipse::PositionedEllipse(PositionedEllipse&& other)
 PositionedEllipse::~PositionedEllipse() {}
 
 Ellipse const& PositionedEllipse::ellipse() const { return ellipse_; }
+
+pair<Position, Position> PositionedEllipse::focalPoints() const {
+  /* The linear eccentricity c is the distance from the ellipse's center to the
+   * focal points. So if radiusX > radiusY, the focal points are (c, 0) and (-c,
+   * 0). Otherwise (0, c) and (0, -c). Then they just need to be translated by
+   * the actual position of the ellipse's center. */
+
+  // 1. Compute linear eccentricity.
+  long double square_radius_x{pow(radiusX(), 2)};
+  long double square_radius_y{pow(radiusY(), 2)};
+  int64_t c{llround(sqrt(abs(square_radius_x - square_radius_y)))};
+
+  // 2. Find the position of the focal points in the ellipse.
+  auto focal_points{make_pair(Position{0, 0}, Position{0, 0})};
+  if (radiusX() > radiusY()) {
+    focal_points.first = Position{c, 0};
+    focal_points.second = Position{-c, 0};
+  } else {
+    focal_points.first = Position{0, c};
+    focal_points.second = Position{0, -c};
+  }
+
+  // 3. Translate to the actual coordinates.
+  focal_points.first += position();
+  focal_points.second += position();
+
+  return focal_points;
+}
 
 Position const& PositionedEllipse::position() const { return position_; }
 

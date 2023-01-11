@@ -61,8 +61,20 @@ Position Position::operator+(Vector const& vector) const {
   return Position{x() + vector.dx(), y() + vector.dy()};
 }
 
+Position& Position::operator+=(const Position& other) {
+  x_ += other.x();
+  y_ += other.y();
+  return *this;
+}
+
 Vector Position::operator-(Position const& other) const {
   return Vector{x() - other.x(), y() - other.y()};
+}
+
+Position& Position::operator-=(const Position& other) {
+  x_ -= other.x();
+  y_ -= other.y();
+  return *this;
 }
 
 bool Position::operator==(Position const& other) const {

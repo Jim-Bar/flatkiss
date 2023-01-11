@@ -70,7 +70,9 @@ class Position {
    * current position.
    * @return Vector A new vector from the other position to the current one.
    */
+  Position& operator+=(const Position& other);
   Vector operator-(Position const& other) const;
+  Position& operator-=(const Position& other);
   bool operator==(Position const& other) const;
   int64_t x() const;
   void x(int64_t newX);

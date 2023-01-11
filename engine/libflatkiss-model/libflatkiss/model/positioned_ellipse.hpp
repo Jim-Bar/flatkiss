@@ -22,6 +22,7 @@
 
 #include <libflatkiss/model/ellipse.hpp>
 #include <libflatkiss/model/position.hpp>
+#include <utility>
 
 class PositionedEllipse {
  public:
@@ -32,6 +33,7 @@ class PositionedEllipse {
   PositionedEllipse& operator=(PositionedEllipse const& other) = delete;
   PositionedEllipse& operator=(PositionedEllipse&& other) = delete;
   Ellipse const& ellipse() const;
+  std::pair<Position, Position> focalPoints() const;
   /**
    * @brief Returns the position of the center of the ellipse.
    *

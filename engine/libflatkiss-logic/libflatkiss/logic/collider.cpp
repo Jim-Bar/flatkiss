@@ -26,7 +26,8 @@ int64_t square(int64_t value) { return value * value; }
 
 bool Collider::collide(PositionedEllipse const& ellipse1,
                        PositionedEllipse const& ellipse2) {
-  // TODO: do.
+  // TODO: https://stackoverflow.com/a/2945439
+  // Will add the test AE + BE <= e with E center of the ellipse.
   return false;
 }
 
@@ -51,7 +52,7 @@ bool Collider::collide(PositionedRectangle const& r,
    * (or is too thin), the (co-)vertex could end up beyond the rectangle. The
    * second test is needed when the rectangle is larger than the ellipse.
    *
-   * Okay, reading this could sounds complex, but it is actually not that
+   * Okay, reading this could sound complex, but it is actually not that
    * complex. Just take a pen a draw ellipses and rectangles. */
 
   // First test.

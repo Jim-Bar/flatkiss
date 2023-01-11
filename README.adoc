@@ -198,7 +198,6 @@ Note also that the speed of animations can slightly differ from the engine, depe
 == TODOs
 
 . Continue the work on libraries: improve controllers in logic (and does logic have to depend on media?)
-. Create a library libflatkiss-data which will depend on libflatkiss-model and load the whole model
 . Characters are updated every ticks. Add a parameter for updating them every N ticks instead (allows lower speeds)?
 . Dedicated type for tiles / sprites instead of `uint16_t`
 . Warning bug with readability-identifier-naming: https://stackoverflow.com/q/68475958 (upgrade clang-tidy?)

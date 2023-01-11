@@ -120,7 +120,7 @@ class _AnimationLoader(object):
         current_group_index = animation_group_index - 1  # Something not equals to the wanted group index.
         with open(path, 'rb') as animations_file:
             while current_group_index != animation_group_index:
-                current_group_index, num_animations = struct.unpack('HH', animations_file.read(2 + 2))
+                current_group_index, num_animations = struct.unpack('<' + 'HH', animations_file.read(2 + 2))
                 animations = _AnimationLoader._read_group_of_animations(animations_file, num_animations, tileset,
                                                                         tick_duration_ms)
 
@@ -134,7 +134,7 @@ class _AnimationLoader(object):
             period = animations_file.read(1)[0]
             duration = (tick_duration_ms * animations_file.read(1)[0]) / 1000
             # Convert each two bytes to an unsigned int.
-            tiles_indices = struct.unpack('H' * period, animations_file.read(period * 2))
+            tiles_indices = struct.unpack('<' + 'H' * period, animations_file.read(period * 2))
             # Convert tiles indices in pyglet's coordinate system.
             tiles_indices = tuple(_reverse_tile_index(tile_index, tileset.width_in_tiles(), tileset.height_in_tiles())
                                   for tile_index in tiles_indices)
@@ -289,12 +289,16 @@ class _LevelLoader(object):
         # Read all the levels until the right one.
         for _ in range(level_index + 1):
             # Level header length in bytes.
-            header = 5 * 2
+            header = 6 * 2
 
-            # Convert each two bytes to an unsigned int (last field is the tile to solid map, unused by the editor).
-            width, height, tileset_index, animation_index, _ = struct.unpack('HHHHH', level_file.read(header))
+            # Convert each two bytes to an unsigned int (second to last field is the tile to solid map, unused by the
+            # editor).
+            width, height, tileset_index, animation_index, _, num_characters = \
+                struct.unpack('<' + 'HHHHHH', level_file.read(header))
+            level_file.read(num_characters * 6)  # Skip the characters (unused by the editor).
             length = width * height * 2
-            tiles = list(struct.unpack('H' * width * height, level_file.read(length)))
+
+            tiles = list(struct.unpack('<' + 'H' * width * height, level_file.read(length)))
 
         return _Level(level_index, tiles, width, height, tileset_index, animation_index)
 
@@ -311,7 +315,11 @@ class _LevelLoader(object):
             level_file.write(level.height_in_tiles().to_bytes(2, 'little'))
             level_file.write(level.tileset_index().to_bytes(2, 'little'))
             level_file.write(level.animation_index().to_bytes(2, 'little'))
-            level_file.read(2)  # Skip to bytes of the tile to solid map (unused by the editor).
+            level_file.read(2)  # Skip two bytes of the tile to solid map (unused by the editor).
+
+            # Skip the characters (unused by the editor).
+            num_characters = struct.unpack('<' + 'H', level_file.read(2))[0]
+            level_file.read(num_characters * 6)
 
             for i in level.tiles_generator():
                 level_file.write(i.to_bytes(2, 'little'))
@@ -383,7 +391,7 @@ class _TilesetLoader(object):
             tileset = None
             for _ in range(tileset_index + 1):
                 tiles_width, _, width_in_tiles, height_in_tiles, left_offset, top_offset, gap, picture_file, _, _, _ = \
-                    struct.unpack('BBHHHHHHBBB', tileset_file.read(tileset_length))
+                    struct.unpack('<' + 'BBHHHHHHBBB', tileset_file.read(tileset_length))
 
                 tileset = _Tileset('{}/{}{}{}'.format(files_directory, files_prefix, picture_file, files_suffix),
                                    tiles_width, width_in_tiles, height_in_tiles, left_offset, top_offset, gap)

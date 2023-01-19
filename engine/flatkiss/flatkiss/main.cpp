@@ -83,8 +83,8 @@ int main(int argc, char* argv[]) {
   cout << "1 " << collider.collide(PositionedEllipse{Position{-50, 0}, Ellipse{112, 50}}, PositionedEllipse{Position{100, -50}, Ellipse{112, 100}}) << endl;
   cout << "0 " << collider.collide(PositionedEllipse{Position{-50, -150}, Ellipse{71, 50}}, PositionedEllipse{Position{100, -50}, Ellipse{112, 100}}) << endl;
   cout << "1 " << collider.collide(PositionedEllipse{Position{-50, -150}, Ellipse{71, 50}}, PositionedEllipse{Position{100, -100}, Ellipse{112, 100}}) << endl;
-  cout << "0 " << collider.collide(PositionedEllipse{Position{-100, 0}, Ellipse{354, 50}}, PositionedEllipse{Position{300, -300}, Ellipse{364, 100}}) << endl;
-  cout << "1 " << collider.collide(PositionedEllipse{Position{-100, 0}, Ellipse{354, 50}}, PositionedEllipse{Position{300, -300}, Ellipse{403, 200}}) << endl;
+  cout << "0 " << collider.collide(PositionedEllipse{Position{-100, 0}, Ellipse{50, 354}}, PositionedEllipse{Position{300, -300}, Ellipse{364, 100}}) << endl;
+  cout << "1 " << collider.collide(PositionedEllipse{Position{-100, 0}, Ellipse{50, 354}}, PositionedEllipse{Position{300, -300}, Ellipse{403, 200}}) << endl;
 
   /*Configuration configuration{"configuration.ini"};
 

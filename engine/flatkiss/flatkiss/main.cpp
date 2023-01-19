@@ -76,7 +76,17 @@ void updateViewport(Character const& character, PositionedRectangle& viewport,
 }
 
 int main(int argc, char* argv[]) {
-  Configuration configuration{"configuration.ini"};
+  Collider collider{};
+  cout << "1 " << collider.collide(PositionedEllipse{Position{0, 0}, Ellipse{1, 1}}, PositionedEllipse{Position{1, 0}, Ellipse{1, 1}}) << endl;
+  cout << "0 " << collider.collide(PositionedEllipse{Position{0, 0}, Ellipse{1, 1}}, PositionedEllipse{Position{3, 0}, Ellipse{1, 1}}) << endl;
+  cout << "0 " << collider.collide(PositionedEllipse{Position{-150, 100}, Ellipse{112, 50}}, PositionedEllipse{Position{100, -50}, Ellipse{112, 100}}) << endl;
+  cout << "1 " << collider.collide(PositionedEllipse{Position{-50, 0}, Ellipse{112, 50}}, PositionedEllipse{Position{100, -50}, Ellipse{112, 100}}) << endl;
+  cout << "0 " << collider.collide(PositionedEllipse{Position{-50, -150}, Ellipse{71, 50}}, PositionedEllipse{Position{100, -50}, Ellipse{112, 100}}) << endl;
+  cout << "1 " << collider.collide(PositionedEllipse{Position{-50, -150}, Ellipse{71, 50}}, PositionedEllipse{Position{100, -100}, Ellipse{112, 100}}) << endl;
+  cout << "0 " << collider.collide(PositionedEllipse{Position{-100, 0}, Ellipse{354, 50}}, PositionedEllipse{Position{300, -300}, Ellipse{364, 100}}) << endl;
+  cout << "1 " << collider.collide(PositionedEllipse{Position{-100, 0}, Ellipse{354, 50}}, PositionedEllipse{Position{300, -300}, Ellipse{403, 200}}) << endl;
+
+  /*Configuration configuration{"configuration.ini"};
 
   PositionedRectangle viewport{Position{0, 0},
                                Rectangle{kViewportSize, kViewportSize}};
@@ -126,7 +136,7 @@ int main(int argc, char* argv[]) {
                      level, level.spriteset().spritesWidth(),
                      level.spriteset().spritesHeight());
     }
-  }
+  }*/
 
   return EXIT_SUCCESS;
 }

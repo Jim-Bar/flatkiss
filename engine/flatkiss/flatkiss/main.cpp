@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
   cout << "1 " << collider.collide(PositionedEllipse{Position{-100, 0}, Ellipse{50, 354}}, PositionedEllipse{Position{300, -300}, Ellipse{403, 200}}) << endl;
   cout << "0 " << collider.collide(PositionedEllipse{Position{-150, 0}, Ellipse{100, 141}}, PositionedEllipse{Position{150, 100}, Ellipse{212, 150}}) << endl;
   cout << "1 " << collider.collide(PositionedEllipse{Position{-150, 50}, Ellipse{100, 180}}, PositionedEllipse{Position{150, 100}, Ellipse{212, 150}}) << endl;
-  cout << "0 " << collider.collide(PositionedEllipse{Position{100, 100}, Ellipse{50, 112}}, PositionedEllipse{Position{150, 100}, Ellipse{212, 150}}) << endl;
+  cout << "1 " << collider.collide(PositionedEllipse{Position{100, 100}, Ellipse{50, 112}}, PositionedEllipse{Position{150, 100}, Ellipse{212, 150}}) << endl;
   cout << "1 " << collider.collide(PositionedEllipse{Position{100, 50}, Ellipse{50, 112}}, PositionedEllipse{Position{150, 100}, Ellipse{212, 150}}) << endl;
   cout << "1 " << collider.collide(PositionedEllipse{Position{-400, 0}, Ellipse{10, 600}}, PositionedEllipse{Position{0, 100}, Ellipse{600, 10}}) << endl;
   cout << "0 " << collider.collide(PositionedEllipse{Position{-620, -520}, Ellipse{10, 600}}, PositionedEllipse{Position{0, 100}, Ellipse{600, 10}}) << endl;

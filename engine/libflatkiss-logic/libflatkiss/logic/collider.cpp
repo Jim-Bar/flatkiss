@@ -77,13 +77,28 @@ struct FloatEllipse {
  * the ellipse; if yes return a collision, otherwise continue
  *
  * This works as long as there is an actual intersection between the ellipses,
- * not if one is contained into another. For that there is the bounding boxes
- * test which is made first. And because often ellipses could actually be
- * circle, there is also a circle to circle collision test made beforehand. */
+ * not if one is contained into another. For that there is the containment test
+ * which is made first. And even before that, the bounding boxes test is
+ * executed too, to speed up cases where ellipses are far away. And because
+ * often ellipses could actually be circle, there is also a circle to circle
+ * collision test made beforehand. */
 bool Collider::collide(PositionedEllipse const& ellipse1,
                        PositionedEllipse const& ellipse2) {
-  // TODO: Bounding boxes test.
-  // TODO: Circle to circle collision test.
+  if (!collideBoundingBoxes(ellipse1, ellipse2)) {
+    // If the bounding boxes do not collide, the ellipses cannot collide either.
+    return false;
+  }
+
+  if (ellipse1.radiusX() == ellipse1.radiusY() &&
+      ellipse2.radiusX() == ellipse2.radiusY()) {
+    // If the ellipses are actually circles, the algorithm is way simpler.
+    return collideAsCircles(ellipse1, ellipse2);
+  }
+
+  if (containsOneAnother(ellipse1, ellipse2)) {
+    // If one ellipse contains the other, there is a collision.
+    return true;
+  }
 
   // Step 1: Deformation to create a circle from the second ellipse.
   long double dX{static_cast<long double>(ellipse2.radiusY())};
@@ -265,5 +280,50 @@ bool Collider::collide(PositionedSolid const& solid1,
     }
   }
 
+  return false;
+}
+
+bool Collider::collideAsCircles(PositionedEllipse const& circle1,
+                                PositionedEllipse const& circle2) {
+  return square(circle2.x() - circle1.x()) +
+             square(circle2.y() - circle1.y()) <=
+         square(circle1.radiusX() + circle2.radiusX());
+}
+
+bool Collider::collideBoundingBoxes(PositionedEllipse const& ellipse1,
+                                    PositionedEllipse const& ellipse2) {
+  return collide(
+      PositionedRectangle{
+          Position{ellipse1.x() - ellipse1.radiusX(),
+                   ellipse1.y() - ellipse1.radiusY()},
+          Rectangle{2 * ellipse1.radiusX(), 2 * ellipse1.radiusY()}},
+      PositionedRectangle{
+          Position{ellipse2.x() - ellipse2.radiusX(),
+                   ellipse2.y() - ellipse2.radiusY()},
+          Rectangle{2 * ellipse2.radiusX(), 2 * ellipse2.radiusY()}});
+}
+
+bool Collider::containsOneAnother(PositionedEllipse const& ellipse1,
+                                  PositionedEllipse const& ellipse2) {
+  /* If one ellipse contains the other, it means the bounding box of the former
+   * contains the one of the latter. */
+
+  // Ellipse 1 contains ellipse 2?
+  if (ellipse1.x() - ellipse1.radiusX() <= ellipse2.x() - ellipse2.radiusX() &&
+      ellipse1.x() + ellipse1.radiusX() >= ellipse2.x() + ellipse2.radiusX() &&
+      ellipse1.y() - ellipse1.radiusY() <= ellipse2.y() - ellipse2.radiusY() &&
+      ellipse1.y() + ellipse1.radiusY() >= ellipse2.y() + ellipse2.radiusY()) {
+    return true;
+  }
+
+  // Ellipse 2 contains ellipse 1?
+  if (ellipse2.x() - ellipse2.radiusX() <= ellipse1.x() - ellipse1.radiusX() &&
+      ellipse2.x() + ellipse2.radiusX() >= ellipse1.x() + ellipse1.radiusX() &&
+      ellipse2.y() - ellipse2.radiusY() <= ellipse1.y() - ellipse1.radiusY() &&
+      ellipse2.y() + ellipse2.radiusY() >= ellipse1.y() + ellipse1.radiusY()) {
+    return true;
+  }
+
+  // No one contains anyone.
   return false;
 }

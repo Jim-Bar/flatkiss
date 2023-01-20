@@ -41,6 +41,13 @@ class Collider {
                       PositionedSolid const& solid2);
 
  private:
+  /** The resolution is used in the ellipse to ellispe collision detection. The
+   * greater it is, the better the accuracy of the algorithm is (but the slower
+   * it becomes). A resolution of 1 means one check point per graduation. So 0.5
+   * means a points every two graduations, while 2 means two points every
+   * graduation. */
+  static long double constexpr kResolution{1};
+
   static bool collide(PositionedEllipse const& ellipse,
                       Position const& position);
 };

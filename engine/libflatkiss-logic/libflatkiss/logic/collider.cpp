@@ -19,10 +19,12 @@
 
 #include <cmath>
 #include <libflatkiss/logic/collider.hpp>
+#include <utility>
 
 using std::ceil;
 using std::fabsl;
 using std::sqrtl;
+using std::swap;
 
 int64_t square(int64_t value) { return value * value; }
 long double square(long double value) { return value * value; }
@@ -51,6 +53,31 @@ struct FloatEllipse {
   long double c;
 };
 
+bool Collider::boundingBoxescontainOneAnother(PositionedEllipse const& ellipse1,
+                                  PositionedEllipse const& ellipse2) {
+  /* If one ellipse contains the other, it means the bounding box of the former
+   * contains the one of the latter. */
+
+  // Ellipse 1 contains ellipse 2?
+  if (ellipse1.x() - ellipse1.radiusX() <= ellipse2.x() - ellipse2.radiusX() &&
+      ellipse1.x() + ellipse1.radiusX() >= ellipse2.x() + ellipse2.radiusX() &&
+      ellipse1.y() - ellipse1.radiusY() <= ellipse2.y() - ellipse2.radiusY() &&
+      ellipse1.y() + ellipse1.radiusY() >= ellipse2.y() + ellipse2.radiusY()) {
+    return true;
+  }
+
+  // Ellipse 2 contains ellipse 1?
+  if (ellipse2.x() - ellipse2.radiusX() <= ellipse1.x() - ellipse1.radiusX() &&
+      ellipse2.x() + ellipse2.radiusX() >= ellipse1.x() + ellipse1.radiusX() &&
+      ellipse2.y() - ellipse2.radiusY() <= ellipse1.y() - ellipse1.radiusY() &&
+      ellipse2.y() + ellipse2.radiusY() >= ellipse1.y() + ellipse1.radiusY()) {
+    return true;
+  }
+
+  // No one contains anyone.
+  return false;
+}
+
 /* This algorithm is an approximation, but a rather good one. It consists in
  * transforming the problem of two ellipses to the problem of one circle and one
  * ellipse. Note that the ellipses are always axis-aligned, which simplifies the
@@ -64,9 +91,9 @@ struct FloatEllipse {
  * Otherwise, continue with the other points on the major axis.
  *
  * Steps:
- * 1. deform the space to make a circle out of the second ellipse
- * 2. translate everything so that the remaining ellipse is centered at the
+ * 1. translate everything so that the remaining ellipse is centered at the
  * origin
+ * 2. deform the space to make a circle out of the second ellipse
  * 3. for simplicity if the ellipse major axis is vertical, swap the coordinates
  * so that it becomes horizontal
  * 4. decide on the number of points to check (this affects the accuracy of the
@@ -77,11 +104,13 @@ struct FloatEllipse {
  * the ellipse; if yes return a collision, otherwise continue
  *
  * This works as long as there is an actual intersection between the ellipses,
- * not if one is contained into another. For that there is the containment test
- * which is made first. And even before that, the bounding boxes test is
- * executed too, to speed up cases where ellipses are far away. And because
- * often ellipses could actually be circle, there is also a circle to circle
- * collision test made beforehand. */
+ * not if one is contained into another (if the first ellipse contains the
+ * second one the algorithm reports a collision, but if it is the opposite it
+ * reports no collision). For that there is the containment test which is made
+ * first. And even before that, the bounding boxes test is executed too, to
+ * speed up cases where ellipses are far away. And because often ellipses could
+ * actually be circle, there is also a circle to circle collision test made
+ * beforehand. */
 bool Collider::collide(PositionedEllipse const& ellipse1,
                        PositionedEllipse const& ellipse2) {
   if (!collideBoundingBoxes(ellipse1, ellipse2)) {
@@ -95,18 +124,18 @@ bool Collider::collide(PositionedEllipse const& ellipse1,
     return collideAsCircles(ellipse1, ellipse2);
   }
 
-  if (containsOneAnother(ellipse1, ellipse2)) {
+  if (boundingBoxescontainOneAnother(ellipse1, ellipse2)) {
     // If one ellipse contains the other, there is a collision.
     return true;
   }
 
-  // Step 1: Deformation to create a circle from the second ellipse.
-  long double dX{static_cast<long double>(ellipse2.radiusY())};
-  long double dY{static_cast<long double>(ellipse2.radiusX())};
-
-  // Step 2: Translation to center the first ellipse at the origin.
+  // Step 1: Translation to center the first ellipse at the origin.
   long double tX{static_cast<long double>(-ellipse1.x())};
   long double tY{static_cast<long double>(-ellipse1.y())};
+
+  // Step 2: Deformation to create a circle from the second ellipse.
+  long double dX{static_cast<long double>(ellipse2.radiusY())};
+  long double dY{static_cast<long double>(ellipse2.radiusX())};
 
   // Second ellipse to circle with floating point precision.
   FloatCircle circle{};
@@ -123,13 +152,9 @@ bool Collider::collide(PositionedEllipse const& ellipse1,
   // Step 3: Swap axes so that the major axis of the ellipse is horizontal.
   if (ellipse.a < ellipse.b) {
     // Swap axes of the ellipse.
-    ellipse.a += ellipse.b;
-    ellipse.b = ellipse.a - ellipse.b;
-    ellipse.a -= ellipse.b;
+    swap(ellipse.a, ellipse.b);
     // Swap coordinates of the circle.
-    circle.a += circle.b;
-    circle.b = circle.a - circle.b;
-    circle.a -= circle.b;
+    swap(circle.a, circle.b);
   }
 
   /* Now the ellipse is centered at the origin, with horizontal radius `a` and
@@ -301,29 +326,4 @@ bool Collider::collideBoundingBoxes(PositionedEllipse const& ellipse1,
           Position{ellipse2.x() - ellipse2.radiusX(),
                    ellipse2.y() - ellipse2.radiusY()},
           Rectangle{2 * ellipse2.radiusX(), 2 * ellipse2.radiusY()}});
-}
-
-bool Collider::containsOneAnother(PositionedEllipse const& ellipse1,
-                                  PositionedEllipse const& ellipse2) {
-  /* If one ellipse contains the other, it means the bounding box of the former
-   * contains the one of the latter. */
-
-  // Ellipse 1 contains ellipse 2?
-  if (ellipse1.x() - ellipse1.radiusX() <= ellipse2.x() - ellipse2.radiusX() &&
-      ellipse1.x() + ellipse1.radiusX() >= ellipse2.x() + ellipse2.radiusX() &&
-      ellipse1.y() - ellipse1.radiusY() <= ellipse2.y() - ellipse2.radiusY() &&
-      ellipse1.y() + ellipse1.radiusY() >= ellipse2.y() + ellipse2.radiusY()) {
-    return true;
-  }
-
-  // Ellipse 2 contains ellipse 1?
-  if (ellipse2.x() - ellipse2.radiusX() <= ellipse1.x() - ellipse1.radiusX() &&
-      ellipse2.x() + ellipse2.radiusX() >= ellipse1.x() + ellipse1.radiusX() &&
-      ellipse2.y() - ellipse2.radiusY() <= ellipse1.y() - ellipse1.radiusY() &&
-      ellipse2.y() + ellipse2.radiusY() >= ellipse1.y() + ellipse1.radiusY()) {
-    return true;
-  }
-
-  // No one contains anyone.
-  return false;
 }

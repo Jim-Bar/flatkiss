@@ -209,14 +209,14 @@ bool Collider::collide(PositionedRectangle const& r,
 
   // Second test, part one.
   if (e.x() >= r.x() && e.x() <= r.x() + r.width()) {
-    if (e.y() + e.radiusY() >= r.y() || e.y() >= r.y() + e.radiusY()) {
+    if (e.y() + e.radiusY() > r.y() || e.y() > r.y() + e.radiusY()) {
       return true;
     }
   }
 
   // End of the second test.
   if (e.y() >= r.y() && e.y() <= r.y() + r.height()) {
-    if (e.x() + e.radiusX() >= r.x() || e.x() >= r.x() + e.radiusX()) {
+    if (e.x() + e.radiusX() > r.x() || e.x() > r.x() + e.radiusX()) {
       return true;
     }
   }

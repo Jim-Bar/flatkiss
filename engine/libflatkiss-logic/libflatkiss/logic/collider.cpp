@@ -53,31 +53,6 @@ struct FloatEllipse {
   long double c;
 };
 
-bool Collider::boundingBoxescontainOneAnother(PositionedEllipse const& ellipse1,
-                                  PositionedEllipse const& ellipse2) {
-  /* If one ellipse contains the other, it means the bounding box of the former
-   * contains the one of the latter. */
-
-  // Ellipse 1 contains ellipse 2?
-  if (ellipse1.x() - ellipse1.radiusX() <= ellipse2.x() - ellipse2.radiusX() &&
-      ellipse1.x() + ellipse1.radiusX() >= ellipse2.x() + ellipse2.radiusX() &&
-      ellipse1.y() - ellipse1.radiusY() <= ellipse2.y() - ellipse2.radiusY() &&
-      ellipse1.y() + ellipse1.radiusY() >= ellipse2.y() + ellipse2.radiusY()) {
-    return true;
-  }
-
-  // Ellipse 2 contains ellipse 1?
-  if (ellipse2.x() - ellipse2.radiusX() <= ellipse1.x() - ellipse1.radiusX() &&
-      ellipse2.x() + ellipse2.radiusX() >= ellipse1.x() + ellipse1.radiusX() &&
-      ellipse2.y() - ellipse2.radiusY() <= ellipse1.y() - ellipse1.radiusY() &&
-      ellipse2.y() + ellipse2.radiusY() >= ellipse1.y() + ellipse1.radiusY()) {
-    return true;
-  }
-
-  // No one contains anyone.
-  return false;
-}
-
 /* This algorithm is an approximation, but a rather good one. It consists in
  * transforming the problem of two ellipses to the problem of one circle and one
  * ellipse. Note that the ellipses are always axis-aligned, which simplifies the
@@ -96,21 +71,17 @@ bool Collider::boundingBoxescontainOneAnother(PositionedEllipse const& ellipse1,
  * 2. deform the space to make a circle out of the second ellipse
  * 3. for simplicity if the ellipse major axis is vertical, swap the coordinates
  * so that it becomes horizontal
- * 4. decide on the number of points to check (this affects the accuracy of the
+ * 4. eliminate the case where the circle contains the ellipse
+ * 5. decide on the number of points to check (this affects the accuracy of the
  * algorithm: more points means more accuracy)
- * 5. subdivide the major axis for getting the required number of points
- * 6. for each point, compute the vector described in the summary above
- * 7. for each vector, check whether the point pointed at by the vector is in
+ * 6. subdivide the major axis for getting the required number of points
+ * 7. for each point, compute the vector described in the summary above
+ * 8. for each vector, check whether the point pointed at by the vector is in
  * the ellipse; if yes return a collision, otherwise continue
  *
- * This works as long as there is an actual intersection between the ellipses,
- * not if one is contained into another (if the first ellipse contains the
- * second one the algorithm reports a collision, but if it is the opposite it
- * reports no collision). For that there is the containment test which is made
- * first. And even before that, the bounding boxes test is executed too, to
- * speed up cases where ellipses are far away. And because often ellipses could
- * actually be circle, there is also a circle to circle collision test made
- * beforehand. */
+ * The bounding boxes test is executed first, to speed up cases where ellipses
+ * are far away. And because often ellipses could actually be circle, there is
+ * also a circle to circle collision test made beforehand. */
 bool Collider::collide(PositionedEllipse const& ellipse1,
                        PositionedEllipse const& ellipse2) {
   if (!collideBoundingBoxes(ellipse1, ellipse2)) {
@@ -122,11 +93,6 @@ bool Collider::collide(PositionedEllipse const& ellipse1,
       ellipse2.radiusX() == ellipse2.radiusY()) {
     // If the ellipses are actually circles, the algorithm is way simpler.
     return collideAsCircles(ellipse1, ellipse2);
-  }
-
-  if (boundingBoxescontainOneAnother(ellipse1, ellipse2)) {
-    // If one ellipse contains the other, there is a collision.
-    return true;
   }
 
   // Step 1: Translation to center the first ellipse at the origin.
@@ -161,16 +127,25 @@ bool Collider::collide(PositionedEllipse const& ellipse1,
    * vertical radius `b` and the distance to the foci `c`. The major axis
    * coincides with the horizontal axis. */
 
-  /* Step 4: Decide on the number of points to check on the major axis of the
+  /* Step 4: This is a special case when the circle contains the ellipse. In
+   * this case, the rest of the algorithm would not report a collision. Just
+   * check whether the center of the ellipse is in the circle. It eliminates
+   * that case, and also a handful of others where they intersect (which would
+   * have been detected later anyway). */
+  if (vectorNorm(0 - circle.a, 0 - circle.b) < circle.r) {
+    return true;
+  }
+
+  /* Step 5: Decide on the number of points to check on the major axis of the
    * ellipse. */
   int64_t num_points{static_cast<int64_t>(ceill(2 * ellipse.a * kResolution))};
   long double step{2 * ellipse.a / static_cast<long double>(num_points)};
   for (int64_t i{0}; i < num_points; i++) {
-    // Step 5: Subdivide the axis (get the i-nth point).
+    // Step 6: Subdivide the axis (get the i-nth point).
     long double x{-ellipse.a + static_cast<long double>(i) * step};
     long double y{0};
 
-    /* Step 6: Construct the vector. Firstly build the point of intersection of
+    /* Step 7: Construct the vector. Firstly build the point of intersection of
      * the circle with the ray cast from the center of the circle and passing by
      * (x, y). */
     long double vX{x - circle.a};
@@ -185,7 +160,7 @@ bool Collider::collide(PositionedEllipse const& ellipse1,
     x = circle.a + vX;
     y = circle.b + vY;
 
-    // Step 7: Check whether the point (x, y) is in the ellipse.
+    // Step 8: Check whether the point (x, y) is in the ellipse.
     long double f1X{-ellipse.c};
     long double f1Y{0};
     long double f2X{ellipse.c};

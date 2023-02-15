@@ -28,7 +28,7 @@ using std::swap;
 
 int64_t square(int64_t value) { return value * value; }
 long double square(long double value) { return value * value; }
-long double vectorNorm(long double vX, long double vY) {
+long double vectorMagnitude(long double vX, long double vY) {
   return sqrtl(square(vX) + square(vY));
 }
 
@@ -132,7 +132,7 @@ bool Collider::collide(PositionedEllipse const& ellipse1,
    * check whether the center of the ellipse is in the circle. It eliminates
    * that case, and also a handful of others where they intersect (which would
    * have been detected later anyway). */
-  if (vectorNorm(0 - circle.a, 0 - circle.b) < circle.r) {
+  if (vectorMagnitude(0 - circle.a, 0 - circle.b) < circle.r) {
     return true;
   }
 
@@ -150,11 +150,11 @@ bool Collider::collide(PositionedEllipse const& ellipse1,
      * (x, y). */
     long double vX{x - circle.a};
     long double vY{y - circle.b};
-    long double norm{vectorNorm(vX, vY)};
+    long double magnitude{vectorMagnitude(vX, vY)};
 
-    // Secondly transform the vector so that its norm equals the radius.
-    vX *= circle.r / norm;
-    vY *= circle.r / norm;
+    // Secondly transform the vector so that its magnitude equals the radius.
+    vX *= circle.r / magnitude;
+    vY *= circle.r / magnitude;
 
     // Finally get the point on the circle (reuse the variables x, y).
     x = circle.a + vX;
@@ -165,7 +165,7 @@ bool Collider::collide(PositionedEllipse const& ellipse1,
     long double f1Y{0};
     long double f2X{ellipse.c};
     long double f2Y{0};
-    if (vectorNorm(x - f1X, y - f1Y) + vectorNorm(x - f2X, y - f2Y) <=
+    if (vectorMagnitude(x - f1X, y - f1Y) + vectorMagnitude(x - f2X, y - f2Y) <=
         2 * ellipse.a) {
       return true;
     }

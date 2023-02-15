@@ -76,26 +76,7 @@ void updateViewport(Character const& character, PositionedRectangle& viewport,
 }
 
 int main(int argc, char* argv[]) {
-  Collider collider{};
-  cout << "1 " << collider.collide(PositionedEllipse{Position{0, 0}, Ellipse{1, 1}}, PositionedEllipse{Position{1, 0}, Ellipse{1, 1}}) << endl;
-  cout << "0 " << collider.collide(PositionedEllipse{Position{0, 0}, Ellipse{1, 1}}, PositionedEllipse{Position{3, 0}, Ellipse{1, 1}}) << endl;
-  cout << "0 " << collider.collide(PositionedEllipse{Position{-150, 100}, Ellipse{112, 50}}, PositionedEllipse{Position{100, -50}, Ellipse{112, 100}}) << endl;
-  cout << "1 " << collider.collide(PositionedEllipse{Position{-50, 0}, Ellipse{112, 50}}, PositionedEllipse{Position{100, -50}, Ellipse{112, 100}}) << endl;
-  cout << "0 " << collider.collide(PositionedEllipse{Position{-50, -150}, Ellipse{71, 50}}, PositionedEllipse{Position{100, -50}, Ellipse{112, 100}}) << endl;
-  cout << "1 " << collider.collide(PositionedEllipse{Position{-50, -150}, Ellipse{71, 50}}, PositionedEllipse{Position{100, -100}, Ellipse{112, 100}}) << endl;
-  cout << "0 " << collider.collide(PositionedEllipse{Position{-100, 0}, Ellipse{50, 354}}, PositionedEllipse{Position{300, -300}, Ellipse{364, 100}}) << endl;
-  cout << "1 " << collider.collide(PositionedEllipse{Position{-100, 0}, Ellipse{50, 354}}, PositionedEllipse{Position{300, -300}, Ellipse{403, 200}}) << endl;
-  cout << "0 " << collider.collide(PositionedEllipse{Position{-150, 0}, Ellipse{100, 141}}, PositionedEllipse{Position{150, 100}, Ellipse{212, 150}}) << endl;
-  cout << "1 " << collider.collide(PositionedEllipse{Position{-150, 50}, Ellipse{100, 180}}, PositionedEllipse{Position{150, 100}, Ellipse{212, 150}}) << endl;
-  cout << "1 " << collider.collide(PositionedEllipse{Position{100, 100}, Ellipse{50, 112}}, PositionedEllipse{Position{150, 100}, Ellipse{212, 150}}) << endl;
-  cout << "1 " << collider.collide(PositionedEllipse{Position{100, 50}, Ellipse{50, 112}}, PositionedEllipse{Position{150, 100}, Ellipse{212, 150}}) << endl;
-  cout << "1 " << collider.collide(PositionedEllipse{Position{-400, 0}, Ellipse{10, 600}}, PositionedEllipse{Position{0, 100}, Ellipse{600, 10}}) << endl;
-  cout << "0 " << collider.collide(PositionedEllipse{Position{-620, -520}, Ellipse{10, 600}}, PositionedEllipse{Position{0, 100}, Ellipse{600, 10}}) << endl;
-  cout << "0 " << collider.collide(PositionedEllipse{Position{-400, -200}, Ellipse{200, 633}}, PositionedEllipse{Position{200, 0}, Ellipse{400, 721}}) << endl;
-  cout << "0 " << collider.collide(PositionedEllipse{Position{-800, -200}, Ellipse{600, 849}}, PositionedEllipse{Position{800, 0}, Ellipse{1000, 1166}}) << endl;
-  cout << "1 " << collider.collide(PositionedEllipse{Position{-800, -200}, Ellipse{627, 868}}, PositionedEllipse{Position{800, 0}, Ellipse{1000, 1166}}) << endl;
-  cout << "0 " << collider.collide(PositionedEllipse{Position{100, 200}, Ellipse{403, 350}}, PositionedEllipse{Position{425, -100}, Ellipse{34, 22}}) << endl;
-  /*Configuration configuration{"configuration.ini"};
+  Configuration configuration{"configuration.ini"};
 
   PositionedRectangle viewport{Position{0, 0},
                                Rectangle{kViewportSize, kViewportSize}};
@@ -145,7 +126,7 @@ int main(int argc, char* argv[]) {
                      level, level.spriteset().spritesWidth(),
                      level.spriteset().spritesHeight());
     }
-  }*/
+  }
 
   return EXIT_SUCCESS;
 }

@@ -66,8 +66,7 @@ struct FloatEllipse {
  * Otherwise, continue with the other points on the major axis.
  *
  * Steps:
- * 1. translate everything so that the remaining ellipse is centered at the
- * origin
+ * 1. translate everything so that the first ellipse is centered at the origin
  * 2. deform the space to make a circle out of the second ellipse
  * 3. for simplicity if the ellipse major axis is vertical, swap the coordinates
  * so that it becomes horizontal
@@ -80,7 +79,7 @@ struct FloatEllipse {
  * the ellipse; if yes return a collision, otherwise continue
  *
  * The bounding boxes test is executed first, to speed up cases where ellipses
- * are far away. And because often ellipses could actually be circle, there is
+ * are far away. And because often ellipses could actually be circles, there is
  * also a circle to circle collision test made beforehand. */
 bool Collider::collide(PositionedEllipse const& ellipse1,
                        PositionedEllipse const& ellipse2) {

@@ -84,7 +84,11 @@ struct FloatEllipse {
  *
  * The bounding boxes test is executed first, to speed up cases where ellipses
  * are far away. And because often ellipses could actually be circles, there is
- * also a circle to circle collision test made beforehand. */
+ * also a circle to circle collision test made beforehand.
+ *
+ * Here is the link to an article explaining the algorithm in details:
+ * https://medium.com/@jeanmarie.baran/algorithm-for-ellipse-to-ellipse-collision-detection-6384b0486ef5
+ */
 bool Collider::collide(PositionedEllipse const& ellipse1,
                        PositionedEllipse const& ellipse2) {
   if (!collideBoundingBoxes(ellipse1, ellipse2)) {

@@ -134,39 +134,41 @@ Position Navigator::moveBy(PositionedSolid const& source_positioned_solid,
       return nearest_position;
     }
 
-    // Maybe it is possible to slide against the obstacle along the X axis.
-    Position destination_x{destination.x(), source_positioned_solid.y()};
-    if (collidesWithTiles(
-            PositionedSolid{destination_x, source_positioned_solid.solid()},
-            level)) {
-      Position nearest_position_x{findNearestPositionToDestination(
-          source_positioned_solid, destination_x, level)};
-      if (source_positioned_solid.position() != nearest_position_x) {
-        return nearest_position_x;
+    /* FIXME: Bypass the obstacle further. A possible solution would be to
+     * recursively invoke moveBy() with varying displacements. */
+    for (Position const& blah : std::array{
+             // Maybe sliding against the obstacle along the X axis is possible.
+             Position{destination.x(), source_positioned_solid.y()},
+             // Or slide along the Y axis.
+             Position{source_positioned_solid.x(), destination.y()},
+             // Otherwise bypass by incrementing along the X axis.
+             Position{destination.x() + 1, destination.y()},
+             // Or bypass by decrementing along the X axis.
+             Position{destination.x() - 1, destination.y()},
+             // Or bypass by incrementing along the Y axis.
+             Position{destination.x(), destination.y() + 1},
+             // Or bypass by decrementing along the Y axis.
+             Position{destination.x(), destination.y() - 1}}) {
+      if (blah != source_positioned_solid.position()) {
+        if (collidesWithTiles(
+                PositionedSolid{blah, source_positioned_solid.solid()},
+                level)) {
+          Position nearest_position_x{findNearestPositionToDestination(
+              source_positioned_solid, blah, level)};
+          if (source_positioned_solid.position() != nearest_position_x) {
+            return nearest_position_x;
+          }
+        } else {
+          return blah;
+        }
       }
-    } else {
-      return destination_x;
-    }
-
-    // Or along the Y axis.
-    Position destination_y{source_positioned_solid.x(), destination.y()};
-    if (collidesWithTiles(
-            PositionedSolid{destination_y, source_positioned_solid.solid()},
-            level)) {
-      Position nearest_position_y{findNearestPositionToDestination(
-          source_positioned_solid, destination_y, level)};
-      if (source_positioned_solid.position() != nearest_position_y) {
-        return nearest_position_y;
-      }
-    } else {
-      return destination_y;
     }
 
     // It is not possible to get to a nearer position.
     return source_positioned_solid.position();
   }
 
-  // But if there is not collision, just go to the final destination.
+  // But if there is no collision, just go to the final destination.
   return destination;
 }
 

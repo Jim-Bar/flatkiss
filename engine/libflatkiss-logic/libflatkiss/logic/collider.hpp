@@ -52,8 +52,8 @@ class Collider {
                                              PositionedEllipse const& ellipse2);
   static bool collide(PositionedEllipse const& ellipse,
                       Position const& position);
-  static bool collideAsCircles(PositionedEllipse const& ellipse1,
-                               PositionedEllipse const& ellipse2);
+  static bool collideAsCircles(PositionedEllipse const& circle1,
+                               PositionedEllipse const& circle2);
   static bool collideBoundingBoxes(PositionedEllipse const& ellipse1,
                                    PositionedEllipse const& ellipse2);
 };

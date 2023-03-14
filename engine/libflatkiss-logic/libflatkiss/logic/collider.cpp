@@ -21,15 +21,19 @@
 #include <libflatkiss/logic/collider.hpp>
 #include <utility>
 
+using std::abs;
 using std::ceil;
-using std::fabsl;
-using std::sqrtl;
+using std::sqrt;
 using std::swap;
+
+/* Disabling lint for short variables names because they are useful for
+ * math-related things (x, y, ...). */
+// NOLINTBEGIN(readability-identifier-length)
 
 int64_t square(int64_t value) { return value * value; }
 long double square(long double value) { return value * value; }
-long double vectorMagnitude(long double vX, long double vY) {
-  return sqrtl(square(vX) + square(vY));
+long double vectorMagnitude(long double vx, long double vy) {
+  return sqrt(square(vx) + square(vy));
 }
 
 // For a circle at coordinates (a, b) with radius `r`:
@@ -95,24 +99,24 @@ bool Collider::collide(PositionedEllipse const& ellipse1,
   }
 
   // Step 1: Translation to center the first ellipse at the origin.
-  long double tX{static_cast<long double>(-ellipse1.x())};
-  long double tY{static_cast<long double>(-ellipse1.y())};
+  long double tx{static_cast<long double>(-ellipse1.x())};
+  long double ty{static_cast<long double>(-ellipse1.y())};
 
   // Step 2: Deformation to create a circle from the second ellipse.
-  long double dX{static_cast<long double>(ellipse2.radiusY())};
-  long double dY{static_cast<long double>(ellipse2.radiusX())};
+  long double dx{static_cast<long double>(ellipse2.radiusY())};
+  long double dy{static_cast<long double>(ellipse2.radiusX())};
 
   // Second ellipse to circle with floating point precision.
   FloatCircle circle{};
-  circle.a = (static_cast<long double>(ellipse2.x()) + tX) * dX;
-  circle.b = (static_cast<long double>(ellipse2.y()) + tY) * dY;
-  circle.r = static_cast<long double>(ellipse2.radiusX()) * dX;
+  circle.a = (static_cast<long double>(ellipse2.x()) + tx) * dx;
+  circle.b = (static_cast<long double>(ellipse2.y()) + ty) * dy;
+  circle.r = static_cast<long double>(ellipse2.radiusX()) * dx;
 
   // First ellipse to origin with floating point precision.
   FloatEllipse ellipse{};
-  ellipse.a = static_cast<long double>(ellipse1.radiusX()) * dX;
-  ellipse.b = static_cast<long double>(ellipse1.radiusY()) * dY;
-  ellipse.c = sqrtl(fabsl(square(ellipse.a) - square(ellipse.b)));
+  ellipse.a = static_cast<long double>(ellipse1.radiusX()) * dx;
+  ellipse.b = static_cast<long double>(ellipse1.radiusY()) * dy;
+  ellipse.c = sqrt(abs(square(ellipse.a) - square(ellipse.b)));
 
   // Step 3: Swap axes so that the major axis of the ellipse is horizontal.
   if (ellipse.a < ellipse.b) {
@@ -147,24 +151,24 @@ bool Collider::collide(PositionedEllipse const& ellipse1,
     /* Step 7: Construct the vector. Firstly build the point of intersection of
      * the circle with the ray cast from the center of the circle and passing by
      * (x, y). */
-    long double vX{x - circle.a};
-    long double vY{y - circle.b};
-    long double magnitude{vectorMagnitude(vX, vY)};
+    long double vx{x - circle.a};
+    long double vy{y - circle.b};
+    long double magnitude{vectorMagnitude(vx, vy)};
 
     // Secondly transform the vector so that its magnitude equals the radius.
-    vX *= circle.r / magnitude;
-    vY *= circle.r / magnitude;
+    vx *= circle.r / magnitude;
+    vy *= circle.r / magnitude;
 
     // Finally get the point on the circle (reuse the variables x, y).
-    x = circle.a + vX;
-    y = circle.b + vY;
+    x = circle.a + vx;
+    y = circle.b + vy;
 
     // Step 8: Check whether the point (x, y) is in the ellipse.
-    long double f1X{-ellipse.c};
-    long double f1Y{0};
-    long double f2X{ellipse.c};
-    long double f2Y{0};
-    if (vectorMagnitude(x - f1X, y - f1Y) + vectorMagnitude(x - f2X, y - f2Y) <=
+    long double f1x{-ellipse.c};
+    long double f1y{0};
+    long double f2x{ellipse.c};
+    long double f2y{0};
+    if (vectorMagnitude(x - f1x, y - f1y) + vectorMagnitude(x - f2x, y - f2y) <=
         2 * ellipse.a) {
       return true;
     }
@@ -301,3 +305,5 @@ bool Collider::collideBoundingBoxes(PositionedEllipse const& ellipse1,
                    ellipse2.y() - ellipse2.radiusY()},
           Rectangle{2 * ellipse2.radiusX(), 2 * ellipse2.radiusY()}});
 }
+
+// NOLINTEND(readability-identifier-length)

@@ -17,14 +17,18 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
+#include <algorithm>
 #include <libflatkiss/logic/character_controller.hpp>
 #include <utility>
 
+using std::min;
 using std::move;
 using std::vector;
 
 KeyboardCharacterController::KeyboardCharacterController(Character& character)
-    : character_{character} {}
+    : character_{character},
+      max_sidestep_distance_{character.positionedSolid().boundingBox().width() /
+                             2} {}
 
 Character const& KeyboardCharacterController::character() const {
   return character_;
@@ -47,12 +51,27 @@ void KeyboardCharacterController::handleKeyboardEvent(
   if (event_handler.isKeyPressed(Key::kRight)) {
     dx += kSpeedInPixels;
   }
-
   Vector desired_displacement{dx, dy};
-  Position final_position{navigator.moveBy(character_.positionedSolid(),
-                                           desired_displacement, level)};
-  character_.updateFacingDirection(desired_displacement,
-                                   final_position - character_.position());
+
+  /* Each tick, increase the sidestep lookup distance by one. This causes the
+   * character to slow down when side-stepping (compared to looking up the
+   * maximum distance right away). */
+  sidestep_distance_ = min(max_sidestep_distance_, sidestep_distance_ + 1);
+  auto [side_stepped, final_position]{
+      navigator.moveBy(character_.positionedSolid(), desired_displacement,
+                       level, sidestep_distance_, true)};
+  if (final_position != character_.position()) {
+    /* In case of side-stepping, this resets the lookup from start, causing the
+     * slow down to be gradual with the distance to the final side-step. When
+     * not side-stepping, this has no effect. */
+    sidestep_distance_ = 0;
+  }
+
+  character_.updateFacingDirection(
+      // When side-stepping, do as if the character were not changing direction.
+      desired_displacement, side_stepped
+                                ? desired_displacement
+                                : final_position - character_.position());
   character_.moveTo(move(final_position));
 }
 

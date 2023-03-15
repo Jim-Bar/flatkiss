@@ -36,6 +36,8 @@ class KeyboardCharacterController {
  private:
   Character& character_;
   static int64_t constexpr kSpeedInPixels{1};
+  int64_t const max_sidestep_distance_;
+  int64_t sidestep_distance_{0};
 };
 
 class CharacterControllerLoader {

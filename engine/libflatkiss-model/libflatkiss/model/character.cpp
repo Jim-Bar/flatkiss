@@ -17,6 +17,7 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
+#include <iostream>  // FIXME: Delete.
 #include <libflatkiss/model/character.hpp>
 #include <set>
 #include <utility>
@@ -93,8 +94,15 @@ void Character::updateFacingDirection(Vector const& desired_displacement,
   if (actual_displacement != Vector::kZero) {
     animation_tick_++;
     updateFacingDirectionForDisplacement(actual_displacement);
-  } else {
+  } else if (desired_displacement == Vector::kZero) {
+    /* Only reset the animation when the character is blocked and not trying to
+     * move. This is useful when side-stepping: the character must still
+     * animate, and not reset during the lookup phase (while not moving). */
     resetAnimationTick();
+    updateFacingDirectionForDisplacement(desired_displacement);
+  } else {
+    /* When the character is blocked but still trying to move, block the
+     * animation. */
     updateFacingDirectionForDisplacement(desired_displacement);
   }
 }

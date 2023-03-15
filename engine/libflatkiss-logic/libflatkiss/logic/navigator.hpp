@@ -29,9 +29,39 @@
  */
 class Navigator {
  public:
+  struct MoveResult {
+    bool const has_side_stepped;
+    Position position;
+  };
+
   Navigator(std::unordered_map<int64_t, Solid const> const& solids);
-  Position moveBy(PositionedSolid const& source_positioned_solid,
-                  Vector const& desired_displacement, Level const& level) const;
+  /**
+   * @brief Try to move a solid according to the provided movement.
+   *
+   * If the movement would cause the solid to enter an obstacle, then the method
+   * returns a position which sticks the solid to the obstacle.
+   *
+   * The method can cause the solid to slide against obstacles: for instance
+   * when going to the bottom left but there is a wall to the bottom, then slide
+   * to the left along the wall.
+   *
+   * The method can also cause the solid to side-step, that it bypassing
+   * obstacles. For example if the solid is blocked by an object, but is also
+   * near the edge of the object, then moving a little bit (side-stepping) could
+   * allow the solid to pass. The solid lookups according to a distance, but
+   * will only move by a fraction of that distance. Calling the method again
+   * several times will move the solid bit by bit until, finally, the edge of
+   * the object is reached and bypassed (side-stepped).
+   *
+   * @param source_positioned_solid Solid to try to move.
+   * @param desired_displacement Movement applied to the solid.
+   * @param level Level in which the solid is moving.
+   * @param sidestep_distance How far the solid looks for side-stepping.
+   * @param slide Whether to enable sliding.
+   */
+  MoveResult moveBy(PositionedSolid const& source_positioned_solid,
+                    Vector const& desired_displacement, Level const& level,
+                    int64_t sidestep_distance, bool slide) const;
 
  private:
   std::unordered_map<int64_t, Solid const> const& solids_;

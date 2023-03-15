@@ -42,6 +42,9 @@ int64_t Navigator::clampToBounds(int64_t object_position, int64_t object_size,
 
 bool Navigator::collidesWithTiles(PositionedSolid const& positioned_solid,
                                   Level const& level) const {
+  /* Disabling lint for short variables names because they are useful for
+   * math-related things (x, y, ...). */
+  // NOLINTBEGIN(readability-identifier-length)
   for (int64_t y(positioned_solid.absoluteBoundingBox().y() /
                  level.spriteset().spritesHeight());
        y <= (positioned_solid.absoluteBoundingBox().y() +
@@ -64,6 +67,7 @@ bool Navigator::collidesWithTiles(PositionedSolid const& positioned_solid,
       }
     }
   }
+  // NOLINTEND(readability-identifier-length)
 
   return false;
 }
@@ -100,9 +104,10 @@ Position Navigator::findNearestPositionToDestination(
   return destination;
 }
 
-Position Navigator::moveBy(PositionedSolid const& source_positioned_solid,
-                           Vector const& desired_displacement,
-                           Level const& level) const {
+Navigator::MoveResult Navigator::moveBy(
+    PositionedSolid const& source_positioned_solid,
+    Vector const& desired_displacement, Level const& level,
+    int64_t sidestep_distance, bool slide) const {
   /* First collide with the bounds of the level. Compute the resulting
    * (potential) destination. */
   Position destination{
@@ -110,17 +115,17 @@ Position Navigator::moveBy(PositionedSolid const& source_positioned_solid,
                     source_positioned_solid.boundingBox().width(),
                     desired_displacement.dx(),
                     level.widthInTiles() * level.spriteset().spritesWidth()) -
-          source_positioned_solid.boundingBox().x(),
+          source_positioned_solid.boundingBox().x(),  // FIXME: - x + w?
       clampToBounds(source_positioned_solid.absoluteBoundingBox().y(),
                     source_positioned_solid.boundingBox().height(),
                     desired_displacement.dy(),
                     level.heightInTiles() * level.spriteset().spritesHeight()) -
-          source_positioned_solid.boundingBox().y()};
+          source_positioned_solid.boundingBox().y()};  // FIXME: - y + h?
 
   /* Secondly, if the destination is the same as the current position, nothing
    * to do. */
   if (source_positioned_solid.position() == destination) {
-    return source_positioned_solid.position();
+    return {false, source_positioned_solid.position()};
   }
 
   /* Otherwise if there is a collision with a tile, make sure to stick to the
@@ -131,45 +136,101 @@ Position Navigator::moveBy(PositionedSolid const& source_positioned_solid,
     Position nearest_position{findNearestPositionToDestination(
         source_positioned_solid, destination, level)};
     if (source_positioned_solid.position() != nearest_position) {
-      return nearest_position;
+      return {false, nearest_position};
     }
 
-    /* FIXME: Bypass the obstacle further. A possible solution would be to
-     * recursively invoke moveBy() with varying displacements. */
-    for (Position const& blah : std::array{
-             // Maybe sliding against the obstacle along the X axis is possible.
-             Position{destination.x(), source_positioned_solid.y()},
-             // Or slide along the Y axis.
-             Position{source_positioned_solid.x(), destination.y()},
-             // Otherwise bypass by incrementing along the X axis.
-             Position{destination.x() + 1, destination.y()},
-             // Or bypass by decrementing along the X axis.
-             Position{destination.x() - 1, destination.y()},
-             // Or bypass by incrementing along the Y axis.
-             Position{destination.x(), destination.y() + 1},
-             // Or bypass by decrementing along the Y axis.
-             Position{destination.x(), destination.y() - 1}}) {
-      if (blah != source_positioned_solid.position()) {
-        if (collidesWithTiles(
-                PositionedSolid{blah, source_positioned_solid.solid()},
-                level)) {
-          Position nearest_position_x{findNearestPositionToDestination(
-              source_positioned_solid, blah, level)};
-          if (source_positioned_solid.position() != nearest_position_x) {
-            return nearest_position_x;
+    if (slide) {
+      for (Vector const& sliding_displacement : std::array{
+               // Try to slide against the obstacle along the X axis.
+               Vector{desired_displacement.dx(), 0},
+               // Or slide along the Y axis.
+               Vector{0, desired_displacement.dy()},
+           }) {
+        Position blah{moveBy(source_positioned_solid, sliding_displacement,
+                             level, 0, false)
+                          .position};
+        if (blah != source_positioned_solid.position()) {
+          return {false, blah};
+        }
+      }
+    }
+
+    /* Side-stepping works by applying the same desired displacement but from a
+     * different position. The position is chosen orthogonally to the desired
+     * displacement, and according to the side-step lookup distance. This
+     * position is called the parallax, it must be a valid position that is not
+     * colliding with anything. Then the final parallax position is computed by
+     * applying the desired displacement on it. If this final position has some
+     * interest (i.e. it is different than the initial parallax position), then
+     * the solid is moved toward the initial parallax position. Note that
+     * side-stepping is only possible when moving along an axis (not
+     * diagonally). */
+    if (sidestep_distance > 0) {
+      if (desired_displacement.dx() == 0) {
+        for (int64_t direction : std::array{-1, 1}) {
+          // FIXME: Must be clamped to bounds.
+          Position parallax{
+              source_positioned_solid.x() + sidestep_distance * direction,
+              source_positioned_solid.y()};
+          if (!collidesWithTiles(
+                  PositionedSolid{parallax, source_positioned_solid.solid()},
+                  level)) {
+            Position parallax_final{
+                moveBy(
+                    PositionedSolid{parallax, source_positioned_solid.solid()},
+                    desired_displacement, level, 0, false)
+                    .position};
+            if (parallax_final != parallax) {
+              // FIXME: Multiply by speed in pixels.
+              Position side_stepped{source_positioned_solid.x() + direction,
+                                    source_positioned_solid.y()};
+              if (!collidesWithTiles(
+                      PositionedSolid{side_stepped,
+                                      source_positioned_solid.solid()},
+                      level)) {
+                return {true, side_stepped};
+              }
+            }
           }
-        } else {
-          return blah;
+        }
+      }
+
+      if (desired_displacement.dy() == 0) {
+        for (int64_t direction : std::array{-1, 1}) {
+          // FIXME: Must be clamped to bounds.
+          Position parallax{
+              source_positioned_solid.x(),
+              source_positioned_solid.y() + sidestep_distance * direction};
+          if (!collidesWithTiles(
+                  PositionedSolid{parallax, source_positioned_solid.solid()},
+                  level)) {
+            Position parallax_final{
+                moveBy(
+                    PositionedSolid{parallax, source_positioned_solid.solid()},
+                    desired_displacement, level, 0, false)
+                    .position};
+            if (parallax_final != parallax) {
+              Position side_stepped{source_positioned_solid.x(),
+                                    // FIXME: Multiply by speed in pixels.
+                                    source_positioned_solid.y() + direction};
+              if (!collidesWithTiles(
+                      PositionedSolid{side_stepped,
+                                      source_positioned_solid.solid()},
+                      level)) {
+                return {true, side_stepped};
+              }
+            }
+          }
         }
       }
     }
 
     // It is not possible to get to a nearer position.
-    return source_positioned_solid.position();
+    return {false, source_positioned_solid.position()};
   }
 
   // But if there is no collision, just go to the final destination.
-  return destination;
+  return {false, destination};
 }
 
 bool Navigator::solidCollidesWithTileAtPosition(

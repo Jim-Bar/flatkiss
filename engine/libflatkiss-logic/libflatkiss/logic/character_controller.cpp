@@ -59,7 +59,7 @@ void KeyboardCharacterController::handleKeyboardEvent(
   sidestep_distance_ = min(max_sidestep_distance_, sidestep_distance_ + 1);
   auto [side_stepped, final_position]{
       navigator.moveBy(character_.positionedSolid(), desired_displacement,
-                       level, sidestep_distance_, true)};
+                       level, sidestep_distance_, kSpeedInPixels, true)};
   if (final_position != character_.position()) {
     /* In case of side-stepping, this resets the lookup from start, causing the
      * slow down to be gradual with the distance to the final side-step. When

@@ -53,38 +53,52 @@ class Navigator {
    * several times will move the solid bit by bit until, finally, the edge of
    * the object is reached and bypassed (side-stepped).
    *
-   * @param source_positioned_solid Solid to try to move.
+   * @param positioned_solid Solid to try to move.
    * @param desired_displacement Movement applied to the solid.
    * @param level Level in which the solid is moving.
    * @param sidestep_distance How far the solid looks for side-stepping.
-   * @param slide Whether to enable sliding.
+   * @param sidestep_speed How much the solid actually side-steps in one step.
+   * @param allow_slide Whether to enable sliding.
    */
-  MoveResult moveBy(PositionedSolid const& source_positioned_solid,
+  MoveResult moveBy(PositionedSolid const& positioned_solid,
                     Vector const& desired_displacement, Level const& level,
-                    int64_t sidestep_distance, bool slide) const;
+                    int64_t sidestep_distance, int64_t sidestep_speed,
+                    bool allow_slide) const;
 
  private:
   std::unordered_map<int64_t, Solid const> const& solids_;
 
   /**
-   * @brief Given a position and a movement (delta) on an axis (representing
-   * either X or Y), return the resulting position taking account the bounds.
+   * @brief Given a position on an axis (representing either X or Y), return the
+   * resulting position taking account the bounds.
    *
    * @param object_position Position on the axis.
    * @param object_size Size of the object at the given position.
-   * @param delta_value Movement of the object.
    * @param upper_bound Maximum position on the axis (the minimum position is
    * zero).
-   * @return int64_t The resulting position of the object on the axis after
-   * applying the movement, and clamping to the bounds.
+   * @return int64_t The resulting position of the object, clamping to the
+   * bounds.
    */
   static int64_t clampToBounds(int64_t object_position, int64_t object_size,
-                               int64_t delta_value, int64_t upper_bound);
+                               int64_t upper_bound);
+  static Position clampToBounds(PositionedSolid const& positioned_solid,
+                                Level const& level);
   bool collidesWithTiles(PositionedSolid const& positioned_solid,
                          Level const& level) const;
   Position findNearestPositionToDestination(
-      PositionedSolid const& source_positioned_solid,
-      Position const& destination, Level const& level) const;
+      PositionedSolid const& positioned_solid, Position const& destination,
+      Level const& level) const;
+  Position sideStep(PositionedSolid const& positioned_solid,
+                    Vector const& desired_displacement, Level const& level,
+                    int64_t sidestep_distance, int64_t sidestep_speed) const;
+  Position sideStepX(PositionedSolid const& positioned_solid,
+                     Vector const& desired_displacement, Level const& level,
+                     int64_t sidestep_distance, int64_t sidestep_speed) const;
+  Position sideStepY(PositionedSolid const& positioned_solid,
+                     Vector const& desired_displacement, Level const& level,
+                     int64_t sidestep_distance, int64_t sidestep_speed) const;
+  Position slide(PositionedSolid const& positioned_solid,
+                 Vector const& desired_displacement, Level const& level) const;
   bool solidCollidesWithTileAtPosition(PositionedSolid const& positioned_solid,
                                        uint16_t tile_index,
                                        Position const& position,

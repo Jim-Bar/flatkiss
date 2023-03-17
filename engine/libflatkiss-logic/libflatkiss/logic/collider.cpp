@@ -255,7 +255,7 @@ bool Collider::collide(PositionedRectangle const& rectangle1,
 bool Collider::collide(PositionedEllipse const& e, Position const& p) {
   // https://math.stackexchange.com/a/76463
   return square(e.radiusY() * abs(p.x() - e.x())) +
-             square(e.radiusX() * abs(p.y() - e.y())) <=
+             square(e.radiusX() * abs(p.y() - e.y())) <
          square(e.radiusX() * e.radiusY());
 }
 

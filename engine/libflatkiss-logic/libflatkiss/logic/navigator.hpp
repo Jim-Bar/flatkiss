@@ -24,6 +24,8 @@
 #include <libflatkiss/model/model.hpp>
 #include <vector>
 
+/* FIXME: Many methods have too many parameters, maybe dedicate one navigator
+ * per solid or something, moving parameters to attributes of the class. */
 /**
  * @brief Move a positioned solid to the closest desired location.
  */
@@ -62,6 +64,7 @@ class Navigator {
    */
   MoveResult moveBy(PositionedSolid const& positioned_solid,
                     Vector const& desired_displacement, Level const& level,
+                    std::vector<PositionedSolid> const& other_solids,
                     int64_t sidestep_distance, int64_t sidestep_speed,
                     bool allow_slide) const;
 
@@ -83,6 +86,9 @@ class Navigator {
                                int64_t upper_bound);
   static Position clampToBounds(PositionedSolid const& positioned_solid,
                                 Level const& level);
+  bool collidesWithSolids(
+      PositionedSolid const& positioned_solid,
+      std::vector<PositionedSolid> const& positioned_solids) const;
   bool collidesWithTiles(PositionedSolid const& positioned_solid,
                          Level const& level) const;
   Position findNearestPositionToDestination(
@@ -90,15 +96,19 @@ class Navigator {
       Level const& level) const;
   Position sideStep(PositionedSolid const& positioned_solid,
                     Vector const& desired_displacement, Level const& level,
+                    std::vector<PositionedSolid> const& other_solids,
                     int64_t sidestep_distance, int64_t sidestep_speed) const;
   Position sideStepX(PositionedSolid const& positioned_solid,
                      Vector const& desired_displacement, Level const& level,
+                     std::vector<PositionedSolid> const& other_solids,
                      int64_t sidestep_distance, int64_t sidestep_speed) const;
   Position sideStepY(PositionedSolid const& positioned_solid,
                      Vector const& desired_displacement, Level const& level,
+                     std::vector<PositionedSolid> const& other_solids,
                      int64_t sidestep_distance, int64_t sidestep_speed) const;
   Position slide(PositionedSolid const& positioned_solid,
-                 Vector const& desired_displacement, Level const& level) const;
+                 Vector const& desired_displacement, Level const& level,
+                 std::vector<PositionedSolid> const& other_solids) const;
   bool solidCollidesWithTileAtPosition(PositionedSolid const& positioned_solid,
                                        uint16_t tile_index,
                                        Position const& position,

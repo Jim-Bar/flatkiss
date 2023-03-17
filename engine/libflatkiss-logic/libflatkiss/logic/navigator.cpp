@@ -23,6 +23,7 @@
 using std::abs;
 using std::max;
 using std::unordered_map;
+using std::vector;
 
 Navigator::Navigator(unordered_map<int64_t, Solid const> const& solids)
     : solids_{solids} {}
@@ -51,6 +52,18 @@ Position Navigator::clampToBounds(PositionedSolid const& positioned_solid,
                     positioned_solid.boundingBox().height(),
                     level.heightInTiles() * level.spriteset().spritesHeight()) -
           positioned_solid.boundingBox().y()};
+}
+
+bool Navigator::collidesWithSolids(
+    PositionedSolid const& positioned_solid,
+    vector<PositionedSolid> const& positioned_solids) const {
+  for (auto const& other : positioned_solids) {
+    if (Collider::collide(positioned_solid, other)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 bool Navigator::collidesWithTiles(PositionedSolid const& positioned_solid,
@@ -116,12 +129,10 @@ Position Navigator::findNearestPositionToDestination(
   return destination;
 }
 
-Navigator::MoveResult Navigator::moveBy(PositionedSolid const& positioned_solid,
-                                        Vector const& desired_displacement,
-                                        Level const& level,
-                                        int64_t sidestep_distance,
-                                        int64_t sidestep_speed,
-                                        bool allow_slide) const {
+Navigator::MoveResult Navigator::moveBy(
+    PositionedSolid const& positioned_solid, Vector const& desired_displacement,
+    Level const& level, vector<PositionedSolid> const& other_solids,
+    int64_t sidestep_distance, int64_t sidestep_speed, bool allow_slide) const {
   /* First collide with the bounds of the level. Compute the resulting
    * (potential) destination. */
   Position destination{
@@ -130,6 +141,10 @@ Navigator::MoveResult Navigator::moveBy(PositionedSolid const& positioned_solid,
   /* Secondly, if the destination is the same as the current position, nothing
    * to do. */
   if (positioned_solid.position() == destination) {
+    return {false, positioned_solid.position()};
+  }
+
+  if (collidesWithSolids(positioned_solid, other_solids)) {
     return {false, positioned_solid.position()};
   }
 
@@ -145,7 +160,8 @@ Navigator::MoveResult Navigator::moveBy(PositionedSolid const& positioned_solid,
 
     // Or slide along it if allowed.
     if (allow_slide) {
-      Position slided{slide(positioned_solid, desired_displacement, level)};
+      Position slided{
+          slide(positioned_solid, desired_displacement, level, other_solids)};
       if (slided != positioned_solid.position()) {
         return {false, slided};
       }
@@ -154,7 +170,8 @@ Navigator::MoveResult Navigator::moveBy(PositionedSolid const& positioned_solid,
     // Or side-step for bypassing it if allowed.
     if (sidestep_distance > 0) {
       Position side_stepped{sideStep(positioned_solid, desired_displacement,
-                                     level, sidestep_distance, sidestep_speed)};
+                                     level, other_solids, sidestep_distance,
+                                     sidestep_speed)};
       if (side_stepped != positioned_solid.position()) {
         return {true, side_stepped};
       }
@@ -179,11 +196,14 @@ Navigator::MoveResult Navigator::moveBy(PositionedSolid const& positioned_solid,
  * possible when moving along an axis (not diagonally). */
 Position Navigator::sideStep(PositionedSolid const& positioned_solid,
                              Vector const& desired_displacement,
-                             Level const& level, int64_t sidestep_distance,
+                             Level const& level,
+                             vector<PositionedSolid> const& other_solids,
+                             int64_t sidestep_distance,
                              int64_t sidestep_speed) const {
   if (desired_displacement.dx() == 0) {
     Position side_stepped{sideStepX(positioned_solid, desired_displacement,
-                                    level, sidestep_distance, sidestep_speed)};
+                                    level, other_solids, sidestep_distance,
+                                    sidestep_speed)};
     if (side_stepped != positioned_solid.position()) {
       return side_stepped;
     }
@@ -191,7 +211,8 @@ Position Navigator::sideStep(PositionedSolid const& positioned_solid,
 
   if (desired_displacement.dy() == 0) {
     Position side_stepped{sideStepY(positioned_solid, desired_displacement,
-                                    level, sidestep_distance, sidestep_speed)};
+                                    level, other_solids, sidestep_distance,
+                                    sidestep_speed)};
     if (side_stepped != positioned_solid.position()) {
       return side_stepped;
     }
@@ -202,7 +223,9 @@ Position Navigator::sideStep(PositionedSolid const& positioned_solid,
 
 Position Navigator::sideStepX(PositionedSolid const& positioned_solid,
                               Vector const& desired_displacement,
-                              Level const& level, int64_t sidestep_distance,
+                              Level const& level,
+                              vector<PositionedSolid> const& other_solids,
+                              int64_t sidestep_distance,
                               int64_t sidestep_speed) const {
   for (int64_t direction : std::array{-1, 1}) {
     Position parallax{clampToBounds(
@@ -211,7 +234,7 @@ Position Navigator::sideStepX(PositionedSolid const& positioned_solid,
                            level)) {
       Position parallax_final{
           moveBy(PositionedSolid{parallax, positioned_solid.solid()},
-                 desired_displacement, level, 0, 0, false)
+                 desired_displacement, level, other_solids, 0, 0, false)
               .position};
       if (parallax_final != parallax) {
         Position side_stepped{positioned_solid.x() + sidestep_speed * direction,
@@ -230,7 +253,9 @@ Position Navigator::sideStepX(PositionedSolid const& positioned_solid,
 
 Position Navigator::sideStepY(PositionedSolid const& positioned_solid,
                               Vector const& desired_displacement,
-                              Level const& level, int64_t sidestep_distance,
+                              Level const& level,
+                              vector<PositionedSolid> const& other_solids,
+                              int64_t sidestep_distance,
                               int64_t sidestep_speed) const {
   for (int64_t direction : std::array{-1, 1}) {
     Position parallax{clampToBounds(
@@ -239,7 +264,7 @@ Position Navigator::sideStepY(PositionedSolid const& positioned_solid,
                            level)) {
       Position parallax_final{
           moveBy(PositionedSolid{parallax, positioned_solid.solid()},
-                 desired_displacement, level, 0, 0, false)
+                 desired_displacement, level, other_solids, 0, 0, false)
               .position};
       if (parallax_final != parallax) {
         Position side_stepped{
@@ -259,16 +284,17 @@ Position Navigator::sideStepY(PositionedSolid const& positioned_solid,
 
 Position Navigator::slide(PositionedSolid const& positioned_solid,
                           Vector const& desired_displacement,
-                          Level const& level) const {
+                          Level const& level,
+                          vector<PositionedSolid> const& other_solids) const {
   for (Vector const& sliding_displacement : std::array{
            // Try to slide against the obstacle along the X axis.
            Vector{desired_displacement.dx(), 0},
            // Or slide along the Y axis.
            Vector{0, desired_displacement.dy()},
        }) {
-    Position slided{
-        moveBy(positioned_solid, sliding_displacement, level, 0, 0, false)
-            .position};
+    Position slided{moveBy(positioned_solid, sliding_displacement, level,
+                           other_solids, 0, 0, false)
+                        .position};
     if (slided != positioned_solid.position()) {
       return slided;
     }

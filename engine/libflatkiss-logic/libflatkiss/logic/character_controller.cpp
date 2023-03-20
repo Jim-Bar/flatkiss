@@ -37,21 +37,21 @@ Character const& KeyboardCharacterController::character() const {
 void KeyboardCharacterController::handleKeyboardEvent(
     EventHandler const& event_handler, Navigator const& navigator,
     Level const& level) {
-  int64_t dx{0};
-  int64_t dy{0};
+  int64_t delta_x{0};
+  int64_t delta_y{0};
   if (event_handler.isKeyPressed(Key::kUp)) {
-    dy -= kSpeedInPixels;
+    delta_y -= kSpeedInPixels;
   }
   if (event_handler.isKeyPressed(Key::kDown)) {
-    dy += kSpeedInPixels;
+    delta_y += kSpeedInPixels;
   }
   if (event_handler.isKeyPressed(Key::kLeft)) {
-    dx -= kSpeedInPixels;
+    delta_x -= kSpeedInPixels;
   }
   if (event_handler.isKeyPressed(Key::kRight)) {
-    dx += kSpeedInPixels;
+    delta_x += kSpeedInPixels;
   }
-  Vector desired_displacement{dx, dy};
+  Vector desired_displacement{delta_x, delta_y};
 
   /* Each tick, increase the sidestep lookup distance by one. This causes the
    * character to slow down when side-stepping (compared to looking up the

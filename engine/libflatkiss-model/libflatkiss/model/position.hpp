@@ -63,6 +63,7 @@ class Position {
    */
   PositionedRectangle operator+(PositionedRectangle const& rectangle) const;
   Position operator+(Vector const& vector) const;
+  Position& operator+=(const Position& other);
   /**
    * @brief Returns a new delta between the two positions.
    *
@@ -70,7 +71,6 @@ class Position {
    * current position.
    * @return Vector A new vector from the other position to the current one.
    */
-  Position& operator+=(const Position& other);
   Vector operator-(Position const& other) const;
   Position& operator-=(const Position& other);
   bool operator==(Position const& other) const;

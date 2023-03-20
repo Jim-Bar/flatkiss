@@ -67,6 +67,8 @@ Position const& PositionedSolid::position() const { return position_; }
 
 void PositionedSolid::position(Position&& new_position) {
   position_ = move(new_position);
+  positioned_ellipses_ = create_positioned_ellipses(new_position, solid_);
+  positioned_rectangles_ = create_positioned_rectangles(new_position, solid_);
 }
 
 vector<PositionedEllipse> const& PositionedSolid::positionedEllipses() const {

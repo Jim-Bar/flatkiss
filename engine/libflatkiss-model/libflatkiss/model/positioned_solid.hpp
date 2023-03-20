@@ -31,9 +31,17 @@ class PositionedSolid {
    * @brief Return the bounding box of the solid moved by the position of the
    * solid.
    *
-   * @return PositionedRectangle const& The bounding box.
+   * @return PositionedRectangle The bounding box.
    */
   PositionedRectangle absoluteBoundingBox() const;
+  /**
+   * @brief Return the bounding box in the solid.
+   *
+   * Note that the position is the
+   * smallest position of all the shapes in the solid.
+   *
+   * @return PositionedRectangle The bounding box.
+   */
   PositionedRectangle boundingBox() const;
   /**
    * @brief Returns a new positioned solid moved by the provided displacement.
@@ -52,8 +60,10 @@ class PositionedSolid {
 
  private:
   Position position_;
-  std::vector<PositionedEllipse> const positioned_ellipses_;
-  std::vector<PositionedRectangle> const positioned_rectangles_;
+  // The positioned ellipses are those of the solid, moved by the position.
+  std::vector<PositionedEllipse> positioned_ellipses_;
+  // The positioned rectangles are those of the solid, moved by the position.
+  std::vector<PositionedRectangle> positioned_rectangles_;
   Solid const solid_;
 
   static std::vector<PositionedEllipse> create_positioned_ellipses(

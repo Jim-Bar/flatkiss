@@ -34,24 +34,11 @@ Character const& KeyboardCharacterController::character() const {
   return character_;
 }
 
-vector<PositionedSolid> blah(Character const& character,
-                             vector<Character> const& other_characters) {
-  // FIXME: This is very expensive and clumsy.
-  vector<PositionedSolid> other_solids{};
-  for (auto const& other_character : other_characters) {
-    if (&character != &other_character) {
-      other_solids.push_back(other_character.positionedSolid());
-    }
-  }
-
-  return other_solids;
-}
-
 void KeyboardCharacterController::handleKeyboardEvent(
     EventHandler const& event_handler, Navigator const& navigator,
-    Level& level) {
-  // NOLINTNEXTLINE
-  int64_t dx{0}, dy{0};
+    Level const& level) {
+  int64_t dx{0};
+  int64_t dy{0};
   if (event_handler.isKeyPressed(Key::kUp)) {
     dy -= kSpeedInPixels;
   }
@@ -72,8 +59,7 @@ void KeyboardCharacterController::handleKeyboardEvent(
   sidestep_distance_ = min(max_sidestep_distance_, sidestep_distance_ + 1);
   auto [side_stepped, final_position]{
       navigator.moveBy(character_.positionedSolid(), desired_displacement,
-                       level, blah(character_, level.characters()),
-                       sidestep_distance_, kSpeedInPixels, true)};
+                       level, sidestep_distance_, kSpeedInPixels, true)};
   if (final_position != character_.position()) {
     /* In case of side-stepping, this resets the lookup from start, causing the
      * slow down to be gradual with the distance to the final side-step. When

@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
   PositionedRectangle viewport{Position{0, 0},
                                Rectangle{kViewportSize, kViewportSize}};
   Window const window{FLATKISS_PROJECT_NAME, viewport.rectangle().width(),
-                      viewport.rectangle().height()};
+                      viewport.rectangle().height()};  
 
   Data data{
       configuration.actionSpriteMapsPath(), configuration.animationsPath(),
@@ -122,8 +122,8 @@ int main(int argc, char* argv[]) {
     }
     // FIXME: Way to define which character is followed by the viewport.
     if (!logic.character_controllers().empty()) {
-      updateViewport(level.characters()[0], viewport, level,
-                     level.spriteset().spritesWidth(),
+      updateViewport(level.characters()[0], viewport,
+                     level, level.spriteset().spritesWidth(),
                      level.spriteset().spritesHeight());
     }
   }

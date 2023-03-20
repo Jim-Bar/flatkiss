@@ -31,7 +31,7 @@ class KeyboardCharacterController {
   KeyboardCharacterController(Character& character);
   Character const& character() const;
   void handleKeyboardEvent(EventHandler const& event_handler,
-                           Navigator const& navigator, Level& level);
+                           Navigator const& navigator, Level const& level);
 
  private:
   Character& character_;

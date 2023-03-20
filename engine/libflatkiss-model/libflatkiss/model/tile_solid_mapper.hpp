@@ -21,6 +21,7 @@
 #define LIBFLATKISS_MODEL_TILE_SOLID_MAPPER_HPP_INCLUDED
 
 #include <cstdint>
+#include <libflatkiss/model/sprite.hpp>
 #include <unordered_map>
 
 /**
@@ -34,12 +35,12 @@ class TileSolidMapper {
    *
    * @param tiles_to_solids Map of tile indices to solid indices.
    */
-  TileSolidMapper(std::unordered_map<uint16_t, int64_t>&& tiles_to_solids);
-  bool contains(uint16_t tile_index) const;
-  int64_t solidIndexForTileIndex(uint16_t tile_index) const;
+  TileSolidMapper(std::unordered_map<Sprite, int64_t>&& tiles_to_solids);
+  bool contains(Sprite const& tile) const;
+  int64_t solidIndexForTile(Sprite const& tile) const;
 
  private:
-  std::unordered_map<uint16_t, int64_t> const tiles_to_solids_;
+  std::unordered_map<Sprite, int64_t> const tiles_to_solids_;
 };
 
 #endif

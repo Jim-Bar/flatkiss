@@ -100,10 +100,9 @@ class Navigator {
   Position slide(PositionedSolid const& positioned_solid,
                  Vector const& desired_displacement, Level const& level) const;
   bool solidCollidesWithTileAtPosition(PositionedSolid const& positioned_solid,
-                                       uint16_t tile_index,
-                                       Position const& position,
+                                       Sprite tile, Position const& position,
                                        Level const& level) const;
-  PositionedSolid solidForTileIndexAtPosition(uint16_t tile_index,
+  PositionedSolid solidForTileIndexAtPosition(Sprite tile,
                                               Position const& position,
                                               Level const& level) const;
 };

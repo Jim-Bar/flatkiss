@@ -17,24 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef LIBFLATKISS_DATA_LOADER_ANIMATION_PLAYER_HPP_INCLUDED
-#define LIBFLATKISS_DATA_LOADER_ANIMATION_PLAYER_HPP_INCLUDED
+#include <libflatkiss/model/sprite.hpp>
 
-#include <libflatkiss/model/model.hpp>
-#include <string>
-#include <unordered_map>
+Sprite::Sprite(int64_t index) : index_{index} {}
 
-/**
- * @brief Helper class for loading the animations from a file.
- */
-class LoaderAnimationPlayer {
- public:
-  static std::unordered_map<int64_t, AnimationPlayer const> load(
-      std::string const& file_path);
-
- private:
-  static std::unordered_map<int64_t, Animation> loadGroup(
-      int64_t group_size, std::ifstream& animations_stream);
-};
-
-#endif
+int64_t Sprite::index() const { return index_; }

@@ -59,15 +59,13 @@ class Renderer {
  private:
   SDL_Renderer* const sdl_renderer_;
 
-  static SDL_Rect rectForSpriteIndex(int64_t sprite_index,
-                                     Spriteset const& spriteset);
+  static SDL_Rect rectForSprite(Sprite sprite, Spriteset const& spriteset);
   void renderCharacter(PositionedRectangle const& viewport,
                        Texture const& characterset_texture,
                        Character const& character) const;
-  void renderCharacters(
-      PositionedRectangle const& viewport,
-      std::vector<Character> const& characters,
-      TextureAtlas const& charactersets_textures) const;
+  void renderCharacters(PositionedRectangle const& viewport,
+                        std::vector<Character> const& characters,
+                        TextureAtlas const& charactersets_textures) const;
   void renderLevel(Level const& level, Texture const& tileset_texture,
                    PositionedRectangle const& viewport, int64_t tick) const;
 };

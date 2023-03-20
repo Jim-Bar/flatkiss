@@ -32,7 +32,7 @@ using std::string;
 using std::unordered_map;
 
 Action LoaderActionSpriteMapper::actionIdentifierToAction(
-    uint16_t action_identifier) {
+    int64_t action_identifier) {
   switch (action_identifier) {
     case 0:
       return Action::kWalkLeft;
@@ -66,9 +66,9 @@ unordered_map<int64_t, ActionSpriteMapper const> LoaderActionSpriteMapper::load(
   return index_to_mapper;
 }
 
-unordered_map<Action, uint16_t> LoaderActionSpriteMapper::loadGroup(
+unordered_map<Action, int64_t> LoaderActionSpriteMapper::loadGroup(
     int64_t group_size, ifstream& stream) {
-  unordered_map<Action, uint16_t> action_to_indices;
+  unordered_map<Action, int64_t> action_to_indices;
   for (int64_t i{0}; i < group_size; i++) {
     int64_t action_identifier{StreamReader::read(stream, 2)};
     int64_t sprite_index{StreamReader::read(stream, 2)};

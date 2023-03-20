@@ -30,7 +30,7 @@ class LoaderTileSolidMapper {
       std::string const& tile_solid_map_file_path);
 
  private:
-  static std::unordered_map<uint16_t, int64_t> loadGroup(int64_t group_size,
+  static std::unordered_map<Sprite, int64_t> loadGroup(int64_t group_size,
                                                          std::ifstream& stream);
 };
 

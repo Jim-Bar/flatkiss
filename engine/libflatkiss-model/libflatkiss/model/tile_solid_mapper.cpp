@@ -24,16 +24,16 @@ using std::move;
 using std::unordered_map;
 
 TileSolidMapper::TileSolidMapper(
-    unordered_map<uint16_t, int64_t>&& tiles_to_solids)
+    unordered_map<Sprite, int64_t>&& tiles_to_solids)
     : tiles_to_solids_{move(tiles_to_solids)} {}
 
-bool TileSolidMapper::contains(uint16_t tile_index) const {
-  return tiles_to_solids_.contains(tile_index);
+bool TileSolidMapper::contains(Sprite const& tile) const {
+  return tiles_to_solids_.contains(tile);
 }
 
-int64_t TileSolidMapper::solidIndexForTileIndex(uint16_t tile_index) const {
-  if (tiles_to_solids_.contains(tile_index)) {
-    return tiles_to_solids_.at(tile_index);
+int64_t TileSolidMapper::solidIndexForTile(Sprite const& tile) const {
+  if (tiles_to_solids_.contains(tile)) {
+    return tiles_to_solids_.at(tile);
   }
 
   return 0;  // FIXME: Raise exception.

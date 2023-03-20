@@ -24,26 +24,26 @@ using std::move;
 using std::unordered_map;
 
 AnimationPlayer::AnimationPlayer(
-    unordered_map<uint16_t, Animation>&& animations_per_sprite_index)
-    : animations_per_sprite_index_{move(animations_per_sprite_index)} {}
+    unordered_map<Sprite, Animation>&& animations_per_sprite)
+    : animations_per_sprite_{move(animations_per_sprite)} {}
 
-uint16_t AnimationPlayer::animatedSpriteIndexFor(uint16_t sprite_index,
+Sprite const& AnimationPlayer::animatedSpriteFor(Sprite const& sprite,
                                                  int64_t tick) const {
-  if (!animations_per_sprite_index_.contains(sprite_index)) {
-    return sprite_index;
+  if (!animations_per_sprite_.contains(sprite)) {
+    return sprite;
   }
 
-  Animation const& animation{animations_per_sprite_index_.at(sprite_index)};
-  return animation.spriteIndexAtStep(
+  Animation const& animation{animations_per_sprite_.at(sprite)};
+  return animation.spriteAtStep(
       (tick % (animation.getPeriod() * animation.getDuration())) /
       animation.getDuration());
 }
 
-int64_t AnimationPlayer::animationDurationForSpriteIndex(
-    uint16_t sprite_index) const {
-  if (!animations_per_sprite_index_.contains(sprite_index)) {
+int64_t AnimationPlayer::animationDurationForSprite(
+    Sprite const& sprite) const {
+  if (!animations_per_sprite_.contains(sprite)) {
     return 0;
   }
 
-  return animations_per_sprite_index_.at(sprite_index).getDuration();
+  return animations_per_sprite_.at(sprite).getDuration();
 }

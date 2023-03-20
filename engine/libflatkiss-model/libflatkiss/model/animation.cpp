@@ -21,16 +21,14 @@
 
 using std::vector;
 
-Animation::Animation(vector<uint16_t> const& sprite_indices, uint8_t period,
+Animation::Animation(vector<Sprite> const& sprites, uint8_t period,
                      uint8_t duration)
-    : sprite_indices_{move(sprite_indices)},
-      period_{period},
-      duration_{duration} {}
+    : sprites_{move(sprites)}, period_{period}, duration_{duration} {}
 
 int64_t Animation::getDuration() const { return duration_; }
 
 int64_t Animation::getPeriod() const { return period_; }
 
-uint16_t Animation::spriteIndexAtStep(int64_t step) const {
-  return sprite_indices_[step];
+Sprite const& Animation::spriteAtStep(int64_t step) const {
+  return sprites_[step];
 }

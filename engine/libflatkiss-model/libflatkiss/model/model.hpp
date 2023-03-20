@@ -25,6 +25,7 @@
 #include <libflatkiss/model/character.hpp>
 #include <libflatkiss/model/level.hpp>
 #include <libflatkiss/model/positioned_rectangle.hpp>
+#include <libflatkiss/model/sprite.hpp>
 #include <libflatkiss/model/spriteset.hpp>
 #include <libflatkiss/model/tile_solid_mapper.hpp>
 #include <libflatkiss/model/vector.hpp>

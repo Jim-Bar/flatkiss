@@ -31,9 +31,9 @@ class LoaderActionSpriteMapper {
       std::string const& indices_file_path);
 
  private:
-  static Action actionIdentifierToAction(uint16_t action_identifier);
-  static std::unordered_map<Action, uint16_t> loadGroup(int64_t group_size,
-                                                        std::ifstream& stream);
+  static Action actionIdentifierToAction(int64_t action_identifier);
+  static std::unordered_map<Action, int64_t> loadGroup(int64_t group_size,
+                                                       std::ifstream& stream);
 };
 
 #endif

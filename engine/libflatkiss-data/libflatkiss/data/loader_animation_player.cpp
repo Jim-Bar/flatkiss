@@ -53,16 +53,16 @@ unordered_map<int64_t, AnimationPlayer const> LoaderAnimationPlayer::load(
   return animation_players_per_group;
 }
 
-unordered_map<uint16_t, Animation> LoaderAnimationPlayer::loadGroup(
+unordered_map<int64_t, Animation> LoaderAnimationPlayer::loadGroup(
     int64_t group_size, ifstream& stream) {
-  unordered_map<uint16_t, Animation> animations_per_sprite_index;
+  unordered_map<int64_t, Animation> animations_per_sprite_index;
   for (int64_t i{0}; i < group_size; i++) {
     int64_t period{StreamReader::read(stream, 1)};
     int64_t duration{StreamReader::read(stream, 1)};
     /* The vector containing animations is created and space is reserved for
      * containing all of them at the same time. Then the stream is read
      * directly into the vector. */
-    vector<uint16_t> sprites(period, 0);
+    vector<int64_t> sprites(period, 0);
     for (int64_t i{0}; i < period; i++) {
       sprites[i] = StreamReader::read(stream, 2);
     }

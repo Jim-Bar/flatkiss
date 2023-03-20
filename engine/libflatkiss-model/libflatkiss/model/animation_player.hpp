@@ -23,29 +23,30 @@
 #include <cstdint>
 #include <fstream>
 #include <libflatkiss/model/animation.hpp>
+#include <libflatkiss/model/sprite.hpp>
 #include <unordered_map>
 
 /**
  * @brief Maps sprite indices to their animated counterparts.
  *
- * Given a sprite index and a tick, this class helps determining the index of
- * the sprite which should be displayed.
+ * Given a sprite and a tick, this class helps determining the sprite which
+ * should be displayed.
  */
 class AnimationPlayer {
  public:
   /**
    * @brief Construct an AnimationPlayer from a map of animations.
    *
-   * @param animations_per_sprite_index Map of sprite indices to their
-   * respective animations.
+   * @param animations_per_sprite Map of sprite indices to their respective
+   * animations.
    */
   AnimationPlayer(
-      std::unordered_map<uint16_t, Animation>&& animations_per_sprite_index);
-  uint16_t animatedSpriteIndexFor(uint16_t sprite_index, int64_t tick) const;
-  int64_t animationDurationForSpriteIndex(uint16_t sprite_index) const;
+      std::unordered_map<Sprite, Animation>&& animations_per_sprite);
+  Sprite const& animatedSpriteFor(Sprite const& sprite, int64_t tick) const;
+  int64_t animationDurationForSprite(Sprite const& sprite) const;
 
  private:
-  std::unordered_map<uint16_t, Animation> const animations_per_sprite_index_;
+  std::unordered_map<Sprite, Animation> const animations_per_sprite_;
 };
 
 #endif

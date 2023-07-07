@@ -70,9 +70,9 @@ bool Navigator::collidesWithTiles(PositionedSolid const& positioned_solid,
                positioned_solid.boundingBox().width() - 1) /
                   level.spriteset().spritesWidth();
          x++) {
-      Sprite const& tile{level.tile(x, y)};
+      uint16_t tile_index(level.tileIndex(x, y));
       if (solidCollidesWithTileAtPosition(
-              positioned_solid, tile,
+              positioned_solid, tile_index,
               Position{x * level.spriteset().spritesWidth(),
                        y * level.spriteset().spritesHeight()},
               level)) {
@@ -278,20 +278,20 @@ Position Navigator::slide(PositionedSolid const& positioned_solid,
 }
 
 bool Navigator::solidCollidesWithTileAtPosition(
-    PositionedSolid const& positioned_solid, Sprite tile,
+    PositionedSolid const& positioned_solid, uint16_t tile_index,
     Position const& position, Level const& level) const {
-  if (level.tileSolidMapper().contains(tile)) {
+  if (level.tileSolidMapper().contains(tile_index)) {
     return Collider::collide(
         positioned_solid,
-        solidForTileIndexAtPosition(tile, position, level));
+        solidForTileIndexAtPosition(tile_index, position, level));
   }
 
   return false;
 }
 
 PositionedSolid Navigator::solidForTileIndexAtPosition(
-    Sprite tile, Position const& position, Level const& level) const {
+    uint16_t tile_index, Position const& position, Level const& level) const {
   return PositionedSolid{
       position,
-      solids_.at(level.tileSolidMapper().solidIndexForTile(tile))};
+      solids_.at(level.tileSolidMapper().solidIndexForTileIndex(tile_index))};
 }

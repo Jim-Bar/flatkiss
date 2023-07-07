@@ -33,7 +33,7 @@ class LoaderAnimationPlayer {
       std::string const& file_path);
 
  private:
-  static std::unordered_map<int64_t, Animation> loadGroup(
+  static std::unordered_map<uint16_t, Animation> loadGroup(
       int64_t group_size, std::ifstream& animations_stream);
 };
 

@@ -76,12 +76,13 @@ void Character::resetAnimationTick() {
    * for small moves. If this causes issues in the future, it could be replaced
    * by adding pre-animation, played a single time when the animation starts. */
   animation_tick_ =
-      animation_player_.animationDurationForSprite(sprite()) - 1;
+      animation_player_.animationDurationForSpriteIndex(spriteIndex()) - 1;
 }
 
-Sprite const& Character::sprite() const {
-  return animation_player_.animatedSpriteFor(
-      action_sprite_mapper_.spriteForAction(currentAction()), animation_tick_);
+uint16_t Character::spriteIndex() const {
+  return animation_player_.animatedSpriteIndexFor(
+      action_sprite_mapper_.spriteIndexForAction(currentAction()),
+      animation_tick_);
 }
 
 Spriteset const& Character::spriteset() const { return spriteset_; }

@@ -21,7 +21,6 @@
 #define LIBFLATKISS_MODEL_ANIMATION_HPP_INCLUDED
 
 #include <cstdint>
-#include <libflatkiss/model/sprite.hpp>
 #include <vector>
 
 /**
@@ -33,16 +32,16 @@
  */
 class Animation {
  public:
-  Animation(std::vector<Sprite> const& sprites, uint8_t period,
+  Animation(std::vector<uint16_t> const& sprite_indices, uint8_t period,
             uint8_t Duration);
   int64_t getDuration() const;
   int64_t getPeriod() const;
-  Sprite const& spriteAtStep(int64_t step) const;
+  uint16_t spriteIndexAtStep(int64_t step) const;
 
  private:
   uint8_t const duration_;
   uint8_t const period_;
-  std::vector<Sprite> const sprites_;
+  std::vector<uint16_t> const sprite_indices_;
 };
 
 #endif

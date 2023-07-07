@@ -50,9 +50,9 @@ unordered_map<int64_t, TileSolidMapper const> LoaderTileSolidMapper::load(
   return index_to_mapper;
 }
 
-unordered_map<Sprite, int64_t> LoaderTileSolidMapper::loadGroup(
+unordered_map<uint16_t, int64_t> LoaderTileSolidMapper::loadGroup(
     int64_t group_size, std::ifstream& stream) {
-  unordered_map<Sprite, int64_t> tiles_to_solids;
+  unordered_map<uint16_t, int64_t> tiles_to_solids;
   for (int64_t i{0}; i < group_size; i++) {
     int64_t tile_index{StreamReader::read(stream, 2)};
     int64_t solid_index{StreamReader::read(stream, 2)};

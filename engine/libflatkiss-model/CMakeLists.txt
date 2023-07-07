@@ -33,8 +33,6 @@ add_library(${LIBRARY_MODEL} STATIC
     lib${NAME_PROJECT}/${NAME_MODEL}/rectangle.hpp
     lib${NAME_PROJECT}/${NAME_MODEL}/solid.cpp
     lib${NAME_PROJECT}/${NAME_MODEL}/solid.hpp
-    lib${NAME_PROJECT}/${NAME_MODEL}/sprite.cpp
-    lib${NAME_PROJECT}/${NAME_MODEL}/sprite.hpp
     lib${NAME_PROJECT}/${NAME_MODEL}/spriteset.cpp
     lib${NAME_PROJECT}/${NAME_MODEL}/spriteset.hpp
     lib${NAME_PROJECT}/${NAME_MODEL}/tile_solid_mapper.cpp

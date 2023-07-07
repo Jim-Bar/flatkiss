@@ -23,7 +23,6 @@
 #include <libflatkiss/model/animation_player.hpp>
 #include <libflatkiss/model/character.hpp>
 #include <libflatkiss/model/character_template.hpp>
-#include <libflatkiss/model/sprite.hpp>
 #include <libflatkiss/model/spriteset.hpp>
 #include <libflatkiss/model/tile_solid_mapper.hpp>
 #include <vector>
@@ -36,7 +35,7 @@
  */
 class Level {
  public:
-  Level(std::vector<Sprite>&& tiles, int64_t width_in_tiles,
+  Level(std::vector<uint16_t>&& tiles, int64_t width_in_tiles,
         int64_t height_in_tiles, Spriteset const& spriteset,
         AnimationPlayer const& animation_player,
         std::vector<Character>& characters,
@@ -45,7 +44,7 @@ class Level {
   std::vector<Character>& characters();
   int64_t heightInTiles() const;
   Spriteset const& spriteset() const;
-  Sprite tile(int64_t i, int64_t j) const;
+  uint16_t tileIndex(int64_t i, int64_t j) const;
   TileSolidMapper const& tileSolidMapper() const;
   int64_t widthInTiles() const;
 
@@ -55,7 +54,7 @@ class Level {
   int64_t const height_in_tiles_;
   Spriteset const& spriteset_;
   TileSolidMapper const& tile_solid_mapper_;
-  std::vector<Sprite> const tiles_;
+  std::vector<uint16_t> const tiles_;
   int64_t const width_in_tiles_;
 };
 

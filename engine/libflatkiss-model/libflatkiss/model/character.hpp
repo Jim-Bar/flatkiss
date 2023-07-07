@@ -50,7 +50,7 @@ class Character {
   void moveTo(Position&& new_position);
   Position const& position() const;
   PositionedSolid const& positionedSolid() const;
-  Sprite const& sprite() const;
+  uint16_t spriteIndex() const;
   Spriteset const& spriteset() const;
   void updateFacingDirection(Vector const& desired_displacement,
                              Vector const& actual_displacement);

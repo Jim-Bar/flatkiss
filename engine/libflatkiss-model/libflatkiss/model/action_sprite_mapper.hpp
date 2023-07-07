@@ -22,7 +22,6 @@
 
 #include <cstdint>
 #include <libflatkiss/model/action.hpp>
-#include <libflatkiss/model/sprite.hpp>
 #include <string>
 #include <unordered_map>
 
@@ -42,11 +41,11 @@ class ActionSpriteMapper {
    * @param action_to_indices Map of actions to the index of the first sprite
    * showing this action in a spriteset.
    */
-  ActionSpriteMapper(std::unordered_map<Action, Sprite>&& action_to_indices);
-  Sprite const& spriteForAction(Action const& action) const;
+  ActionSpriteMapper(std::unordered_map<Action, uint16_t>&& action_to_indices);
+  uint16_t spriteIndexForAction(Action const& action) const;
 
  private:
-  std::unordered_map<Action, Sprite> const action_to_indices_;
+  std::unordered_map<Action, uint16_t> const action_to_indices_;
 };
 
 #endif

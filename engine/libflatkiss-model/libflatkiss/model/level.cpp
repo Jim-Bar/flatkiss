@@ -23,7 +23,7 @@
 using std::move;
 using std::vector;
 
-Level::Level(vector<Sprite>&& tiles, int64_t width_in_tiles,
+Level::Level(vector<uint16_t>&& tiles, int64_t width_in_tiles,
              int64_t height_in_tiles, Spriteset const& spriteset,
              AnimationPlayer const& animation_player,
              std::vector<Character>& characters,
@@ -46,7 +46,7 @@ int64_t Level::heightInTiles() const { return height_in_tiles_; }
 
 Spriteset const& Level::spriteset() const { return spriteset_; }
 
-Sprite Level::tile(int64_t i, int64_t j) const {
+uint16_t Level::tileIndex(int64_t i, int64_t j) const {
   return tiles_[j * width_in_tiles_ + i];
 }
 

@@ -25,10 +25,10 @@ using std::move;
 using std::unordered_map;
 
 ActionSpriteMapper::ActionSpriteMapper(
-    unordered_map<Action, Sprite>&& action_to_indices)
+    unordered_map<Action, uint16_t>&& action_to_indices)
     : action_to_indices_{move(action_to_indices)} {}
 
-Sprite const& ActionSpriteMapper::spriteForAction(Action const& action) const {
+uint16_t ActionSpriteMapper::spriteIndexForAction(Action const& action) const {
   if (action_to_indices_.contains(action)) {
     return action_to_indices_.at(action);
   }

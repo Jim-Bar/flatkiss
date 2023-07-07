@@ -65,9 +65,9 @@ vector<Level> LoaderLevel::load(
       }
       // Two bytes per tile.
       int64_t const size_in_bytes{width_in_tiles * height_in_tiles * 2};
-      vector<Sprite> tiles;
+      vector<uint16_t> tiles(size_in_bytes, 0);
       for (int64_t i{0}; i < size_in_bytes; i++) {
-        tiles.emplace_back(StreamReader::read(stream, 2));
+        tiles[i] = StreamReader::read(stream, 2);
       }
       levels.emplace_back(move(tiles), width_in_tiles, height_in_tiles,
                           spritesets[spriteset_index],

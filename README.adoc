@@ -59,12 +59,13 @@ WARNING: In the tables below, sometimes values or bytefields follow a _(...)_ on
 
 === Level
 
+The file `levels.bin` contains any number of `LEVEL` concatenated together.
+
 .`LEVEL`
-[cols="8*"]
 |===
 |0|1|2|3|4|5|6|7
 
-2+|`Width` 2+|`Height` 2+|`SpritesetIndex` 2+|`TileAnimation`
+2+|`Width` 2+|`Height` 2+|`SpritesetIndex` 2+|`AnimationGroupIndex`
 2+|`TilesToSolidsMapIndex` 2+|`NumberOfCharacters` 4+|`CHARACTER_IN_LEVEL` (0)
 2+|(continued) 6+|`CHARACTER_IN_LEVEL` (1)
 2+| (...) 6+|`CHARACTER_IN_LEVEL` (`NumberOfCharacters` - 1)
@@ -74,14 +75,13 @@ WARNING: In the tables below, sometimes values or bytefields follow a _(...)_ on
 `Width`:: Width of the level in tiles.
 `Height`:: Height of the level in tiles.
 `SpritesetIndex`:: Index of the spriteset to use for the level.
-`TileAnimation`:: Index of the tile animation to use for the level.
+`AnimationGroupIndex`:: Index of the group of animations to use for the level.
 `TilesToSolidsMapIndex`:: Index of the map of tiles to solids to use for the level.
 `NumberOfCharacters`:: Number of characters in the level.
-`TileIndex`:: Tile index in the tileset. The first one is the top left tile in the level, then the one to its right, and
-so on until reaching the bottom right tile in the level.
+`TileIndex`:: Tile index in the tileset. The first tile index represents the top left tile in the level, then next tile
+index represents the one to its right, and so on until reaching the bottom right tile in the level.
 
 .`CHARACTER_IN_LEVEL`
-[cols="6*"]
 |===
 |0|1|2|3|4|5
 
@@ -94,12 +94,36 @@ so on until reaching the bottom right tile in the level.
 
 === Animations
 
-The _period_ of the animation is the number of tiles making it up. It is stored on one byte. The _duration_ of the
-animation is how many ticks pass before the animation goes to the next step / tile. Stored on the next byte. Then are
-the tiles indices (in the tileset) as shorts (two bytes per index).
+The file `animations.bin` contains any number of `ANIMATION_GROUP` concatenated together.
 
-A group of animation starts with the index on two bytes. Then the number of animations making up the group on two bytes.
-Then come the animations concatenated together.
+.`ANIMATION_GROUP`
+|===
+|0|1|2|3|4|5|6|7
+
+2+|`AnimationGroupIndex` 2+|`NumberOfAnimations` 4+|`ANIMATION` (0)
+4+|`ANIMATION` (1) 4+|(...)
+4+|`ANIMATION` (`NumberOfAnimations` - 1) 4+|
+|===
+
+`AnimationGroupIndex`:: Unique identifier of this group, can be anything.
+`NumberOfAnimations`:: Number of animations this group is made of.
+
+.`ANIMATION`
+|===
+|0|1|2|3|4|5|6|7
+
+|`Period` |`Duration` 2+|`SpriteIndex` (0) 2+|`SpriteIndex` (1) 2+|(...)
+2+|`SpriteIndex` (`Period` - 1) 6+|
+|===
+
+`Period`:: Number of sprites making up this animation.
+`Duration`:: How many ticks pass before the animation goes to the next step / sprite.
+`SpriteIndex`:: Sprite index in the spriteset. The first sprite index is the first frame of the animation, the second
+sprite index the second frame, etc...
+
+TIP: The first sprite index in the animation also defines which animation is played for a particular sprite (in a level
+or of a character). A group of animations is associated with a level / character. Then the animation for a particular
+sprite is the one starting with that sprite index.
 
 === Collisions
 
@@ -212,7 +236,7 @@ other things) the naming of identifiers.
 
 TIP: For quickly reformatting the code in Visual Studio Code, use `Ctrl+Shift+I`.
 
-== Editor
+== Level editor
 
 === How to use
 

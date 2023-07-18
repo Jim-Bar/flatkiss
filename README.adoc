@@ -127,36 +127,79 @@ sprite is the one starting with that sprite index.
 
 === Collisions
 
-Collisions are either rectangles or ellipses which cannot be crossed. There are gathered in groups making up solids. A
-solid is a collection of those shapes which cannot be crossed.
+Collisions are handled through the use of shapes which cannot be crossed. The shapes available are rectangles and
+ellipses. Those are gathered in groups making up _solids_. A solid is a collection of those shapes which cannot be
+crossed.
 
-Rectangle collisions are delimitated by an origin (x, y) at the top left of the sprite, and a size (width, height). They
-are associated with sprites indices. For instance, if sprites are 16x16 pixels, the collision of origin (12, 12) and
-size (4, 4) makes a sprite not walkable on the square of 4x4 pixels at its bottom right.
+Rectangle are delimitated by an origin (x, y) at the top left of the sprite, and a size (width, height). They are
+associated with sprites indices. For instance, if sprites are 16x16 pixels, the collision of origin (12, 12) and size
+(4, 4) makes a sprite not walkable on the square of 4x4 pixels at its bottom right.
 
-Ellipse collisions are delimitated by an ellipse whose center (x, y) is at the top left of the sprite, and two radii for
-each axis (radiusX, radiusY). As for rectangle collisions, they are associated with sprites indices. For instance, if
-sprites are 16x16 pixels, the collision of origin (4, 4) and radii (4, 4) makes a sprite not walkable on the circle of
-8x8 pixels at its top left.
+Ellipse are delimitated by an ellipse whose center (x, y) is at the top left of the sprite, and two radii for each axis
+(radiusX, radiusY). As for rectangle collisions, they are associated with sprites indices. For instance, if sprites are
+16x16 pixels, the collision of origin (4, 4) and radii (4, 4) makes a sprite not walkable on the circle of 8x8 pixels at
+its top left.
 
 NOTE: The origin (respectively center) of the rectangle (respectively ellipse) can be outside of the sprite. Likewise,
 the size of the rectangle or ellipse can be greather than the one of the sprite. Consequently, the rectangle or ellipse
 can overflow the sprite. *However*, the portion outside of the sprite will be ignored.
 
-A collision is stored as:
+The file `solids.bin` contains any number of `SOLID_GROUP` concatenated together.
 
-. First two bytes: solid index
-. Next byte: collision type (0 for rectangle, 1 for ellipse)
-. *For a rectangle*: on the four next bytes (each on one byte): x, y, width, height
-. *For an ellipse*: on the four next bytes (each on one byte): x center, y center, x radius, y radius
+.`SOLID_GROUP`
+|===
+|0|1|2|3|4|5|6|7
 
-All of those are interpreted as positive integers.
+2+|`SolidGroupIndex` 2+|`NumberOfShapes` 4+|`SHAPE` (0)
+3+|(continued) 5+|`SHAPE` (1)
+2+|(continued) 6+|(...)
+7+|`SHAPE` (`NumberOfShapes` - 1) |
+|===
 
-TIP: Several collisions can be added for a single solid index. Every one of those will be checked to determine whether
-an object collides with the solid.
+`SolidGroupIndex`:: Unique identifier of this group, can be anything.
+`NumberOfShapes`:: Number of shapes making up this group.
 
-A group of solids starts with the index on two bytes. Then the number of solids making up the group on two bytes. Then
-come the solids (meaning all the collisions making up all the solids of that group) concatenated together.
+IMPORTANT: The solids are defined through the shapes they are made of. Nowhere there is a definition of a solid as a
+list of shapes. There is only a list of shapes, some of which reference a single solid, effectively defining that solid.
+
+.`SHAPE`
+|===
+|0|1|2|3|4|5|6
+
+2+|`SolidIndex` |`ShapeType` 4+|`RECTANGLE` \| `ELLIPSE`
+|===
+
+`SolidIndex`:: Unique identifier of the solid owning this shape.
+`ShapeType`:: Either a rectangle or ellipse, respectively `0` or `1`.
+
+.`RECTANGLE`
+|===
+|0|1|2|3
+
+|`PositionX` |`PositionY` |`Width` |`Height`
+|===
+
+`PositionX`:: Horizontal position of the rectangle's top left in the sprite in pixels.
+`PositionY`:: Vertical position of the rectangle's top left in the sprite in pixels.
+`Width`:: Width of the rectangle in pixels.
+`Height`:: Height of the rectangle in pixels.
+
+.`ELLIPSE`
+|===
+|0|1|2|3
+
+|`CenterX` |`CenterY` |`RadiusX` |`RadiusY`
+|===
+
+`CenterX`:: Horizontal position of the ellipse's center in the sprite in pixels.
+`CenterY`:: Vertical position of the ellipse's center in the sprite in pixels.
+`RadiusX`:: Horizontal radius of the ellipse in pixels.
+`RadiusY`:: Vertical radius of the ellipse in pixels.
+
+NOTE: All the positions are interpreted as positive integers.
+
+TIP: Remember that several shapes can be added for a single solid index. Every one of those will be checked to determine
+whether an object collides with the solid.
 
 ==== Tiles and solids
 

@@ -18,9 +18,11 @@
  */
 
 #include <algorithm>
+#include <array>
 #include <libflatkiss/logic/navigator.hpp>
 
 using std::abs;
+using std::array;
 using std::max;
 using std::unordered_map;
 
@@ -204,7 +206,7 @@ Position Navigator::sideStepX(PositionedSolid const& positioned_solid,
                               Vector const& desired_displacement,
                               Level const& level, int64_t sidestep_distance,
                               int64_t sidestep_speed) const {
-  for (int64_t direction : std::array{-1, 1}) {
+  for (int64_t direction : array{-1, 1}) {
     Position parallax{clampToBounds(
         positioned_solid + Vector{sidestep_distance * direction, 0}, level)};
     if (!collidesWithTiles(PositionedSolid{parallax, positioned_solid.solid()},
@@ -232,7 +234,7 @@ Position Navigator::sideStepY(PositionedSolid const& positioned_solid,
                               Vector const& desired_displacement,
                               Level const& level, int64_t sidestep_distance,
                               int64_t sidestep_speed) const {
-  for (int64_t direction : std::array{-1, 1}) {
+  for (int64_t direction : array{-1, 1}) {
     Position parallax{clampToBounds(
         positioned_solid + Vector{0, sidestep_distance * direction}, level)};
     if (!collidesWithTiles(PositionedSolid{parallax, positioned_solid.solid()},
@@ -260,7 +262,7 @@ Position Navigator::sideStepY(PositionedSolid const& positioned_solid,
 Position Navigator::slide(PositionedSolid const& positioned_solid,
                           Vector const& desired_displacement,
                           Level const& level) const {
-  for (Vector const& sliding_displacement : std::array{
+  for (Vector const& sliding_displacement : array{
            // Try to slide against the obstacle along the X axis.
            Vector{desired_displacement.dx(), 0},
            // Or slide along the Y axis.

@@ -51,13 +51,46 @@ IMPORTANT: SDL2 must be installed.
 
 NOTE: Everything is little-endian.
 
+NOTE: In the tables below, names in `PascalCase` are just values, names in `MACRO_CASE` are other bytefields.
+
+NOTE: In the tables below, _(continued)_ means a value of bytefield which extends onto the next row.
+
+WARNING: In the tables below, sometimes values or bytefields follow a _(...)_ on a new row. This does not necessarily means that this value / bytefields is padded to 0. In all cases, this field just follows whatever was before without a gap.
+
 === Level
 
-Width and height of the level in tiles on two bytes each, followed by the spriteset index to use on two bytes, then the
-tile animation on two bytes, then the tiles to solids map index on two bytes. After comes the characters in the level.
-Firstly is the number of characters on two bytes, followed by a list of pairs for each character. A pair is composed of
-the index of the character to use on two bytes and of its location in the level in tiles, two bytes for x and two bytes
-for y. After the characters come the list of tiles indices (in the tileset) as shorts (two bytes per index).
+.`LEVEL`
+[cols="8*"]
+|===
+|0|1|2|3|4|5|6|7
+
+2+|`Width` 2+|`Height` 2+|`SpritesetIndex` 2+|`TileAnimation`
+2+|`TilesToSolidsMapIndex` 2+|`NumberOfCharacters` 4+|`CHARACTER_IN_LEVEL` (0)
+2+|(continued) 6+|`CHARACTER_IN_LEVEL` (1)
+2+| (...) 6+|`CHARACTER_IN_LEVEL` (`NumberOfCharacters` - 1)
+2+|`TileIndex` (0) 2+|`TileIndex` (1) 2+| (...) 2+|`TileIndex` (`Width` * `Height` - 1)
+|===
+
+`Width`:: Width of the level in tiles.
+`Height`:: Height of the level in tiles.
+`SpritesetIndex`:: Index of the spriteset to use for the level.
+`TileAnimation`:: Index of the tile animation to use for the level.
+`TilesToSolidsMapIndex`:: Index of the map of tiles to solids to use for the level.
+`NumberOfCharacters`:: Number of characters in the level.
+`TileIndex`:: Tile index in the tileset. The first one is the top left tile in the level, then the one to its right, and
+so on until reaching the bottom right tile in the level.
+
+.`CHARACTER_IN_LEVEL`
+[cols="6*"]
+|===
+|0|1|2|3|4|5
+
+2+|`CharacterIndex` 2+|`PositionX` 2+|`PositionY`
+|===
+
+`CharacterIndex`:: Index of the character to use.
+`PositionX`:: Location in the level of the character in tiles along the horizontal axis.
+`PositionY`:: Location in the level of the character in tiles along the vertical axis.
 
 === Animations
 

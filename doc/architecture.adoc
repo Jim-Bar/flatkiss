@@ -1,0 +1,3 @@
+= Architecture
+
+Explanation about the structure and inner workings of the project.

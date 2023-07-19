@@ -1,0 +1,3 @@
+= Environment
+
+Recommended way of setting up the environment for starting developing.

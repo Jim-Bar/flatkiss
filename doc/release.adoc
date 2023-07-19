@@ -1,0 +1,3 @@
+= Release
+
+Process to release a new version of the project.

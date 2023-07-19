@@ -272,20 +272,39 @@ TIP: There are also _charactersets_ and _tilesets_ which are special occurrences
 spriteset dedicated to sprites of characters while the latter is dedicated to sprites of levels. Technically there is no
 difference with a regular spriteset though, those are just names for convenience.
 
-==== Sprite indices
+==== Actions to animations
 
-Group of sprite indices mapping actions to the first sprite index of the animation in the characterset. The actions are:
+The file `action_sprite_maps.bin` contains any number of `ACTIONS_TO_ANIMATIONS_GROUP` concatenated together.
 
-. Walk left: 0
-. Walk down: 1
-. Walk right: 2
-. Walk up: 3
+.`ACTIONS_TO_ANIMATIONS_GROUP`
+|===
+|0|1|2|3|4|5|6|7
 
-A group of animation is made up of its index (two bytes), then of its size (two bytes). Then the couples of each action
-mapped to the first sprite index of the animation for that action, concatenated. Both the action and sprite index are
-two bytes each. Example of a map: 2 to 4 which means that the index of the first sprite of the animation showing the
-character walk to the right (2) is at the fourth position in the characterset (4). Combined with the animation, this is
-enough for finding all the (animated) sprites showing the character walking to the right.
+2+|`ActionsToAnimationsGroup` 2+|`GroupSize` 4+|`ACTION_TO_ANIMATION` (0)
+4+|`ACTION_TO_ANIMATION` (1) 4+|(...)
+4+|`ACTION_TO_ANIMATION` (`GroupSize` - 1) 4+|
+|===
+
+`ActionsToAnimationsGroup`:: Unique identifier of this group.
+`GroupSize`:: Number of mappings in this group.
+
+.`ACTION_TO_ANIMATION`
+|===
+|0|1|2|3
+
+2+|`ActionIndex` 2+|`SpriteIndex`
+|===
+
+`ActionIndex`:: Index of the action to map to the animation. The possible actions are:
+    - Walk left: `0`
+    - Walk down: `1`
+    - Walk right: `2`
+    - Walk up: `3`
+`SpriteIndex`:: Index of the first sprite of the animation to link with the action.
+
+TIP: Example of a mapping: 2 to 4 which means that the index of the first sprite of the animation showing the character
+walk to the right (2) is at the fourth position in the characterset (4). Combined with the animation, this is enough for
+finding all the (animated) sprites showing the character walking to the right.
 
 == Quality
 

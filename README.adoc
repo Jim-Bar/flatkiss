@@ -201,44 +201,76 @@ NOTE: All the positions are interpreted as positive integers.
 TIP: Remember that several shapes can be added for a single solid index. Every one of those will be checked to determine
 whether an object collides with the solid.
 
-==== Tiles and solids
+==== Associating tiles to solids
 
-Either nothing is specified for a tile (it has no solid, i.e. never collides with anything) or it maps to the index of
-the solid to use. This is first the index of the tile on two bytes, followed by the index of the solid on two bytes.
+The file `tile_solid_maps.bin` contains any number of `TILE_SOLID_ASSOCIATION` concatenated together.
+
+.`TILE_SOLID_ASSOCIATION`
+|===
+|0|1|2|3
+
+2+|`TileIndex` 2+|`SolidIndex`
+|===
+
+`TileIndex`:: Tile index in the tileset.
+`SolidIndex`:: Index of the solid to use for collisions with the provided tile.
+
+If a tile is not associated with any solid then it never collides with anything.
 
 === Characters
 
-As many characters can be defined as one like. A character is defined like this:
+The file `characters.bin` contains any number of `CHARACTER` concatenated together.
 
-. Index of the spriteset to use (two bytes)
-. Index of the group of sprite indices to use with the spriteset (two bytes)
-. Index of the character animation to use with the spriteset (two bytes)
-. Index of the solid to use (two bytes)
-. Index of the controller to use (one byte)
+.`CHARACTER`
+|===
+|0|1|2|3|4|5|6|7
 
-Just append the characters for adding more than one.
+2+|`SpritesetIndex` 2+|`ActionsToAnimationsGroup` 2+|`AnimationGroupIndex` 2+|`SolidIndex`
+|`ControllerIndex` 7+|
+|===
 
-==== Spritesets
+`SpritesetIndex`:: Index of the spriteset to use for this character.
+`ActionsToAnimationsGroup`:: Index of the mapping of actions to animations to use for this character.
+`AnimationGroupIndex`:: Index of the group of animations to use with this character.
+`SolidIndex`:: Index of the solid to use for collisions with this character.
+`ControllerIndex`:: The index of the controller which will handle the behavior of this character. For now there is only
+a single controller which is the keyboard control, whose index is `0`.
 
-A spriteset is the set of sprites making up a character, a level or both. All the spritesets are defined in the same
-file, however each have a corresponding picture file containing the index of its matching spriteset in its name. A
-spriteset is defined by:
+=== Spritesets
 
-. Width of the sprites in pixels (one byte)
-. Height of the sprites in pixels (one byte)
-. Width of the spriteset in sprites (two bytes)
-. Height of the spriteset in sprites (two bytes)
-. Number of pixels from the left border of the spriteset to the first sprite (two bytes)
-. Number of pixels from the top border of the spriteset to the first sprite (two bytes)
-. Number of pixels between each sprites, called gap (two bytes)
-. Index of the picture file to use (this matches the actual picture file to load) (two bytes)
-. Red component of the colour which will be turned transparent (one byte)
-. Green component of the colour which will be turned transparent (one byte)
-. Blue component of the colour which will be turned transparent (one byte)
+A spriteset is the collection of sprites making up a character, a level or both. All the spritesets are defined in the
+same file, however each have a corresponding picture file containing the index of its matching spriteset in its name.
+
+The file `spritesets.bin` contains any number of `SPRITESET` concatenated together.
+
+.`SPRITESET`
+|===
+|0|1|2|3|4|5|6|7
+
+|`SpriteWidth` |`SpriteHeight` 2+|`SpritesetWidth` 2+|`SpritesetHeight` 2+|`OffsetLeft`
+2+|`OffsetTop` 2+|`Gap` 2+|`PictureFileIndex` |`TransparencyRed` |`TransparencyGreen`
+|`TransparencyBlue` 7+|
+|===
+
+`SpriteWidth`:: Width of the sprites in pixels.
+`SpriteHeight`:: Height of the sprites in pixels.
+`SpritesetWidth`:: Width of the spriteset in sprites.
+`SpritesetHeight`:: Height of the spriteset in sprites.
+`OffsetLeft`:: Number of pixels from the left border of the spriteset to the first sprite, used to ignore a margin in
+the spriteset if there is one.
+`OffsetTop`:: Number of pixels from the top border of the spriteset to the first sprite, used to ignore a margin in the
+spriteset if there is one.
+`Gap`:: Number of pixels between each sprites, used to ignore a margin in the spriteset separating the sprites if there
+is one.
+`PictureFileIndex`:: Index of the picture file to use (this matches the actual picture file to load which must be named
+like this: `spriteset_N.bmp`, `N` being the index).
+`TransparencyRed`:: Red component of the colour which will be turned transparent (0 to 255).
+`TransparencyGreen`:: Green component of the colour which will be turned transparent (0 to 255).
+`TransparencyBlue`:: Blue component of the colour which will be turned transparent (0 to 255).
 
 TIP: There are also _charactersets_ and _tilesets_ which are special occurrences of spritesets. The former is a
-spriteset dedicated to sprites of characters while the latter is dedicated to sprites of levels. There are no
-differences with a regular spriteset though, those are just names for convenience.
+spriteset dedicated to sprites of characters while the latter is dedicated to sprites of levels. Technically there is no
+difference with a regular spriteset though, those are just names for convenience.
 
 ==== Sprite indices
 

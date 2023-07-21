@@ -6,6 +6,7 @@
 :5: https://cmake.org
 :6: https://www.libsdl.org
 :7: https://github.com/mcmtroffaes/inipp
+:8: https://hub.docker.com/r/jimbar/flatkiss
 
 Recommended way of setting up the environment for starting developing.
 
@@ -43,8 +44,7 @@ the container and load the recommended extensions.
 For more information about developing with Docker containers in Visual Studio Code, refer to {3}[Developing inside a
 Container].
 
-WARNING: The Docker image is not yet accessible anywhere. The only way to get it is to build it: `docker build -t
-flatkiss .` (notice the final dot).
+TIP: The Docker image is {8}[on the Docker Hub].
 
 == CMake
 

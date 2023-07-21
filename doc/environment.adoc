@@ -1,3 +1,87 @@
 = Environment
+:1: https://docs.docker.com/engine/install/ubuntu
+:2: https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers
+:3: https://code.visualstudio.com/docs/devcontainers/containers
+:4: https://code.visualstudio.com
+:5: https://cmake.org
+:6: https://www.libsdl.org
+:7: https://github.com/mcmtroffaes/inipp
 
 Recommended way of setting up the environment for starting developing.
+
+== Supported platforms
+
+The project has been tested on Linux and macOS, but should also work on Windows.
+
+On Linux it is recommended to rely on Docker: there is a Docker image shipping all the required tools and dependencies
+for building.
+
+On macOS, CMake can be used directly, but IniPP and SDL must be installed manually.
+
+For both platform the recommended IDE is Visual Studio Code because it works well with Docker and CMake.
+
+== Visual Studio Code
+
+The recommended IDE (particularly on Linux thanks to its Docker capabilities) is {4}[Visual Studio Code]. If under Linux
+and using Docker there is no need to install any extension besides the one described in the next section. Otherwise
+there are a few helpful extensions which can be installed. Refer to link:../.devcontainer.json[`.devcontainer.json`] to
+find out which ones.
+
+== Docker
+
+WARNING: Only on Linux.
+
+The Docker image for the project has everything needed in it for building: compiler, tools, dependencies and even the
+recommended Visual Studio Code extensions. This is why Docker is recommended for the project.
+
+Refer to {1}[the official Docker documentation] for installing Docker.
+
+Additionally if using Visual Studio Code, the extension {2}[Dev Containers] must be installed. It will automatically
+detect that the project relies on a Docker image upon opening the project's root directory, and will automatically start
+the container and load the recommended extensions.
+
+For more information about developing with Docker containers in Visual Studio Code, refer to {3}[Developing inside a
+Container].
+
+WARNING: The Docker image is not yet accessible anywhere. The only way to get it is to build it: `docker build -t
+flatkiss .` (notice the final dot).
+
+== CMake
+
+IMPORTANT: Not required if using Docker.
+
+Refer to the {5}[official documentation] for installing CMake.
+
+== SDL2
+
+The engine relies on SDL2.
+
+CAUTION: There are two moments where SDL2 is required: at build time (development libraries) and at runtime. If using
+Docker, the SDL2 development libraries are already included in the image. But running the game happens outside of the
+container, hence requires SDL2 to be installed on the system.
+
+Refer to the {6}[official documentation] for installing SDL2. Remember the the development libraries (`dev` or `devel`)
+are required only if *not* using Docker.
+
+== IniPP
+
+IMPORTANT: Not required if using Docker.
+
+The simplest way to install {7}[IniPP] is to take its single header file and to put it in an include directory of the
+operating system. For instance on Linux and macOS, this would be `/usr/local/include/`.
+
+CMake can probably be used as another solution but this has not been tested.
+
+== C++ compiler
+
+IMPORTANT: Not required if using Docker.
+
+Last but not least, a C++ compiler is required. Anything will do, CMake is able to automatically discover installed
+compilers on the system.
+
+== clang-tidy and clang-format
+
+IMPORTANT: Not required if using Docker.
+
+This is optional, only required for writing code which is going to be committed to the Git repository. Refer to the
+Internet for how to install those tools.

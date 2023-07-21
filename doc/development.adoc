@@ -1,3 +1,48 @@
 = Development
 
-How to build the project locally and how to work on it.
+How to build the project locally and how to work on it. First follow the instructions in link:environment.adoc[
+Environment] to set up the development environment.
+
+== Building
+
+=== Visual Studio Code
+
+If using Docker, or the CMake extension is installed, Visual Studio Code will suggest to configure the project using
+CMake the first time the project is opened. After that a _Build_ button becomes available in the bottom bar.
+
+=== CMake
+
+In the root folder of the project, run these commands to configure the project:
+
+----
+mkdir build
+cd build
+cmake ../engine
+----
+
+This is only required the first time or when changes are made to CMake files.
+
+NOTE: The directory `build` can have any name.
+
+Then to build the project, run:
+
+----
+cmake --build .
+----
+
+== Generating the assets
+
+Assets are required for the engine to actually show something.
+
+There is a temporary script which generates binary files containing example assets for the engine to use:
+`setup_dev_environment.sh`. Note that it will download pictures which must be converted manually to the BMP file format.
+
+== Running
+
+NOTE: As of now it is not possible to run the generated program in the Docker container (the image cannot run graphic
+apps and is not configured to forward to an external X server), nor from Visual Studio Code (it is lacking launch
+configuration).
+
+From the root folder of the project, run: `./build/flatkiss/flatkiss-bin`.
+
+NOTE: Replace `build` with the name given in the previous section if it is different.

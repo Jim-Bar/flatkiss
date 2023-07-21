@@ -16,7 +16,7 @@ The project has been tested on Linux and macOS, but should also work on Windows.
 On Linux it is recommended to rely on Docker: there is a Docker image shipping all the required tools and dependencies
 for building.
 
-On macOS, CMake can be used directly, but IniPP and SDL must be installed manually.
+On macOS CMake can be used directly but this means that the tools and dependencies must be installed manually.
 
 For both platform the recommended IDE is Visual Studio Code because it works well with Docker and CMake.
 

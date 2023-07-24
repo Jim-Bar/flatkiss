@@ -17,22 +17,30 @@
 
 # Refer to 'COPYING.txt' for the full notice.
 
+from typing import DefaultDict, List
+
 import collections
 
-with open('solids.txt') as solids_file:
-    lines = solids_file.readlines()
 
-solid_pieces_per_index = collections.defaultdict(list)
+def solids_to_binary(text_file_path: str, binary_file_path: str) -> None:
+    with open(text_file_path) as solids_file:
+        lines = solids_file.readlines()
 
-for line in lines:
-    integers = [int(i) for i in line.split()]
-    solid_pieces_per_index[integers[0]].append(integers[1::])
+    solid_pieces_per_index: DefaultDict[int, List] = collections.defaultdict(list)
 
-with open('solids.bin', 'wb') as solids_file:
-    for solid_index, solid_pieces in solid_pieces_per_index.items():
-        solid_size = len(solid_pieces)
-        solids_file.write(solid_index.to_bytes(2, 'little'))
-        solids_file.write(solid_size.to_bytes(2, 'little'))
-        for solid_piece in solid_pieces:
-            for i in solid_piece:
-                solids_file.write(i.to_bytes(1, 'little'))
+    for line in lines:
+        integers = [int(i) for i in line.split()]
+        solid_pieces_per_index[integers[0]].append(integers[1::])
+
+    with open(binary_file_path, 'wb') as solids_file:
+        for solid_index, solid_pieces in solid_pieces_per_index.items():
+            solid_size = len(solid_pieces)
+            solids_file.write(solid_index.to_bytes(2, 'little'))
+            solids_file.write(solid_size.to_bytes(2, 'little'))
+            for solid_piece in solid_pieces:
+                for i in solid_piece:
+                    solids_file.write(i.to_bytes(1, 'little'))
+
+
+if __name__ == '__main__':
+    solids_to_binary('solids.txt', 'solids.bin')

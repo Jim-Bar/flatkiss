@@ -11,11 +11,8 @@ set -e
 git config user.name "Jean-Marie Baran"
 git config user.email "jeanmarie.baran@gmail.com"
 
-cd levels
-python3 levels_to_bin.py
-cd ..
-
 cd assets
+python3 levels_to_bin.py
 python3 animations_to_bin.py
 python3 spritesets_to_bin.py
 python3 characters_to_bin.py

@@ -17,15 +17,20 @@
 
 # Refer to 'COPYING.txt' for the full notice.
 
-with open('characters.txt') as characters_file:
-    characters_text = characters_file.readlines()
+def characters_to_binary(text_file_path: str, binary_file_path: str) -> None:
+    with open(text_file_path) as characters_file:
+        characters_text = characters_file.readlines()
 
-characters = [[int(i) for i in character.split()] for character in characters_text]
+    characters = [[int(i) for i in character.split()] for character in characters_text]
 
-with open('characters.bin', 'wb') as characters_file:
-    for character in characters:
-        characters_file.write(character[0].to_bytes(2, 'little'))
-        characters_file.write(character[1].to_bytes(2, 'little'))
-        characters_file.write(character[2].to_bytes(2, 'little'))
-        characters_file.write(character[3].to_bytes(2, 'little'))
-        characters_file.write(character[4].to_bytes(1, 'little'))
+    with open(binary_file_path, 'wb') as characters_file:
+        for character in characters:
+            characters_file.write(character[0].to_bytes(2, 'little'))
+            characters_file.write(character[1].to_bytes(2, 'little'))
+            characters_file.write(character[2].to_bytes(2, 'little'))
+            characters_file.write(character[3].to_bytes(2, 'little'))
+            characters_file.write(character[4].to_bytes(1, 'little'))
+
+
+if __name__ == '__main__':
+    characters_to_binary('characters.txt', 'characters.bin')

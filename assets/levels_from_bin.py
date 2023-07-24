@@ -21,31 +21,37 @@ import math
 import os
 import struct
 
-with open('levels.bin', 'rb') as level_file:
-    level_bytes = level_file.read()
 
-with open('levels.txt', 'w') as level_file:
+def levels_from_binary(binary_file_path: str, text_file_path: str) -> None:
+    with open(binary_file_path, 'rb') as level_file:
+        level_bytes = level_file.read()
 
-    while len(level_bytes) > 0:
-        mark = 6 * 2
-        width, height, spriteset_index, animation_index, tile_solid_map_index, num_characters = \
-            struct.unpack('HHHHHH', level_bytes[:mark])
-        characters = struct.unpack('HHH' * num_characters, level_bytes[mark:mark + num_characters * 3 * 2])
-        mark += num_characters * 3 * 2
-        tiles = struct.unpack('H' * width * height, level_bytes[mark:mark + width * height * 2])
+    with open(text_file_path, 'w') as level_file:
 
-        level_file.write('{} {} {} {} {} {}\n'.format(width, height, spriteset_index, animation_index,
-                                                   tile_solid_map_index, num_characters))
+        while len(level_bytes) > 0:
+            mark = 6 * 2
+            width, height, spriteset_index, animation_index, tile_solid_map_index, num_characters = \
+                struct.unpack('HHHHHH', level_bytes[:mark])
+            characters = struct.unpack('HHH' * num_characters, level_bytes[mark:mark + num_characters * 3 * 2])
+            mark += num_characters * 3 * 2
+            tiles = struct.unpack('H' * width * height, level_bytes[mark:mark + width * height * 2])
 
-        rows = [characters[i:i + 3] for i in range(0, len(characters), 3)]
-        level_file.write('\n'.join([' '.join([str(index).zfill(2) for index in row]) for row in rows]))
+            level_file.write('{} {} {} {} {} {}\n'.format(width, height, spriteset_index, animation_index,
+                                                    tile_solid_map_index, num_characters))
 
-        level_file.write('\n')
-        rows = [tiles[i:i + width] for i in range(0, len(tiles), width)]
-        level_file.write('\n'.join([' '.join([str(index).zfill(3) for index in row]) for row in rows]))
+            rows = [characters[i:i + 3] for i in range(0, len(characters), 3)]
+            level_file.write('\n'.join([' '.join([str(index).zfill(2) for index in row]) for row in rows]))
 
-        # Prepare for next level.
-        level_bytes = level_bytes[mark + width * height * 2:]
-
-        if len(level_bytes) > 0:
             level_file.write('\n')
+            rows = [tiles[i:i + width] for i in range(0, len(tiles), width)]
+            level_file.write('\n'.join([' '.join([str(index).zfill(3) for index in row]) for row in rows]))
+
+            # Prepare for next level.
+            level_bytes = level_bytes[mark + width * height * 2:]
+
+            if len(level_bytes) > 0:
+                level_file.write('\n')
+
+
+if __name__ == '__main__':
+    levels_from_binary('levels.bin', 'levels.txt')

@@ -34,8 +34,13 @@ cmake --build .
 
 Assets are required for the engine to actually show something.
 
-There is a temporary script which generates binary files containing example assets for the engine to use:
-`setup_dev_environment.sh`. Note that it will download pictures which must be converted manually to the BMP file format.
+For demonstrating purposes, sample assets can be generated from the directory `sample-assets/`. To generate them, run:
+`./sample-assets/generators/generate_assets.py`. An `assets/` directory is created containing the assets. Note that it
+will download pictures which must be converted manually to the BMP file format.
+
+TIP: The sample assets are stored as text for easier debugging. However as described in link:architecture.adoc[
+Architecture], the engine expects them to be in binary form, so they must be converted. The command described above does
+just that.
 
 == Running
 
@@ -46,3 +51,6 @@ configuration).
 From the root folder of the project, run: `./build/flatkiss/flatkiss-bin`.
 
 NOTE: Replace `build` with the name given in the previous section if it is different.
+
+IMPORTANT: The directory containing the assets must be in the directory from where the program is ran. In this example,
+this is the root directory of the project.

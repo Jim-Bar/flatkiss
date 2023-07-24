@@ -20,6 +20,7 @@
 import math
 import os
 import struct
+import sys
 
 
 def levels_from_binary(binary_file_path: str, text_file_path: str) -> None:
@@ -54,4 +55,4 @@ def levels_from_binary(binary_file_path: str, text_file_path: str) -> None:
 
 
 if __name__ == '__main__':
-    levels_from_binary('levels.bin', 'levels.txt')
+    levels_from_binary(sys.argv[1], sys.argv[2])

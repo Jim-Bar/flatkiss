@@ -17,19 +17,20 @@
 
 # Refer to 'COPYING.txt' for the full notice.
 
-import os
+import pathlib
 import re
+import sys
 
 
-def animations_to_binary(text_file_regex: str, binary_file_path: str) -> None:
+def animations_to_binary(text_file_path: str, text_file_regex: str, binary_file_path: str) -> None:
     with open(binary_file_path, 'wb') as animations_file:
-        for file_name in os.listdir():
-            if re.match(text_file_regex, file_name):
-                with open(file_name) as animations_text_file:
+        for file_path in pathlib.Path(text_file_path).iterdir():
+            if re.match(text_file_regex, str(file_path)):
+                with open(file_path) as animations_text_file:
                     animations = animations_text_file.readlines()
 
                 # Index of the group.
-                animations_file.write(int(re.search(r'\d', file_name)[0]).to_bytes(2, 'little'))
+                animations_file.write(int(re.search(r'\d', file_path.name)[0]).to_bytes(2, 'little'))
                 # Number of animations in the group.
                 animations_file.write(len(animations).to_bytes(2, 'little'))
                 for animation in [[int(i) for i in animation.split()] for animation in animations]:
@@ -41,4 +42,4 @@ def animations_to_binary(text_file_regex: str, binary_file_path: str) -> None:
 
 
 if __name__ == '__main__':
-    animations_to_binary(r'animations_\d+.txt', 'animations.bin')
+    animations_to_binary(sys.argv[1], sys.argv[2], sys.argv[3])

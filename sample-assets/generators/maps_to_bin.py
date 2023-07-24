@@ -17,20 +17,20 @@
 
 # Refer to 'COPYING.txt' for the full notice.
 
-import os
+import pathlib
 import re
 import sys
 
 
-def maps_to_binary(text_file_regex: str, binary_file_path: str) -> None:
+def maps_to_binary(text_file_path: str, text_file_regex: str, binary_file_path: str) -> None:
     with open(binary_file_path, 'wb') as indices_file:
-        for file_name in os.listdir():
-            if re.match(text_file_regex, file_name):
-                with open(file_name) as indices_text_file:
+        for file_path in pathlib.Path(text_file_path).iterdir():
+            if re.match(text_file_regex, str(file_path)):
+                with open(file_path) as indices_text_file:
                     action_indices_pairs = indices_text_file.readlines()
 
                 # Index of the group.
-                indices_file.write(int(re.search(r'\d', file_name)[0]).to_bytes(2, 'little'))
+                indices_file.write(int(re.search(r'\d', file_path.name)[0]).to_bytes(2, 'little'))
                 # Number of action / sprite index couples in the group.
                 indices_file.write(len(action_indices_pairs).to_bytes(2, 'little'))
 
@@ -41,4 +41,4 @@ def maps_to_binary(text_file_regex: str, binary_file_path: str) -> None:
 
 
 if __name__ == '__main__':
-    maps_to_binary(r'{}_\d+.txt'.format(sys.argv[1]), '{}s.bin'.format(sys.argv[1]))
+    maps_to_binary(sys.argv[1], sys.argv[2], sys.argv[3])

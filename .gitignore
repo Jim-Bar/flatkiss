@@ -1,4 +1,5 @@
 # Project specifics
+assets/
 build/
 *.bin
 *.bmp

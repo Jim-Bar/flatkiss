@@ -17,21 +17,23 @@
 
 # Refer to 'COPYING.txt' for the full notice.
 
-def spritesets_to_binary(text_file_path: str, binary_file_path: str) -> None:
-    with open(text_file_path) as spritesets_file:
-        characters_text = spritesets_file.readlines()
+import sys
+
+
+def characters_to_binary(text_file_path: str, binary_file_path: str) -> None:
+    with open(text_file_path) as characters_file:
+        characters_text = characters_file.readlines()
 
     characters = [[int(i) for i in character.split()] for character in characters_text]
 
-    with open(binary_file_path, 'wb') as spritesets_file:
+    with open(binary_file_path, 'wb') as characters_file:
         for character in characters:
-            for i in character[:2]:  # Width and height on one byte each.
-                spritesets_file.write(i.to_bytes(1, 'little'))
-            for i in character[2:8]:  # Number of sprites and offsets, and texture index.
-                spritesets_file.write(i.to_bytes(2, 'little'))
-            for i in character[8:11]:  # Colour to turn transparent.
-                spritesets_file.write(i.to_bytes(1, 'little'))
+            characters_file.write(character[0].to_bytes(2, 'little'))
+            characters_file.write(character[1].to_bytes(2, 'little'))
+            characters_file.write(character[2].to_bytes(2, 'little'))
+            characters_file.write(character[3].to_bytes(2, 'little'))
+            characters_file.write(character[4].to_bytes(1, 'little'))
 
 
 if __name__ == '__main__':
-    spritesets_to_binary('spritesets.txt', 'spritesets.bin')
+    characters_to_binary(sys.argv[1], sys.argv[2])

@@ -17,6 +17,9 @@
 
 # Refer to 'COPYING.txt' for the full notice.
 
+import sys
+
+
 def levels_to_binary(text_file_path: str, binary_file_path: str) -> None:
     with open(text_file_path) as level_file:
         items = level_file.read().split()
@@ -49,4 +52,4 @@ def levels_to_binary(text_file_path: str, binary_file_path: str) -> None:
 
 
 if __name__ == '__main__':
-    levels_to_binary('levels.txt', 'levels.bin')
+    levels_to_binary(sys.argv[1], sys.argv[2])

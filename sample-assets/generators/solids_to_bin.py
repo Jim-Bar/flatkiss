@@ -20,6 +20,7 @@
 from typing import DefaultDict, List
 
 import collections
+import sys
 
 
 def solids_to_binary(text_file_path: str, binary_file_path: str) -> None:
@@ -43,4 +44,4 @@ def solids_to_binary(text_file_path: str, binary_file_path: str) -> None:
 
 
 if __name__ == '__main__':
-    solids_to_binary('solids.txt', 'solids.bin')
+    solids_to_binary(sys.argv[1], sys.argv[2])

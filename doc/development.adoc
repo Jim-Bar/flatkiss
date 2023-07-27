@@ -1,18 +1,24 @@
 = Development
+:1: https://pyglet.org
 
 How to build the project locally and how to work on it. First follow the instructions in link:environment.adoc[
 Environment] to set up the development environment.
 
-== Building
+== Getting started
 
-=== Visual Studio Code
+This section describes how to get started with the project by building and running it.
+
+=== Building
+
+==== Visual Studio Code
 
 If using Docker, or the CMake extension is installed, Visual Studio Code will suggest to configure the project using
 CMake the first time the project is opened. After that a _Build_ button becomes available in the bottom bar.
 
-=== CMake
+==== CMake
 
-In the root folder of the project, run these commands to configure the project:
+If not using Visual Studio Code, CMake commands must be issued manually. In the root folder of the project, run these
+commands to configure the project:
 
 ----
 mkdir build
@@ -30,7 +36,7 @@ Then to build the project, run:
 cmake --build .
 ----
 
-== Generating the assets
+=== Generating the assets
 
 Assets are required for the engine to actually show something.
 
@@ -42,7 +48,7 @@ TIP: The sample assets are stored as text for easier debugging. However as descr
 Architecture], the engine expects them to be in binary form, so they must be converted. The command described above does
 just that.
 
-== Running
+=== Running
 
 NOTE: As of now it is not possible to run the generated program in the Docker container (the image cannot run graphic
 apps and is not configured to forward to an external X server), nor from Visual Studio Code (it is lacking launch
@@ -54,3 +60,61 @@ NOTE: Replace `build` with the name given in the previous section if it is diffe
 
 IMPORTANT: The directory containing the assets must be in the directory from where the program is ran. In this example,
 this is the root directory of the project.
+
+== Working with the sample assets
+
+The sample assets are stored as text, but it could be anything as long as the final generated assets are in the binary
+form described in link:doc/architecture.adoc[Architecture].
+
+There are a number of helpful Python scripts under `./sample-assets/generators/` to generate final assets files from the
+text files. They are self-explanatory and can be used separately or all at once (refer to <<Generating the assets>>).
+Each asset text file has its own generator which can convert from text to binary.
+
+TIP: In the case of the level, there is also a backward generator: from binary to text.
+
+The text files must be edited manually. There is no documentation on their content because it closely matches the binary
+form described in link:doc/architecture.adoc[Architecture]. Refer to the according generator script for more information
+on a particular text file.
+
+There is however a tool for editing the levels, which otherwise would be a very tedious process.
+
+=== Level editor
+
+The level editor is a Python script relying on {1}[pyglet]. It works directly with the assets in binary form, so if the
+changes must be saved in the repository do not forget to convert the level binary file back to text using the script
+from the previous section.
+
+==== How to use
+
+Start the editor by running `./sample-assets/editor.py 0`. The argument `0` is the index of the level to edit. For
+example if there are two levels, the first one is `0` and the second one `1`.
+
+IMPORTANT: Obviously the assets must have been generated beforehand.
+
+Move around using the right mouse button. Select a tile to place by left-clicking on it in the tileset view. Place a
+tile by left-clicking on a location in the level view. Save the level by pressing `S`. The title bars display a `*` when
+the work is not saved.
+
+==== About animations
+
+The editor plays the animations. However be aware that the animations will go out of sync when placing animated tiles
+down: the animation starts playing immediately, which means two identical animated tiles can be at a different frame of
+animation depending on when they were placed. To synchronize animations, restart the editor.
+
+Note also that the speed of animations can slightly differ from the engine, depending on the performance of the editor.
+
+== TODOs
+
+This is a non-exhaustive list of tasks which could be interesting to tackle.
+
+. Continue the work on libraries: improve controllers in logic (and does logic have to depend on media?)
+. Characters are updated every ticks. Add a parameter for updating them every N ticks instead (allows lower speeds)?
+. Dedicated type for tiles / sprites instead of `uint16_t`
+. Warning bug with readability-identifier-naming: https://stackoverflow.com/q/68475958
+. Replace "pixel" by "point" in the code that does not deal with graphics
+. Use namespaces
+. Editor: synchronize animated tiles when placing them
+. Objects or entities or whatever (including characters): each tile has a z-order sorted list of objects. Each tile
+draws its objects respecting the z-order, *clipped* to the tile. So that multi-tiles objects are not a problem.
+. Editor: resizable tileset window
+. Tiled: https://www.mapeditor.org

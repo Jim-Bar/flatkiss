@@ -31,32 +31,7 @@ link:doc/test.adoc[Test]:: Build the project with the CI, find useful resources 
 link:doc/development.adoc[Development]:: Learn how to start working with the project
 link:doc/release.adoc[Release]:: Publish new versions of the project
 
-== Level editor
+== Status
 
-=== How to use
-
-Move around using the right mouse button. Select a tile to place by left-clicking on it in the tileset view. Place a
-tile by left-clicking on a location in the level view. Save the level by pressing `S`. The title bars display a `*` when
-the work is not saved.
-
-=== About animations
-
-The editor plays the animations. However be aware that the animations will go out of sync when placing animated tiles
-down: the animation starts playing immediately, which means two identical animated tiles can be at a different frame of
-animation depending on when they were placed. To synchronize animations, restart the editor.
-
-Note also that the speed of animations can slightly differ from the engine, depending on the performance of the editor.
-
-== TODOs
-
-. Continue the work on libraries: improve controllers in logic (and does logic have to depend on media?)
-. Characters are updated every ticks. Add a parameter for updating them every N ticks instead (allows lower speeds)?
-. Dedicated type for tiles / sprites instead of `uint16_t`
-. Warning bug with readability-identifier-naming: https://stackoverflow.com/q/68475958 (upgrade clang-tidy?)
-. Replace "pixel" by "point" in the code that does not deal with graphics
-. Use namespaces
-. Editor: synchronize animated tiles when placing them
-. Objects or entities or whatever (including characters): each tile has a z-order sorted list of objects. Each tile
-draws its objects respecting the z-order, *clipped* to the tile. So that multi-tiles objects are not a problem.
-. Editor: resizable tileset window
-. Tiled: https://www.mapeditor.org
+I am not actively working on the project. I come back to it from time to time for improving a thing or two. There are
+still various issues to address, which can be found in link:doc/development.adoc[Development].

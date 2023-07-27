@@ -53,11 +53,10 @@ def generate() -> None:
                                            str(output_directory / 'spritesets.bin'))
 
     # Pictures.
-    fetch_pictures.fetch_picture('https://www.spriters-resource.com/resources/sheets/9/9445.png?updated=1460953914',
-                                 output_directory / 'spriteset_0.png')
-    fetch_pictures.fetch_picture('https://i.postimg.cc/8cJk8WKQ/characterset-0.png',
-                                 output_directory / 'spriteset_1.png')
-    print('WARNING: The pictures must manually be converted to BMP')
+    fetch_pictures.fetch_picture('https://drive.google.com/uc?export=download&id=1O0GsqAahAjgUKe4n6ddDJJej5ADlUaYO',
+                                 output_directory / 'spriteset_0.bmp')
+    fetch_pictures.fetch_picture('https://drive.google.com/uc?export=download&id=1B1mNhLA5u5oI_b2eH7qb_5NXIzzuRUE4',
+                                 output_directory / 'spriteset_1.bmp')
 
 
 if __name__ == '__main__':

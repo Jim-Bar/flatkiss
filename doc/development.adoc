@@ -41,8 +41,8 @@ cmake --build .
 Assets are required for the engine to actually show something.
 
 For demonstrating purposes, sample assets can be generated from the directory `sample-assets/`. To generate them, run:
-`./sample-assets/generators/generate_assets.py`. An `assets/` directory is created containing the assets. Note that it
-will download pictures which must be converted manually to the BMP file format.
+`./sample-assets/generators/generate_assets.py`. An `assets/` directory is created containing the assets. Note that this
+downloads pictures from the Internet.
 
 TIP: The sample assets are stored as text for easier debugging. However as described in link:architecture.adoc[
 Architecture], the engine expects them to be in binary form, so they must be converted. The command described above does

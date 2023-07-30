@@ -1,5 +1,6 @@
 = Development
 :1: https://pyglet.org
+:2: https://hub.docker.com/r/jimbar/flatkiss
 
 How to build the project locally and how to work on it. First follow the instructions in link:environment.adoc[
 Environment] to set up the development environment.
@@ -102,6 +103,34 @@ down: the animation starts playing immediately, which means two identical animat
 animation depending on when they were placed. To synchronize animations, restart the editor.
 
 Note also that the speed of animations can slightly differ from the engine, depending on the performance of the editor.
+
+== Docker image
+
+Building the Docker image in a CI is not planned. It requires almost no dependencies and there is no reproducibility
+requirements on its build. Instead building the image is done on a development computer, as is pushing it to {2}[Docker
+Hub].
+
+=== Build the Docker image
+
+In the root directory of the project, run:
+
+----
+docker build --tag jimbar/flatkiss:x.y.z .
+----
+
+NOTE: Replace `x.y.z` by the version number and notice the final period `.`.
+
+=== Push the Docker image
+
+Once the image is built, from anywhere run:
+
+----
+docker push jimbar/flatkiss:x.y.z
+----
+
+NOTE: Once again replace `x.y.z` by the version number.
+
+IMPORTANT: Pushing to {2}[Docker Hub] requires to log in with `docker login` and to have write access on the repository.
 
 == TODOs
 

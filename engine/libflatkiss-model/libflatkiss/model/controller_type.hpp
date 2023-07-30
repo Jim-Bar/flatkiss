@@ -22,6 +22,7 @@
 
 enum class ControllerType {
   kKeyboardController = 0,
+  kStrollController = 1,
 };
 
 #endif

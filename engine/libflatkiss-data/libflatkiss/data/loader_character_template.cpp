@@ -34,6 +34,8 @@ LoaderCharacterTemplate::controllerTypeIdentifierToControllerType(
   switch (controller_type_identifier) {
     case 0:
       return ControllerType::kKeyboardController;
+    case 1:
+      return ControllerType::kStrollController;
     default:
       return ControllerType::kKeyboardController;  // FIXME: Raise exception;
   }

@@ -16,20 +16,3 @@
  *
  * Refer to 'COPYING.txt' for the full notice.
  */
-
-#include <libflatkiss/logic/logic.hpp>
-
-using std::move;
-using std::unique_ptr;
-using std::vector;
-
-Logic::Logic(
-    std::vector<unique_ptr<CharacterController>>&& character_controllers,
-    Navigator const& navigator)
-    : character_controllers_{move(character_controllers)}, navigator_{navigator} {}
-
-vector<unique_ptr<CharacterController>>& Logic::characterControllers() {
-  return character_controllers_;
-}
-
-Navigator const& Logic::navigator() const { return navigator_; }

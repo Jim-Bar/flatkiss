@@ -17,28 +17,23 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef LIBFLATKISS_LOGIC_KEYBOARD_CHARACTER_CONTROLLER_HPP_INCLUDED
-#define LIBFLATKISS_LOGIC_KEYBOARD_CHARACTER_CONTROLLER_HPP_INCLUDED
+#ifndef LIBFLATKISS_LOGIC_CHARACTER_CONTROLLER_HPP_INCLUDED
+#define LIBFLATKISS_LOGIC_CHARACTER_CONTROLLER_HPP_INCLUDED
 
-#include <libflatkiss/logic/character_controller.hpp>
 #include <libflatkiss/logic/navigator.hpp>
 #include <libflatkiss/media/media.hpp>
 #include <libflatkiss/model/model.hpp>
-#include <memory>
-#include <vector>
 
-class KeyboardCharacterController : public CharacterController {
+class CharacterController {
  public:
-  KeyboardCharacterController(Character& character);
-  Character const& character() const;
-  void onTick(int64_t tick, EventHandler const& event_handler,
-              Navigator const& navigator, Level const& level);
-
- private:
-  Character& character_;
-  static int64_t constexpr kSpeedInPixels{1};
-  int64_t const max_sidestep_distance_;
-  int64_t sidestep_distance_{0};
+  CharacterController() = default;
+  CharacterController(CharacterController const& other) = delete;
+  CharacterController(CharacterController&& other) = default;
+  CharacterController& operator=(CharacterController const& other) = delete;
+  CharacterController& operator=(CharacterController&& other) = default;
+  virtual ~CharacterController() = default;
+  virtual void onTick(int64_t tick, EventHandler const& event_handler,
+                      Navigator const& navigator, Level const& level) = 0;
 };
 
 #endif

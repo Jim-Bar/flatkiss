@@ -91,15 +91,12 @@ int main(int argc, char* argv[]) {
   Model model{data.load()};
 
   Navigator navigator{model.solids()};
-  vector<KeyboardCharacterController> character_controllers;
+  vector<unique_ptr<CharacterController>> character_controllers;
   for (auto& level : model.levels()) {
-    for (auto& character :
-         CharacterControllerLoader::load(level.characters())) {
-      character_controllers.emplace_back(character);
-    }
+    CharacterControllerLoader::load(level.characters(), character_controllers);
   }
 
-  Logic logic{character_controllers, navigator};
+  Logic logic{move(character_controllers), navigator};
 
   Level& level{model.levels()[0]};
 
@@ -118,7 +115,7 @@ int main(int argc, char* argv[]) {
     quit = event_handler.mustQuit();
     for (auto& controller : logic.characterControllers()) {
       // FIXME: Move all this into logic.
-      controller.handleKeyboardEvent(event_handler, logic.navigator(), level);
+      controller->onTick(tick, event_handler, logic.navigator(), level);
     }
     // FIXME: Way to define which character is followed by the viewport.
     if (!logic.characterControllers().empty()) {

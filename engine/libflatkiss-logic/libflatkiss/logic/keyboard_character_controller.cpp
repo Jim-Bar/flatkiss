@@ -34,9 +34,10 @@ Character const& KeyboardCharacterController::character() const {
   return character_;
 }
 
-void KeyboardCharacterController::handleKeyboardEvent(
-    EventHandler const& event_handler, Navigator const& navigator,
-    Level const& level) {
+void KeyboardCharacterController::onTick(int64_t tick,
+                                         EventHandler const& event_handler,
+                                         Navigator const& navigator,
+                                         Level const& level) {
   int64_t delta_x{0};
   int64_t delta_y{0};
   if (event_handler.isKeyPressed(Key::kUp)) {

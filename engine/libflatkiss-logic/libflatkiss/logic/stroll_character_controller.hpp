@@ -20,7 +20,9 @@
 #ifndef LIBFLATKISS_LOGIC_STROLL_CHARACTER_CONTROLLER_HPP_INCLUDED
 #define LIBFLATKISS_LOGIC_STROLL_CHARACTER_CONTROLLER_HPP_INCLUDED
 
+#include <libflatkiss/logic/character_controller.hpp>
 #include <libflatkiss/logic/navigator.hpp>
+#include <libflatkiss/media/media.hpp>
 #include <libflatkiss/model/model.hpp>
 #include <memory>
 #include <vector>
@@ -31,15 +33,19 @@
  * A character controlled by this controller stays iddle and from time to time
  * choose a random direction and walks a few steps.
  */
-class StrollCharacterController {
+class StrollCharacterController : public CharacterController {
  public:
   StrollCharacterController(Character& character);
   Character const& character() const;
-  void onTick(int64_t tick, Navigator const& navigator, Level const& level);
+  void onTick(int64_t tick, EventHandler const& event_handler,
+              Navigator const& navigator, Level const& level);
 
  private:
   Character& character_;
+  CardinalDirection current_direction_{kSouth};
+  static int64_t constexpr kIdleTimeInTicks{250};
   static int64_t constexpr kSpeedInPixels{1};
+  static int64_t constexpr kWalkTimeInTicks{35};
 
   /**
    * @brief Returns a value between [lower, upper].
@@ -49,12 +55,6 @@ class StrollCharacterController {
    * @return int64_t A value in the interval [lower, upper], inclusive.
    */
   static int64_t randomValue(int64_t lower, int64_t upper);
-};
-
-class CharacterControllerLoader {
- public:
-  static std::vector<StrollCharacterController> load(
-      std::vector<Character>& characters);
 };
 
 #endif

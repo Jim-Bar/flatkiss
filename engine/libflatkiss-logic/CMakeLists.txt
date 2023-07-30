@@ -1,4 +1,6 @@
 add_library(${LIBRARY_LOGIC} STATIC
+    lib${NAME_PROJECT}/${NAME_LOGIC}/character_controller.cpp
+    lib${NAME_PROJECT}/${NAME_LOGIC}/character_controller.hpp
     lib${NAME_PROJECT}/${NAME_LOGIC}/character_controller_loader.cpp
     lib${NAME_PROJECT}/${NAME_LOGIC}/character_controller_loader.hpp
     lib${NAME_PROJECT}/${NAME_LOGIC}/collider.cpp

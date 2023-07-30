@@ -18,22 +18,26 @@
  */
 
 #include <libflatkiss/logic/character_controller_loader.hpp>
+#include <libflatkiss/logic/keyboard_character_controller.hpp>
+#include <libflatkiss/logic/stroll_character_controller.hpp>
 
+using std::make_unique;
+using std::unique_ptr;
 using std::vector;
 
-vector<KeyboardCharacterController> CharacterControllerLoader::load(
-    vector<Character>& characters) {
-  vector<KeyboardCharacterController> controllers{};
+void CharacterControllerLoader::load(
+    vector<Character>& characters,
+    vector<unique_ptr<CharacterController>>& into) {
   for (int64_t i{0}; i < characters.size(); i++) {
     switch (characters[i].controllers()[0]) {
       case ControllerType::kKeyboardController:
-        controllers.emplace_back(characters[i]);
+        into.push_back(make_unique<KeyboardCharacterController>(characters[i]));
         break;
+      case ControllerType::kStrollController:
+        into.push_back(make_unique<StrollCharacterController>(characters[i]));
       default:
         // FIXME: Raise exception.
         break;
     }
   }
-
-  return controllers;
 }

@@ -20,15 +20,15 @@
 #ifndef LIBFLATKISS_LOGIC_CHARACTER_CONTROLLER_LOADER_HPP_INCLUDED
 #define LIBFLATKISS_LOGIC_CHARACTER_CONTROLLER_LOADER_HPP_INCLUDED
 
-#include <libflatkiss/logic/keyboard_character_controller.hpp>
+#include <libflatkiss/logic/character_controller.hpp>
 #include <libflatkiss/model/model.hpp>
 #include <memory>
 #include <vector>
 
 class CharacterControllerLoader {
  public:
-  static std::vector<KeyboardCharacterController> load(
-      std::vector<Character>& characters);
+  static void load(std::vector<Character>& characters,
+                   std::vector<std::unique_ptr<CharacterController>>& into);
 };
 
 #endif

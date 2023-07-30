@@ -34,17 +34,44 @@ Character const& StrollCharacterController::character() const {
   return character_;
 }
 
-void StrollCharacterController::onTick(int64_t tick, Navigator const& navigator,
+void StrollCharacterController::onTick(int64_t tick,
+                                       EventHandler const& event_handler,
+                                       Navigator const& navigator,
                                        Level const& level) {
-  if (tick % 10 < 5) {  // FIXME: "Variabilize" 10 and 5.
-    Vector desired_displacement{randomValue(-1, 1) * kSpeedInPixels,
-                                randomValue(-1, 1) * kSpeedInPixels};
+  // At the beginning of a new cycle, decide on a random direction.
+  if (tick % (kIdleTimeInTicks + kWalkTimeInTicks) == 0) {
+    switch (randomValue(1, 4)) {
+      case 1:
+        current_direction_ = kSouth;
+        break;
+      case 2:
+        current_direction_ = kNorth;
+        break;
+      case 3:
+        current_direction_ = kWest;
+        break;
+      case 4:
+        current_direction_ = kEast;
+        break;
+    }
+  }
+
+  Vector movement{
+      current_direction_ == kWest ? -1 : (current_direction_ == kEast ? 1 : 0),
+      current_direction_ == kNorth ? -1
+                                   : (current_direction_ == kSouth ? 1 : 0)};
+
+  if (tick % (kIdleTimeInTicks + kWalkTimeInTicks) < kWalkTimeInTicks) {
+    // Walking time.
     auto [_, final_position]{navigator.moveBy(character_.positionedSolid(),
-                                              desired_displacement, level, 0,
+                                              movement, level, 0,
                                               kSpeedInPixels, true)};
-    character_.updateFacingDirection(desired_displacement,
+    character_.updateFacingDirection(movement,
                                      final_position - character_.position());
     character_.moveTo(move(final_position));
+  } else {
+    // Idle time. Reset the animation when the character is not moving.
+    character_.updateFacingDirection(Vector::kZero, Vector::kZero);
   }
 }
 

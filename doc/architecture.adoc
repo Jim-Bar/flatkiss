@@ -273,8 +273,14 @@ The file `characters.bin` contains any number of `CHARACTER` concatenated togeth
 `ActionsToAnimationsGroup`:: Index of the mapping of actions to animations to use for this character.
 `AnimationGroupIndex`:: Index of the group of animations to use with this character.
 `SolidIndex`:: Index of the solid to use for collisions with this character.
-`ControllerIndex`:: The index of the controller which will handle the behavior of this character. For now there is only
-a single controller which is the keyboard control, whose index is `0`.
+`ControllerIndex`:: The index of the controller which will handle the behavior of this character.
+
+====
+The available controllers are:
+
+. Keyboard control: `0`.
+. Strolling (walks around randomly): `1`.
+====
 
 ===== Spritesets
 

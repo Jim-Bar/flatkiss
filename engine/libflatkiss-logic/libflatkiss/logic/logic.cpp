@@ -26,7 +26,7 @@ Logic::Logic(
     Navigator const& navigator)
     : character_controllers_{character_controllers}, navigator_{navigator} {}
 
-vector<KeyboardCharacterController>& Logic::character_controllers() {
+vector<KeyboardCharacterController>& Logic::characterControllers() {
   return character_controllers_;
 }
 

@@ -17,8 +17,8 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#ifndef LIBFLATKISS_LOGIC_CHARACTER_CONTROLLER_HPP_INCLUDED
-#define LIBFLATKISS_LOGIC_CHARACTER_CONTROLLER_HPP_INCLUDED
+#ifndef LIBFLATKISS_LOGIC_KEYBOARD_CHARACTER_CONTROLLER_HPP_INCLUDED
+#define LIBFLATKISS_LOGIC_KEYBOARD_CHARACTER_CONTROLLER_HPP_INCLUDED
 
 #include <libflatkiss/logic/navigator.hpp>
 #include <libflatkiss/media/media.hpp>
@@ -38,12 +38,6 @@ class KeyboardCharacterController {
   static int64_t constexpr kSpeedInPixels{1};
   int64_t const max_sidestep_distance_;
   int64_t sidestep_distance_{0};
-};
-
-class CharacterControllerLoader {
- public:
-  static std::vector<KeyboardCharacterController> load(
-      std::vector<Character>& characters);
 };
 
 #endif

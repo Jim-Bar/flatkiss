@@ -18,7 +18,7 @@
  */
 
 #include <algorithm>
-#include <libflatkiss/logic/character_controller.hpp>
+#include <libflatkiss/logic/keyboard_character_controller.hpp>
 #include <utility>
 
 using std::min;
@@ -73,21 +73,4 @@ void KeyboardCharacterController::handleKeyboardEvent(
                                 ? desired_displacement
                                 : final_position - character_.position());
   character_.moveTo(move(final_position));
-}
-
-vector<KeyboardCharacterController> CharacterControllerLoader::load(
-    vector<Character>& characters) {
-  vector<KeyboardCharacterController> controllers{};
-  for (int64_t i{0}; i < characters.size(); i++) {
-    switch (characters[i].controllers()[0]) {
-      case ControllerType::kKeyboardController:
-        controllers.emplace_back(characters[i]);
-        break;
-      default:
-        // FIXME: Raise exception.
-        break;
-    }
-  }
-
-  return controllers;
 }

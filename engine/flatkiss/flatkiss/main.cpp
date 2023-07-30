@@ -116,12 +116,12 @@ int main(int argc, char* argv[]) {
     sleep_for(milliseconds(configuration.engineTickDurationMs()));
     event_handler.handleEvents();
     quit = event_handler.mustQuit();
-    for (auto& controller : logic.character_controllers()) {
+    for (auto& controller : logic.characterControllers()) {
       // FIXME: Move all this into logic.
       controller.handleKeyboardEvent(event_handler, logic.navigator(), level);
     }
     // FIXME: Way to define which character is followed by the viewport.
-    if (!logic.character_controllers().empty()) {
+    if (!logic.characterControllers().empty()) {
       updateViewport(level.characters()[0], viewport, level,
                      level.spriteset().spritesWidth(),
                      level.spriteset().spritesHeight());

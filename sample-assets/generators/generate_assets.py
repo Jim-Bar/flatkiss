@@ -57,6 +57,8 @@ def generate() -> None:
                                  output_directory / 'spriteset_0.bmp')
     fetch_pictures.fetch_picture('https://drive.google.com/uc?export=download&id=1B1mNhLA5u5oI_b2eH7qb_5NXIzzuRUE4',
                                  output_directory / 'spriteset_1.bmp')
+    fetch_pictures.fetch_picture('https://drive.google.com/uc?export=download&id=1M5dhOrofBOA4SJzYkFeit7SHONr22x3A',
+                                 output_directory / 'spriteset_2.bmp')
 
 
 if __name__ == '__main__':

@@ -1,0 +1,48 @@
+name: Build
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+        image: jimbar/${{ github.event.repository.name }}:0.1.0
+        # Refer to the Dockerfile as to how to choose the user running the container. Here the UID
+        # is hardcoded because it is not possible to get it dynamically. Refer to:
+        # https://github.com/actions/checkout/issues/956
+        options: --user 1001
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Build the project
+        uses: threeal/cmake-action@v1.2.0
+        with:
+          run-build: true
+          source-dir: engine
+      - name: Upload built artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.event.repository.name }}
+          # FIXME: When available, use https://github.com/threeal/cmake-action/issues/60 instead of
+          # hardcoding the path to the build directory.
+          path: engine/build/${{ github.event.repository.name }}/${{ github.event.repository.name }}-bin
+          retention-days: 1
+          if-no-files-found: error
+  sample-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Python up
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Generate sample assets
+        run: ${{ github.workspace }}/sample-assets/generators/generate_assets.py
+      - name: Upload built artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: sample-assets
+          path: |
+            ${{ github.workspace }}/configuration.ini
+            ${{ github.workspace }}/assets
+          retention-days: 1
+          if-no-files-found: error

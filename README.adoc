@@ -30,8 +30,23 @@ IMPORTANT: No hyphen `-` or underscore `_` in the name, ever.
 link:doc/architecture.adoc[Architecture]:: Understand how the project works
 link:doc/environment.adoc[Environment]:: Setup your environment for development
 link:doc/test.adoc[Test]:: Build the project with the CI, find useful resources for testing
-link:doc/development.adoc[Development]:: Learn how to start working with the project
+link:doc/development.adoc[Development]:: Learn how to start working on the project
 link:doc/release.adoc[Release]:: Publish new versions of the project
+
+== Running the engine
+
+The simplest course of action is to download the artifacts from the latest CI run.
+
+WARNING: As of now only a Linux version is provided by the CI. For other platforms, refer to the documentation pages
+linked in the previous section.
+
+Go to the _Actions_ tab in the GitHub repository page, select the last workflow run and download the artifacts. Unzip
+them in a common directory (the configuration file must be in the same directory as the executable), grant execution
+permissions to the program (`chmod u+x ...`) and run it.
+
+NOTE: It may be that the artifacts have expired if the last workflow run occurred too long ago. In that case a new one
+must be ran. They can be triggered manually but this requires write permission on the repository. For those who do not
+have it, forking the repository should work just fine.
 
 == Status
 

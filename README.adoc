@@ -29,9 +29,7 @@ IMPORTANT: No hyphen `-` or underscore `_` in the name, ever.
 
 link:doc/architecture.adoc[Architecture]:: Understand how the project works
 link:doc/environment.adoc[Environment]:: Setup your environment for development
-link:doc/test.adoc[Test]:: Build the project with the CI, find useful resources for testing
 link:doc/development.adoc[Development]:: Learn how to start working on the project
-link:doc/release.adoc[Release]:: Publish new versions of the project
 
 == Running the engine
 

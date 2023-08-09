@@ -13,7 +13,8 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
       - name: Build the project
-        uses: threeal/cmake-action@v1.2.0
+        id: build-project
+        uses: threeal/cmake-action@v1.3.0
         with:
           run-build: true
           source-dir: engine
@@ -21,9 +22,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ github.event.repository.name }}
-          # FIXME: When available, use https://github.com/threeal/cmake-action/issues/60 instead of
-          # hardcoding the path to the build directory.
-          path: engine/build/${{ github.event.repository.name }}/${{ github.event.repository.name }}-bin
+          path: ${{ steps.build-project.outputs.build-dir }}/${{ github.event.repository.name }}/${{ github.event.repository.name }}-bin
           retention-days: 1
           if-no-files-found: error
   sample-assets:

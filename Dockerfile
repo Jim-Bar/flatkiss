@@ -54,7 +54,7 @@ RUN chmod 644 /usr/local/include/inipp.h
 ########################################################################################################################
 FROM debian:bullseye-slim AS stage-sdl
 
-ADD https://github.com/libsdl-org/SDL/releases/download/release-2.0.20/SDL2-2.0.20.tar.gz /SDL.tar.gz
+ADD https://github.com/libsdl-org/SDL/releases/download/release-2.28.2/SDL2-2.28.2.tar.gz /SDL.tar.gz
 WORKDIR /sdl-build
 
 # This installs SDL without worrying about its dependencies. It is likely that it could not run into the container, but

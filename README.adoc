@@ -35,8 +35,8 @@ link:doc/development.adoc[Development]:: Learn how to start working on the proje
 
 The simplest course of action is to download the artifacts from the latest CI run.
 
-WARNING: As of now only a Linux version is provided by the CI. For other platforms, refer to the documentation pages
-linked in the previous section.
+WARNING: As of now only Linux and macOS versions are provided by the CI. For other platforms, refer to the documentation
+pages linked in the previous section.
 
 Go to the _Actions_ tab in the GitHub repository page, select the last workflow run and download the artifacts. Unzip
 them in a common directory (the configuration file must be in the same directory as the executable), grant execution
@@ -45,6 +45,20 @@ permissions to the program (`chmod u+x ...`) and run it.
 NOTE: It may be that the artifacts have expired if the last workflow run occurred too long ago. In that case a new one
 must be ran. They can be triggered manually but this requires write permission on the repository. For those who do not
 have it, forking the repository should work just fine.
+
+=== Running on macOS
+
+Unfortunately macOS will most likely complain that the program is not trusted and consequently will refuse to run it.
+After having tried to run it one time (without success), go in the system preferences in _Privacy & Security_. There a
+message among the lines of "_<program> was blocked from use because it is not from an identified developer_". Click on
+the button next to it (_Allow Anyway_).
+
+Next the SDL dynamic library must be allowed too. Rerun the program, macOS will now complain that SDL is not trusted.
+Head back to the system preferences, and once again click on _Allow Anyway_ for `libSDL2-(...).dylib`. That should do
+the trick.
+
+TIP: Make sure to run the program with a command-line utility from the program's directory as it seems that when Running
+programs from Finder they are not ran from their own directory, which causes the dependencies not to be found.
 
 == Status
 

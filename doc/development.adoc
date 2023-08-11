@@ -136,14 +136,16 @@ IMPORTANT: Pushing to {2}[Docker Hub] requires to log in with `docker login` and
 
 This is a non-exhaustive list of tasks which could be interesting to tackle.
 
+. Enable exceptions for error handling
 . Continue the work on libraries: improve controllers in logic (and does logic have to depend on media?)
+. Collisions between characters?
 . Characters are updated every ticks. Add a parameter for updating them every N ticks instead (allows lower speeds)?
 . Dedicated type for tiles / sprites instead of `uint16_t`
 . Warning bug with readability-identifier-naming: https://stackoverflow.com/q/68475958
-. Replace "pixel" by "point" in the code that does not deal with graphics
+. Replace "pixel" by "point" in the code that does not deal with graphics. And handle blurry display on macOS retina.
 . Use namespaces
 . Editor: synchronize animated tiles when placing them
-. Objects or entities or whatever (including characters): each tile has a z-order sorted list of objects. Each tile
-draws its objects respecting the z-order, *clipped* to the tile. So that multi-tiles objects are not a problem.
-. Editor: resizable tileset window
+. If implementing z-index (objects can pass behind others): objects or entities or whatever (including characters): each
+tile has a z-order sorted list of objects. Each tile draws its objects respecting the z-order, *clipped* to the tile. So
+that multi-tiles objects are not a problem.
 . Tiled: https://www.mapeditor.org

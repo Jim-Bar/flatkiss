@@ -1,20 +1,32 @@
 name: Build
 on: workflow_dispatch
 jobs:
-  build:
-    strategy:
-      matrix:
-        # Using a map for associating Ubuntu (the host on which the job runs) with Linux (what the
-        # final program is compatible with): https://stackoverflow.com/a/68940067
-        os: [ {host: ubuntu, compatible-os: linux}, {host: macos, compatibility: macos}]
-    runs-on: ${{ matrix.os.host }}-latest
+  build-linux:
+    runs-on: ubuntu-latest
     container:
-      if: matrix.os.host == 'ubuntu'
-      image: jimbar/${{ github.event.repository.name }}:0.1.0
-      # Refer to the Dockerfile as to how to choose the user running the container. Here the UID
-      # is hardcoded because it is not possible to get it dynamically. Refer to:
-      # https://github.com/actions/checkout/issues/956
-      options: --user 1001
+        image: jimbar/${{ github.event.repository.name }}:0.1.0
+        # Refer to the Dockerfile as to how to choose the user running the container. Here the UID
+        # is hardcoded because it is not possible to get it dynamically. Refer to:
+        # https://github.com/actions/checkout/issues/956
+        options: --user 1001
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Build the project
+        id: build-project
+        uses: threeal/cmake-action@v1.3.0
+        with:
+          run-build: true
+          source-dir: engine
+      - name: Upload built program
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.event.repository.name }}-linux
+          path: ${{ steps.build-project.outputs.build-dir }}/${{ github.event.repository.name }}/${{ github.event.repository.name }}-bin
+          retention-days: 1
+          if-no-files-found: error
+  build-macos:
+    runs-on: macos-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -22,7 +34,6 @@ jobs:
         # Refer to the Dockerfile to find out which version of SDL to use. Not using brew for
         # installing SDL because the result would not be compatible with both arm64 and x86_64.
         # https://wiki.libsdl.org/SDL2/Installation
-        if: matrix.os.host == 'macos'
         run: |
           wget --output-document=${{ github.workspace }}/SDL.tar.gz https://github.com/libsdl-org/SDL/releases/download/release-2.28.2/SDL2-2.28.2.tar.gz
           mkdir ${{ github.workspace }}/sdl-source
@@ -33,7 +44,6 @@ jobs:
           make
           sudo make install
       - name: Set IniPP up
-        if: matrix.os.host == 'macos'
         run: |
           wget https://raw.githubusercontent.com/mcmtroffaes/inipp/46248e4e93a2e63f9a1d0d8d9ad40bd6b3725df5/inipp/inipp.h
           sudo mv inipp.h /usr/local/include
@@ -46,7 +56,6 @@ jobs:
       - name: Link SDL library
         # Make sure the program finds and uses the shipped SDL library. The library must be in the
         # same directory as the program.
-        if: matrix.os.host == 'macos'
         run: |
           PROGRAM="${{ steps.build-project.outputs.build-dir }}/${{ github.event.repository.name }}/${{ github.event.repository.name }}-bin"
           OLD_DYLIB_PATH=$(otool -XL "${PROGRAM}" | head -1 | awk '{print $1;}')
@@ -57,17 +66,16 @@ jobs:
         # than the program upload step (but with the same name) is useful to flatten the directory
         # structure. Otherwise the artifacts would be nested in their source directory in the
         # resulting file.
-        if: matrix.os.host == 'macos'
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.event.repository.name }}-${{ matrix.os.compatible-os }}
+          name: ${{ github.event.repository.name }}-macos
           path: ${{ github.workspace }}/sdl-build/build/.libs/libSDL2-2.0.0.dylib
           retention-days: 1
           if-no-files-found: error
       - name: Upload built program
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.event.repository.name }}-${{ matrix.os.compatible-os }}
+          name: ${{ github.event.repository.name }}-macos
           path: ${{ steps.build-project.outputs.build-dir }}/${{ github.event.repository.name }}/${{ github.event.repository.name }}-bin
           retention-days: 1
           if-no-files-found: error

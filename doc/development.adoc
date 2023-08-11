@@ -94,7 +94,7 @@ IMPORTANT: Obviously the assets must have been generated beforehand.
 
 Move around using the right mouse button. Select a tile to place by left-clicking on it in the tileset view. Place a
 tile by left-clicking on a location in the level view. Save the level by pressing `S`. The title bars display a `*` when
-the work is not saved.
+the work is not saved. It also displays the index of the currently selected tile.
 
 ==== About animations
 

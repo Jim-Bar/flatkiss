@@ -24,8 +24,9 @@ target_include_directories(${LIBRARY_MEDIA}
 )
 
 target_link_libraries(${LIBRARY_MEDIA}
-    ${LIBRARY_MODEL}
-    ${SDL2_LIBRARIES}
+    PRIVATE
+        ${LIBRARY_MODEL}
+        ${SDL2_LIBRARIES}
 )
 
 # Setting the C++ version, from Modern CMake:

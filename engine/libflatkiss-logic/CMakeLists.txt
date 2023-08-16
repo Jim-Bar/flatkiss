@@ -20,8 +20,9 @@ target_include_directories(${LIBRARY_LOGIC} PUBLIC
 )
 
 target_link_libraries(${LIBRARY_LOGIC}
-    ${LIBRARY_MEDIA}
-    ${LIBRARY_MODEL}
+    PRIVATE
+        ${LIBRARY_MEDIA}
+        ${LIBRARY_MODEL}
 )
 
 # Setting the C++ version, from Modern CMake:

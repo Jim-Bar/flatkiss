@@ -50,7 +50,9 @@ vector<Spriteset> LoaderSpriteset::load(string const& file_path) {
                               alpha_blue);
     }
     stream.close();
-  }  // FIXME: Raise exception.
+  } else {
+    throw ios::failure("Failed to open file: " + file_path);
+  }
 
   return spritesets;
 }

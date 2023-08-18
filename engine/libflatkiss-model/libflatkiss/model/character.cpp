@@ -17,13 +17,16 @@
  * Refer to 'COPYING.txt' for the full notice.
  */
 
-#include <iostream>  // FIXME: Delete.
 #include <libflatkiss/model/character.hpp>
 #include <set>
+#include <stdexcept>
+#include <string>
 #include <utility>
 
+using std::invalid_argument;
 using std::move;
 using std::set;
+using std::to_string;
 using std::vector;
 
 Character::Character(Spriteset const& spriteset,
@@ -53,7 +56,8 @@ Action Character::currentAction() const {
     case kNorth:
       return Action::kWalkUp;
     default:
-      return Action::kWalkLeft;  // FIXME.
+      throw invalid_argument("Unknown cardinal direction: " +
+                             to_string(facing_direction_));
   }
 }
 

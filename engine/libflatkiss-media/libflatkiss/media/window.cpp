@@ -22,10 +22,10 @@
 #include <algorithm>
 #include <iostream>
 #include <libflatkiss/media/window.hpp>
+#include <stdexcept>
 
-using std::cerr;
-using std::endl;
 using std::max;
+using std::runtime_error;
 using std::string;
 
 // Lint disabled because of this bug: https://stackoverflow.com/a/64680981
@@ -56,9 +56,9 @@ SDL_Window* Window::createSDLWindow(string display_name, int64_t width,
       display_name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
       static_cast<int>(width), static_cast<int>(height), SDL_WINDOW_SHOWN)};
   if (sdl_window == nullptr) {
-    cerr << "SDL_CreateWindow Error: " << SDL_GetError() << endl;
     quitSDL();
-    return nullptr;  // FIXME: Raise an exception.
+    throw runtime_error("Failed to create SDL window: " +
+                        string{SDL_GetError()});
   }
 
   windows_count_++;
@@ -67,8 +67,7 @@ SDL_Window* Window::createSDLWindow(string display_name, int64_t width,
 
 void Window::initSDL() {
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-    cerr << "SDL_Init Error: " << SDL_GetError() << endl;
-    // FIXME: Raise an exception.
+    throw runtime_error("Failed to initialize SDL: " + string{SDL_GetError()});
   }
 }
 

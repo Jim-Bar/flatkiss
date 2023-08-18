@@ -20,9 +20,11 @@
 #include <algorithm>
 #include <array>
 #include <libflatkiss/logic/navigator.hpp>
+#include <stdexcept>
 
 using std::abs;
 using std::array;
+using std::logic_error;
 using std::max;
 using std::unordered_map;
 
@@ -113,9 +115,7 @@ Position Navigator::findNearestPositionToDestination(
     }
   }
 
-  /* FIXME: Raise an exception (this must only be called when the destination
-   * cannot be reached). */
-  return destination;
+  throw logic_error("The initial position collides with tiles");
 }
 
 Navigator::MoveResult Navigator::moveBy(PositionedSolid const& positioned_solid,

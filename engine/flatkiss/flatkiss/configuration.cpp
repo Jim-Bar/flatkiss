@@ -23,11 +23,15 @@
 #include <fstream>
 
 using std::ifstream;
+using std::ios;
 using std::string;
 
 Configuration::Configuration(string const& file_path) {
   inipp::Ini<char> ini;
-  ifstream configuration_input_stream(file_path);
+  ifstream configuration_input_stream{file_path};
+  if (!configuration_input_stream.is_open()) {
+    throw ios::failure("Failed to open file: " + file_path);
+  }
   ini.parse(configuration_input_stream);
 
   /* The values are retrieved at construction time to fail early if something is

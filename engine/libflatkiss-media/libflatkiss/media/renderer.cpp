@@ -21,7 +21,9 @@
 
 #include <algorithm>
 #include <libflatkiss/media/renderer.hpp>
+#include <stdexcept>
 
+using std::runtime_error;
 using std::sort;
 using std::unordered_map;
 using std::vector;
@@ -31,7 +33,7 @@ Renderer::Renderer(SDL_Window* sdl_window)
           sdl_window, -1,
           SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)} {
   if (sdl_renderer_ == nullptr) {
-    // FIXME: Raise an exception.
+    throw runtime_error("Failed to create SDL renderer");
   }
 }
 

@@ -48,7 +48,9 @@ unordered_map<int64_t, AnimationPlayer const> LoaderAnimationPlayer::load(
           forward_as_tuple(move(loadGroup(group_size, stream))));
     }
     stream.close();
-  }  // FIXME: Raise exception.
+  } else {
+    throw ios::failure("Failed to open file: " + file_path);
+  }
 
   return animation_players_per_group;
 }

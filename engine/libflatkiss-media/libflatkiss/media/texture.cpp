@@ -19,10 +19,11 @@
 
 #include <SDL2/SDL.h>
 
-#include <iostream>  // FIXME: Remove.
 #include <libflatkiss/media/renderer.hpp>
 #include <libflatkiss/media/texture.hpp>
+#include <stdexcept>
 
+using std::runtime_error;
 using std::string;
 using std::unordered_map;
 using std::vector;
@@ -44,17 +45,17 @@ SDL_Texture* Texture::loadTexture(string const& file_path,
     SDL_SetColorKey(
         surface, SDL_TRUE,
         SDL_MapRGB(surface->format, alpha_red, alpha_green, alpha_blue));
-    texture = renderer.createTextureFromSurface(
-        surface);  // TODO: Check nullity / raise exception.
+    texture = renderer.createTextureFromSurface(surface);
     SDL_FreeSurface(surface);
+
+    if (texture == nullptr) {
+      throw runtime_error("Failed to create SDL texture");
+    }
 
     return texture;
   }
 
-  // TODO: Raise exception.
-  std::cerr << "Failed to load texture " << file_path << std::endl;
-
-  return nullptr;
+  throw runtime_error("Failed to load SDL surface: " + file_path);
 }
 
 SDL_Texture* Texture::texture() const { return texture_; }

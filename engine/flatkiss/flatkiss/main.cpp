@@ -28,14 +28,15 @@
 #include <libflatkiss/media/media.hpp>
 #include <libflatkiss/model/model.hpp>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <thread>
 #include <unordered_map>
 #include <vector>
 
 using std::cerr;
-using std::cout;
 using std::endl;
+using std::exception;
 using std::move;
 using std::unique_ptr;
 using std::unordered_map;
@@ -75,7 +76,7 @@ void updateViewport(Character const& character, PositionedRectangle& viewport,
   }
 }
 
-int main(int argc, char* argv[]) {
+void start() {
   Configuration configuration{"configuration.ini"};
 
   PositionedRectangle viewport{Position{0, 0},
@@ -124,6 +125,14 @@ int main(int argc, char* argv[]) {
                      level.spriteset().spritesHeight());
     }
   }
+}
 
-  return EXIT_SUCCESS;
+int main(int argc, char* argv[]) {
+  try {
+    start();
+    return EXIT_SUCCESS;
+  } catch (exception& exception) {
+    cerr << exception.what() << endl;
+    return EXIT_FAILURE;
+  }
 }

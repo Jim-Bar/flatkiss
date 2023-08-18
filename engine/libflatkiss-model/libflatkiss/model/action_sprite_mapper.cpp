@@ -19,9 +19,13 @@
 
 #include <fstream>
 #include <libflatkiss/model/action_sprite_mapper.hpp>
+#include <stdexcept>
+#include <string>
 #include <utility>
 
+using std::invalid_argument;
 using std::move;
+using std::to_string;
 using std::unordered_map;
 
 ActionSpriteMapper::ActionSpriteMapper(
@@ -33,5 +37,5 @@ uint16_t ActionSpriteMapper::spriteIndexForAction(Action const& action) const {
     return action_to_indices_.at(action);
   }
 
-  return 0;  // FIXME: Raise exception.
+  throw invalid_argument("No sprite for action: " + to_string(action));
 }

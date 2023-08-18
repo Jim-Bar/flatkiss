@@ -20,8 +20,11 @@
 #include <libflatkiss/logic/character_controller_loader.hpp>
 #include <libflatkiss/logic/keyboard_character_controller.hpp>
 #include <libflatkiss/logic/stroll_character_controller.hpp>
+#include <stdexcept>
 
+using std::invalid_argument;
 using std::make_unique;
+using std::to_string;
 using std::unique_ptr;
 using std::vector;
 
@@ -35,9 +38,9 @@ void CharacterControllerLoader::load(
         break;
       case ControllerType::kStrollController:
         into.push_back(make_unique<StrollCharacterController>(characters[i]));
-      default:
-        // FIXME: Raise exception.
         break;
+      default:
+        throw invalid_argument("Unknown controller type");
     }
   }
 }

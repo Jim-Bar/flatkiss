@@ -46,7 +46,9 @@ unordered_map<int64_t, Solid const> LoaderSolid::load(string const& file_path) {
           forward_as_tuple(move(loadSolid(solid_size, stream))));
     }
     stream.close();
-  }  // FIXME: Raise exception.
+  } else {
+    throw ios::failure("Failed to open file: " + file_path);
+  }
 
   return solids_per_index;
 }

@@ -76,7 +76,9 @@ vector<Level> LoaderLevel::load(
                           tile_solid_mappers.at(tile_solid_mapper_index));
     }
     stream.close();
-  }  // FIXME: fail.
+  } else {
+    throw ios::failure("Failed to open file: " + file_path);
+  }
 
   return levels;
 }

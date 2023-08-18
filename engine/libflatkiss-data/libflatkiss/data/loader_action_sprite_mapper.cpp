@@ -20,15 +20,18 @@
 #include <fstream>
 #include <libflatkiss/data/loader_action_sprite_mapper.hpp>
 #include <libflatkiss/data/stream_reader.hpp>
+#include <stdexcept>
 #include <utility>
 
 using std::forward_as_tuple;
 using std::ifstream;
+using std::invalid_argument;
 using std::ios;
 using std::istream;
 using std::move;
 using std::piecewise_construct;
 using std::string;
+using std::to_string;
 using std::unordered_map;
 
 Action LoaderActionSpriteMapper::actionIdentifierToAction(
@@ -43,7 +46,8 @@ Action LoaderActionSpriteMapper::actionIdentifierToAction(
     case 3:
       return Action::kWalkUp;
     default:
-      return Action::kWalkLeft;  // FIXME: Raise exception;
+      throw invalid_argument("Unknown action identifier: " +
+                             to_string(action_identifier));
   }
 }
 
@@ -61,7 +65,9 @@ unordered_map<int64_t, ActionSpriteMapper const> LoaderActionSpriteMapper::load(
           forward_as_tuple(move(loadGroup(group_size, stream))));
     }
     stream.close();
-  }  // FIXME: Raise exception.
+  } else {
+    throw ios::failure("Failed to open file: " + indices_file_path);
+  }
 
   return index_to_mapper;
 }

@@ -20,11 +20,14 @@
 #include <fstream>
 #include <libflatkiss/data/loader_character_template.hpp>
 #include <libflatkiss/data/stream_reader.hpp>
+#include <stdexcept>
 
 using std::ifstream;
+using std::invalid_argument;
 using std::ios;
 using std::istream;
 using std::string;
+using std::to_string;
 using std::unordered_map;
 using std::vector;
 
@@ -37,7 +40,8 @@ LoaderCharacterTemplate::controllerTypeIdentifierToControllerType(
     case 1:
       return ControllerType::kStrollController;
     default:
-      return ControllerType::kKeyboardController;  // FIXME: Raise exception;
+      throw invalid_argument("Unknown controller type identifier: " +
+                             to_string(controller_type_identifier));
   }
 }
 
@@ -65,7 +69,9 @@ vector<CharacterTemplate> LoaderCharacterTemplate::load(
           spritesets[spriteset_index], solids.at(solid_index));
     }
     stream.close();
-  }  // FIXME: Raise exception.
+  } else {
+    throw ios::failure("Failed to open file: " + characters_file_path);
+  }
 
   return character_templates;
 }

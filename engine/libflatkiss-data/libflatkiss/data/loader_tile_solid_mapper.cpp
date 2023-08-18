@@ -45,7 +45,9 @@ unordered_map<int64_t, TileSolidMapper const> LoaderTileSolidMapper::load(
           forward_as_tuple(move(loadGroup(group_size, stream))));
     }
     stream.close();
-  }  // FIXME: Raise exception.
+  } else {
+    throw ios::failure("Failed to open file: " + tile_solid_map_file_path);
+  }
 
   return index_to_mapper;
 }

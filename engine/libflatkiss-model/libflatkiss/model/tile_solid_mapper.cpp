@@ -18,9 +18,13 @@
  */
 
 #include <libflatkiss/model/tile_solid_mapper.hpp>
+#include <stdexcept>
+#include <string>
 #include <utility>
 
+using std::invalid_argument;
 using std::move;
+using std::to_string;
 using std::unordered_map;
 
 TileSolidMapper::TileSolidMapper(
@@ -36,5 +40,5 @@ int64_t TileSolidMapper::solidIndexForTileIndex(uint16_t tile_index) const {
     return tiles_to_solids_.at(tile_index);
   }
 
-  return 0;  // FIXME: Raise exception.
+  throw invalid_argument("No solid for tile: " + to_string(tile_index));
 }

@@ -53,6 +53,7 @@ void EventHandler::updateKeysState(SDL_Event const& event) {
       keys_state_[Key::kRight] = pressed;
       return;
     default:
-      return;  // FIXME: Exception.
+      // The other keys are unused.
+      return;
   }
 }

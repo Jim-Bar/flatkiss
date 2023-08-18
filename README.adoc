@@ -46,7 +46,11 @@ NOTE: It may be that the artifacts have expired if the last workflow run occurre
 must be ran. They can be triggered manually but this requires write permission on the repository. For those who do not
 have it, forking the repository should work just fine.
 
-=== Running on macOS
+=== On Linux
+
+Make sure that SDL is installed. Refer to link:doc/environment.adoc[Environment].
+
+=== On macOS
 
 Unfortunately macOS will most likely complain that the program is not trusted and consequently will refuse to run it.
 After having tried to run it one time (without success), go in the system preferences in _Privacy & Security_. There a

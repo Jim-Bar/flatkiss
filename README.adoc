@@ -53,8 +53,8 @@ Make sure first that SDL is installed. Refer to link:doc/environment.adoc[Enviro
 === On macOS
 
 Unfortunately macOS will most likely complain that the program is not trusted and consequently will refuse to run it.
-After having tried to run it one time (without success), go in the system preferences in _Privacy & Security_. There a
-message among the lines of "_<program> was blocked from use because it is not from an identified developer_". Click on
+After having tried to run it one time (without success), go in the system preferences in _Privacy & Security_. There is
+a message among the lines of "_<program> was blocked from use because it is not from an identified developer_". Click on
 the button next to it (_Allow Anyway_).
 
 Next the SDL dynamic library must be allowed too. Rerun the program, macOS will now complain that SDL is not trusted.

@@ -48,7 +48,7 @@ have it, forking the repository should work just fine.
 
 === On Linux
 
-Make sure that SDL is installed. Refer to link:doc/environment.adoc[Environment].
+Make sure first that SDL is installed. Refer to link:doc/environment.adoc[Environment].
 
 === On macOS
 

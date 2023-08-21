@@ -60,7 +60,7 @@ CAUTION: There are two moments where SDL2 is required: at build time (developmen
 Docker, the SDL2 development libraries are already included in the image. But running the game happens outside of the
 container, hence requires SDL2 to be installed on the system.
 
-Refer to the {6}[official documentation] for installing SDL2. Remember the the development libraries (`dev` or `devel`)
+Refer to the {6}[official documentation] for installing SDL2. Remember that the development libraries (`dev` or `devel`)
 are required only if *not* using Docker.
 
 == IniPP

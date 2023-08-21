@@ -136,6 +136,8 @@ IMPORTANT: Pushing to {2}[Docker Hub] requires to log in with `docker login` and
 
 This is a non-exhaustive list of tasks which could be interesting to tackle.
 
+. On macOS it is odd that the path to SDL shared lib differ between CI and locally (forcing to embed SDL in the artifact
+to be sure it will be found). Needs investigations.
 . On Linux find a way to run and debug the program from Visual Studio Code (either in the container or outside)
 . Continue the work on libraries: improve controllers in logic
 . Collisions between characters?

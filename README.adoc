@@ -1,7 +1,7 @@
 = FlatKiss
 :1: https://en.wikipedia.org/wiki/KISS_principle
 
-image::https://drive.google.com/uc?export=download&id=1RkDHVplmHKQtxRa-1fiRS8aFoBad-_Px[Preview]
+image::https://drive.google.com/uc?export=view&id=196eLfkc7vK4kZFDDzvK933_h4FxoUwco[Preview]
 
 FlatKiss is a 2D tile based toy game engine written in C++.
 
